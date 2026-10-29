@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from config import (ACTIONABLE_CATEGORIES, CATEGORIES, DEFAULT_FILENAME, Config,
                     ConfigError, init_template, load_config, resolve_secret)
-from imap import Folder, MailClient, MailError, SafetyError
+from imap import MailClient, MailError, SafetyError
 from journal import Journal
 from mailparse import parse_headers
 from planning import (ARCHIVE, JUNK, KEEP_CATEGORIES, TRASH, Plan, build_plan,
@@ -148,13 +148,15 @@ def _describe_actions(actions: list[dict]) -> tuple[int, int, dict[str, int]]:
     return len(unsubs), sum(len(item.get("uids") or []) for item in moves), dict(by_dest)
 
 
-def _print_action_plan(actions: list[dict]) -> None:
+def _print_action_plan(actions: list[dict], redact: bool = False) -> None:
     unsub_count, message_count, by_dest = _describe_actions(actions)
     say(f"Actions .... {unsub_count} unsubscribe, {message_count} messages to file")
     for action in actions:
         if action.get("type") == "unsubscribe":
-            say(f"  unsub  {action.get('mode','?'):<9} {action.get('domain','')}  "
-                f"{truncate(action.get('target',''), 80)}")
+            domain = "***" if redact else action.get("domain", "")
+            target = _redact_target(action.get("target", "")) if redact else action.get("target", "")
+            say(f"  unsub  {action.get('mode','?'):<9} {domain}  "
+                f"{truncate(target, 80)}")
     for dest, count in sorted(by_dest.items()):
         say(f"  move   {count:>5} messages -> {dest}")
     if not actions:
@@ -203,7 +205,7 @@ def cmd_validate(args) -> int:
     say(f"Auth ........ {config.account.auth}")
     say(f"Secret ...... {config.account.secret_status()}")
     say(f"State ....... {config.state_path()}")
-    say(f"Taxonomy .... " + ", ".join(f"{key}={value}" for key, value in config.taxonomy.items()))
+    say("Taxonomy .... " + ", ".join(f"{key}={value}" for key, value in config.taxonomy.items()))
     for warning in config.warnings:
         warn("Warning: " + warning)
     say("OK")
@@ -259,7 +261,7 @@ def cmd_doctor(args) -> int:
             folder = client.special(flag)
             if folder:
                 special[label] = folder.name
-        out(f"Special ..... " + (", ".join(f"{k}={v}" for k, v in special.items()) or "none advertised"))
+        out("Special ..... " + (", ".join(f"{k}={v}" for k, v in special.items()) or "none advertised"))
         inbox = client.status("INBOX")
         out(f"INBOX ....... {inbox.get('messages', '?')} messages, {inbox.get('unseen', '?')} unread")
         if "UIDPLUS" not in client.capabilities and "MOVE" not in client.capabilities \
@@ -457,6 +459,41 @@ def _redact_unsub(value: dict | None) -> dict | None:
     return out
 
 
+def _redact_group_data(data: dict) -> dict:
+    out = dict(data)
+    out["key"] = "***"
+    out["domain"] = "***"
+    out["senders"] = ["***"] if out.get("senders") else []
+    out["samples"] = []
+    out["reasons"] = ["redacted"]
+    out["uids"] = {}
+    if out.get("protected_reason"):
+        out["protected_reason"] = "protected by policy"
+    if out.get("unsubscribe"):
+        out["unsubscribe"] = _redact_unsub(out["unsubscribe"])
+    return out
+
+
+def _redact_action(action: dict) -> dict:
+    out = dict(action)
+    for key in ("target", "sender", "domain", "group"):
+        if out.get(key):
+            out[key] = "***"
+    return out
+
+
+def _redact_plan_payload(data: dict) -> dict:
+    out = dict(data)
+    out["account"] = "***"
+    out["actions"] = [_redact_action(action) for action in data.get("actions", [])]
+    out["groups"] = [_redact_group_data(group) for group in data.get("groups", [])]
+    return out
+
+
+def _redact_failures(failures: list[str]) -> list[str]:
+    return ["redacted"] if failures else []
+
+
 def _redact_journal_entry(entry: dict) -> dict:
     out = dict(entry)
     if out.get("account"):
@@ -640,12 +677,16 @@ def cmd_plan(args) -> int:
     atomic_write_json(path, plan.to_dict())
     ensure_private_file(path)
     if args.json:
-        emit_json({"path": str(path), "plan": plan.to_dict()})
+        payload = plan.to_dict()
+        if args.redact:
+            payload = _redact_plan_payload(payload)
+        emit_json({"path": str(path), "plan": payload})
         return EXIT_OK
 
     unsub_count, message_count, by_dest = _describe_actions(plan.actions)
     say(f"Plan ........ {path}")
-    say(f"Account ..... {config.account.email}")
+    account = "***" if args.redact else config.account.email
+    say(f"Account ..... {account}")
     say(f"Scanned ..... {human_count(plan.stats.get('messages', 0), 'message')} "
         f"({human_count(plan.stats.get('groups', 0), 'group')})")
     say(f"Actionable .. {human_count(plan.stats.get('actionable', 0), 'message')}")
@@ -660,7 +701,8 @@ def cmd_plan(args) -> int:
             continue
         unsub = (group.unsub or {}).get("mode", "-") if group.unsub else "-"
         rows.append([
-            group.key, group.category, group.domain, group.count,
+            "***" if args.redact else group.key, group.category,
+            "***" if args.redact else group.domain, group.count,
             group.actionable, group.unread,
             "PROTECTED" if group.protected else group.recommended,
             unsub,
@@ -1017,10 +1059,12 @@ def cmd_apply(args) -> int:
         return EXIT_OK
     if args.dry_run or not args.yes:
         if args.json:
-            emit_json({"dry_run": True, "actions": actions,
+            payload_actions = ([_redact_action(action) for action in actions]
+                               if args.redact else actions)
+            emit_json({"dry_run": True, "actions": payload_actions,
                        "confirmation_required": not args.dry_run})
         else:
-            _print_action_plan(actions)
+            _print_action_plan(actions, redact=args.redact)
             say("")
             if args.dry_run:
                 say("Dry run. Nothing was changed.")
@@ -1042,14 +1086,15 @@ def cmd_apply(args) -> int:
             move_actions = [item for item in actions if item.get("type") == "move"]
             moved, move_failures, move_skipped = _execute_moves(
                 config, client, store, journal, plan, run, move_actions,
-                quiet=args.json, limit=args.limit)
+                quiet=args.json or args.redact, limit=args.limit)
             failures.extend(move_failures)
             if move_skipped:
                 failures.append(f"{move_skipped} messages skipped during move")
             if not move_failures and not move_skipped:
                 unsub_results = _execute_unsubs(
                     config, store, journal, run, secret, unsub_actions,
-                    args.limit if args.limit is not None else None, quiet=args.json)
+                    args.limit if args.limit is not None else None,
+                    quiet=args.json or args.redact)
                 failed_unsubs = sum(1 for item in unsub_results
                                     if item.get("status") == "failed")
                 if failed_unsubs:
@@ -1061,14 +1106,18 @@ def cmd_apply(args) -> int:
                 if moved or unsub_results:
                     say(f"Undo: python tools/mail.py undo --run {run} --yes")
             if args.json:
+                payload_unsubs = ([_redact_journal_entry(item) for item in unsub_results]
+                                  if args.redact else unsub_results)
+                payload_failures = _redact_failures(failures) if args.redact else failures
                 emit_json({
                     "run": run, "moved": moved,
-                    "unsubscribes": unsub_results, "failures": failures,
+                    "unsubscribes": payload_unsubs, "failures": payload_failures,
                 })
     except (MailError, SafetyError) as exc:
         warn(f"Stopped after a server or safety error: {exc}")
         if args.json:
-            emit_json({"run": run, "moved": moved, "error": str(exc)})
+            emit_json({"run": run, "moved": moved,
+                       "error": "redacted" if args.redact else str(exc)})
         else:
             say(f"Run {run}: {moved} messages were already filed.")
             say(f"Undo: python tools/mail.py undo --run {run} --yes")
@@ -1119,22 +1168,31 @@ def cmd_unsubscribe(args) -> int:
         return EXIT_OK
     if not args.yes:
         if args.json:
+            payload_actions = ([_redact_action(action) for action in actions]
+                               if args.redact else actions)
+            payload_manual = ([_redact_group_data(group.to_dict()) for group in manual]
+                              if args.redact else [group.to_dict() for group in manual])
             emit_json({
                 "dry_run": True,
-                "actions": actions,
-                "manual": [group.to_dict() for group in manual],
+                "actions": payload_actions,
+                "manual": payload_manual,
             })
             return EXIT_CONFIRM
         say(f"Automatic requests .... {len(actions)}")
         for action in actions:
-            say(f"  {action.get('mode'):<9} {action.get('domain',''):<34} "
-                f"{truncate(action.get('target',''), 80)}")
+            domain = "***" if args.redact else action.get("domain", "")
+            target = (_redact_target(action.get("target", "")) if args.redact
+                      else action.get("target", ""))
+            say(f"  {action.get('mode'):<9} {domain:<34} {truncate(target, 80)}")
         if manual:
             say("")
             say("Manual (the tool will not fetch these; open them yourself):")
             for group in manual:
-                target = (group.unsub or {}).get("url") or (group.unsub or {}).get("address") or ""
-                say(f"  {group.domain:<34} {truncate(target, 80)}")
+                unsub = group.unsub or {}
+                target = unsub.get("url") or unsub.get("address") or ""
+                domain = "***" if args.redact else group.domain
+                target = _redact_target(target) if args.redact else target
+                say(f"  {domain:<34} {truncate(target, 80)}")
         say("")
         say("Dry run. Re-run with --yes to send the automatic requests.")
         return EXIT_CONFIRM
@@ -1147,11 +1205,15 @@ def cmd_unsubscribe(args) -> int:
             secret = resolve_secret(config.account)
             results = _execute_unsubs(config, store, journal, run, secret, actions,
                                       args.limit if args.limit is not None else None,
-                                      quiet=args.json)
+                                      quiet=args.json or args.redact)
             failed = sum(1 for item in results if item.get("status") == "failed")
             if args.json:
-                emit_json({"run": run, "results": results,
-                           "manual": [group.to_dict() for group in manual]})
+                payload_results = ([_redact_journal_entry(item) for item in results]
+                                   if args.redact else results)
+                payload_manual = ([_redact_group_data(group.to_dict()) for group in manual]
+                                  if args.redact else [group.to_dict() for group in manual])
+                emit_json({"run": run, "results": payload_results,
+                           "manual": payload_manual})
             else:
                 say("")
                 say(f"Run {run}: {len(results)} attempts, {failed} failed.")
@@ -1161,8 +1223,10 @@ def cmd_unsubscribe(args) -> int:
                         unsub = group.unsub or {}
                         target = unsub.get("url") or (
                             "mailto:" + unsub["address"] if unsub.get("address") else "")
+                        domain = "***" if args.redact else group.domain
+                        target = _redact_target(target) if args.redact else target
                         if target:
-                            say(f"  {group.domain}: {target}")
+                            say(f"  {domain}: {target}")
     finally:
         store.close()
     return EXIT_FAIL if failed else EXIT_OK
@@ -1567,6 +1631,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--category", action="append", help="Only these categories (repeatable)")
     p.add_argument("--save", default=None)
     p.add_argument("--top", type=int, default=40)
+    p.add_argument("--redact", action="store_true", help="Mask addresses and targets in output")
     p.set_defaults(func=cmd_plan)
 
     p = sub.add_parser("apply", parents=[common], help="Apply a plan (needs --yes)")
@@ -1578,6 +1643,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--category", action="append")
     p.add_argument("--limit", type=int, default=None,
                    help="Max messages to move and max unsubscribe requests")
+    p.add_argument("--redact", action="store_true", help="Mask addresses and targets in output")
     p.set_defaults(func=cmd_apply)
 
     p = sub.add_parser("unsubscribe", parents=[common],
@@ -1587,6 +1653,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--group", action="append")
     p.add_argument("--limit", type=int, default=None)
     p.add_argument("--yes", action="store_true")
+    p.add_argument("--redact", action="store_true", help="Mask addresses and targets in output")
     p.set_defaults(func=cmd_unsubscribe)
 
     p = sub.add_parser("unsubs", parents=[common], help="Show unsubscribe history")

@@ -1,0 +1,32 @@
+# CleanYourMail is run from a checkout:
+#
+#   python tools/mail.py doctor
+#
+# It is intentionally not packaged as a wheel: the CLI relies on the tools/
+# directory and on the repository's docs/examples. This file configures the
+# development tools used by CI.
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+exclude = [".git", "__pycache__", "state", "*.sqlite3"]
+
+[tool.ruff.lint]
+# Keep CI focused on syntax/undefined-name/import errors, not cosmetic style.
+select = ["E4", "E7", "E9", "F"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.coverage.run]
+source = ["tools"]
+branch = true
+omit = ["tools/cym_version.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+]

@@ -6,7 +6,7 @@ from pathlib import Path
 
 from config import (Account, Config, DEFAULT_TAXONOMY, FolderOptions, Policy,
                     ScanOptions, UnsubscribeOptions)
-from planning import (ARCHIVE, JUNK, TRASH, build_plan, plan_from_dict,
+from planning import (ARCHIVE, JUNK, build_plan, plan_from_dict,
                       plan_summary_lines)
 from store import StoredMessage
 from util import to_iso, utcnow

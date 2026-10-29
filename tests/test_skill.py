@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 import re
 import unittest
-from pathlib import Path
 
 from helpers import ROOT, TempDir
 
@@ -13,6 +12,7 @@ from mail import build_parser
 DOCS = [
     "README.md", "README.es.md", "SKILL.md", "PROMPT.md", "PROMPT.es.md",
     "AGENTS.md", "SECURITY.md", "LICENSE",
+    "CHANGELOG.md", "pyproject.toml", ".github/workflows/tests.yml",
     "docs/SAFETY.md", "docs/PROVIDERS.md", "docs/TROUBLESHOOTING.md",
     "docs/UNSUBSCRIBE.md", "docs/FOLDERS.md",
     "examples/cleanyourmail.toml",

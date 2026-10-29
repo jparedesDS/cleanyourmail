@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import imaplib
 import re
-import socket
 import ssl
 from dataclasses import dataclass
 

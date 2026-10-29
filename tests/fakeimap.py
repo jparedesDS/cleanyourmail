@@ -235,7 +235,6 @@ class _Handler(socketserver.StreamRequestHandler):
         self._write(f"{tag} OK [{mode}] SELECT completed")
 
     def _search(self, tag: str, rest: str) -> None:
-        state = self.server.state
         box = self._require_box(tag)
         if box is None:
             return

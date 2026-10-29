@@ -5,6 +5,8 @@ newsletters, promotions, social notifications, cold outreach and spam, files the
 labels, and sends unsubscribe requests — without reading message bodies and without permanently
 deleting anything.
 
+[![tests](https://github.com/jparedesDS/clean-your-mail/actions/workflows/tests.yml/badge.svg)](https://github.com/jparedesDS/clean-your-mail/actions/workflows/tests.yml)
+
 Inspired by [cleanyour.tv](https://www.cleanyour.tv) and built like
 [CleanYourPhone](https://github.com/cleanyourphone): a procedure plus a small standard-library CLI,
 not a hosted service. No account, no telemetry, no third-party API.
@@ -126,7 +128,9 @@ code **1**.
 | `rules` | Export Gmail filter XML or Sieve. | No |
 
 Use `--config path.toml` for a non-default config and `--json` for machine-readable output. Use
-`report --redact --no-subjects` before sharing a screen.
+`report --redact --no-subjects` before sharing a screen; `plan --json --redact`,
+`apply --json --redact` and `unsubscribe --json --redact` mask targets in their output without
+changing the real plan on disk.
 
 ## How it decides
 

@@ -5,6 +5,8 @@ cabeceras del correo, encuentra newsletters, promociones, notificaciones sociale
 spam, los archiva en carpetas o etiquetas y envía solicitudes de baja — sin leer el cuerpo de los
 mensajes y sin borrar nada de forma permanente.
 
+[![tests](https://github.com/jparedesDS/clean-your-mail/actions/workflows/tests.yml/badge.svg)](https://github.com/jparedesDS/clean-your-mail/actions/workflows/tests.yml)
+
 Inspirada en [cleanyour.tv](https://www.cleanyour.tv) y construida como
 [CleanYourPhone](https://github.com/cleanyourphone): un procedimiento y una CLI pequeña de biblioteca
 estándar, no un servicio alojado. Sin cuenta, sin telemetría, sin API de terceros.
@@ -130,7 +132,9 @@ salen con código **1**.
 | `rules` | Exporta XML de filtros de Gmail o Sieve. | No |
 
 Usa `--config ruta.toml` para otra configuración y `--json` para salida legible por máquina. Usa
-`report --redact --no-subjects` antes de compartir pantalla.
+`report --redact --no-subjects` antes de compartir pantalla; `plan --json --redact`,
+`apply --json --redact` y `unsubscribe --json --redact` ocultan los objetivos en su salida sin
+cambiar el plan real en disco.
 
 ## Cómo decide
 

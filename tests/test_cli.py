@@ -146,6 +146,37 @@ class CliTest(unittest.TestCase):
         self.assertNotIn("example.com", out)
         self.assertNotIn("https://example.com/u", out)
 
+    def test_plan_apply_unsubscribe_redaction(self):
+        self.assertEqual(self.cli("scan")[0], 0)
+        code, out, err = self.cli("plan", "--json", "--redact")
+        self.assertEqual(code, 0, err)
+        self.assertNotIn("example.com", out)
+        plan_payload = json.loads(out)["plan"]
+        self.assertEqual(plan_payload["account"], "***")
+        for action in plan_payload["actions"]:
+            if action["type"] == "unsubscribe":
+                self.assertEqual(action["target"], "***")
+        for group in plan_payload["groups"]:
+            self.assertEqual(group["domain"], "***")
+        plan_file = next((self.temp / "state").glob("*/plan.json"))
+        self.assertIn("example.com", plan_file.read_text(encoding="utf-8"))
+
+        code, out, err = self.cli("apply", str(plan_file), "--dry-run", "--json", "--redact")
+        self.assertEqual(code, 0, err)
+        self.assertNotIn("example.com", out)
+        for action in json.loads(out)["actions"]:
+            if action["type"] == "unsubscribe":
+                self.assertEqual(action["target"], "***")
+
+        code, out, err = self.cli("unsubscribe", str(plan_file), "--json", "--redact")
+        self.assertEqual(code, 3, err)
+        self.assertNotIn("example.com", out)
+        payload = json.loads(out)
+        for action in payload["actions"]:
+            self.assertEqual(action["target"], "***")
+        for group in payload["manual"]:
+            self.assertEqual(group["domain"], "***")
+
     def test_scan_report_plan_and_rules(self):
         self.assertEqual(self.cli("scan")[0], 0)
         code, out, err = self.cli("report", "--json", "--redact")

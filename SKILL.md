@@ -341,8 +341,10 @@ python tools/mail.py unsubs --check
 python tools/mail.py folders
 ```
 
-When screen sharing, use `report --redact --no-subjects`, `journal --redact` and `unsubs --redact`.
-These mask the account, sender domains, subjects and unsubscribe tokens.
+When screen sharing, use `report --redact --no-subjects`, `plan --json --redact`,
+`apply --json --redact`, `unsubscribe --json --redact`, `journal --redact` and `unsubs --redact`.
+These mask the account, sender domains, subjects and unsubscribe tokens in the output. `plan.json`
+on disk remains the real plan; redaction only affects what is printed.
 
 Give the person:
 

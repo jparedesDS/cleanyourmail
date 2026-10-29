@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import contextlib
 import io
-import os
 import sys
 import tempfile
 from pathlib import Path
