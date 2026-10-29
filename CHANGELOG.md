@@ -4,6 +4,15 @@ All notable changes to CleanYourMail are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Static English/Spanish landing page in `site/` with a before/after inbox demo, provider tabs,
+  setup steps, safety section and FAQ.
+- GitHub Pages deployment workflow, issue templates, PR template, contributing guide, code of
+  conduct and FAQ.
+
 ## [1.0.1] - 2026-10-29
 
 ### Fixed

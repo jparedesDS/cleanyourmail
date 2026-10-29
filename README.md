@@ -11,7 +11,7 @@ Inspired by [cleanyour.tv](https://www.cleanyour.tv) and built like
 [CleanYourPhone](https://github.com/cleanyourphone): a procedure plus a small standard-library CLI,
 not a hosted service. No account, no telemetry, no third-party API.
 
-[Leer en español](README.es.md) · [The skill](SKILL.md) · [Prompt](PROMPT.md) · [Safety](docs/SAFETY.md)
+[Leer en español](README.es.md) · [Website](https://jparedesds.github.io/clean-your-mail/) · [The skill](SKILL.md) · [Prompt](PROMPT.md) · [Safety](docs/SAFETY.md)
 
 ## What it does
 
@@ -229,6 +229,14 @@ no-MOVE and no-UIDPLUS refusals, CLI flows and the skill document.
 - [docs/UNSUBSCRIBE.md](docs/UNSUBSCRIBE.md) — RFC 8058, mailto, manual links, SSRF guard.
 - [docs/FOLDERS.md](docs/FOLDERS.md) — taxonomy, Gmail labels, archive mode, rules.
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — auth, IMAP, folders, rate limits, undo.
+- [docs/FAQ.md](docs/FAQ.md) — the questions people ask.
+- [CONTRIBUTING.md](CONTRIBUTING.md) — development setup, tests and safety invariants.
+
+## Contributing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md). The suite must pass without a
+real mailbox; use `tests/fakeimap.py`. Do not add permanent deletion, body reading, OAuth token
+acquisition, telemetry or a mailbox-wide EXPUNGE.
 
 ## License
 

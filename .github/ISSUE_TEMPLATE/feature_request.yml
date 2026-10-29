@@ -1,0 +1,52 @@
+name: Feature request
+description: Suggest a provider, safety rule, workflow or documentation improvement.
+title: "feature: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        CleanYourMail will not add permanent deletion, body reading, OAuth token acquisition, or a
+        mailbox-wide EXPUNGE. See AGENTS.md for the hard rules.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Provider support
+        - Classification / protected mail
+        - Planning / apply / undo
+        - Unsubscribe
+        - Rules export
+        - CLI / output
+        - Documentation
+        - Website
+        - Tests / CI
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety impact
+      description: Does this touch deletion, protected mail, unsubscribe, secrets or undo?
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: This does not require permanent deletion or reading message bodies.
+          required: true
+        - label: This does not add telemetry or a third-party API.
+          required: true

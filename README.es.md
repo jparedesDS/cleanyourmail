@@ -11,7 +11,7 @@ Inspirada en [cleanyour.tv](https://www.cleanyour.tv) y construida como
 [CleanYourPhone](https://github.com/cleanyourphone): un procedimiento y una CLI pequeña de biblioteca
 estándar, no un servicio alojado. Sin cuenta, sin telemetría, sin API de terceros.
 
-[Read in English](README.md) · [La skill](SKILL.md) · [Prompt](PROMPT.es.md) · [Seguridad](docs/SAFETY.md)
+[Read in English](README.md) · [Web](https://jparedesds.github.io/clean-your-mail/es.html) · [La skill](SKILL.md) · [Prompt](PROMPT.es.md) · [Seguridad](docs/SAFETY.md)
 
 ## Qué hace
 
@@ -234,6 +234,14 @@ fallbacks sin MOVE y rechazo sin UIDPLUS, flujos de CLI y el documento de la ski
 - [docs/UNSUBSCRIBE.md](docs/UNSUBSCRIBE.md) — RFC 8058, mailto, enlaces manuales, protección SSRF.
 - [docs/FOLDERS.md](docs/FOLDERS.md) — taxonomía, etiquetas de Gmail, modo archive, reglas.
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — autenticación, IMAP, carpetas, límites, undo.
+- [docs/FAQ.md](docs/FAQ.md) — las preguntas que la gente hace.
+- [CONTRIBUTING.md](CONTRIBUTING.md) — entorno de desarrollo, tests e invariantes de seguridad.
+
+## Contribuir
+
+Lee [CONTRIBUTING.md](CONTRIBUTING.md) y [AGENTS.md](AGENTS.md). La suite debe pasar sin un buzón
+real; usa `tests/fakeimap.py`. No añadas borrado permanente, lectura de cuerpos, adquisición de tokens
+OAuth, telemetría ni un EXPUNGE general.
 
 ## Licencia
 

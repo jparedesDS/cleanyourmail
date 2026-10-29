@@ -21,6 +21,10 @@ longer without making it safer or clearer is probably a bad change.
 | `SKILL.md` | The skill. Agent-agnostic procedure and safety rules. |
 | `PROMPT.md`, `PROMPT.es.md` | Short prompts for agents that do not support skills, in English and Spanish. |
 | `README.md`, `README.es.md` | Front page and Spanish translation. |
+| `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` | Contribution rules and community standards. |
+| `CHANGELOG.md` | Release notes. |
+| `site/` | Static English/Spanish landing page (no build step, no analytics). |
+| `.github/` | CI, Pages deploy, issue templates and PR template. |
 | `tools/mail.py` | CLI: `init`, `validate`, `doctor`, `folders`, `scan`, `report`, `plan`, `apply`, `unsubscribe`, `unsubs`, `journal`, `undo`, `rules`. Stdlib only. |
 | `tools/config.py` | TOML loading, provider presets, secrets, validation. |
 | `tools/imap.py` | Minimal IMAP client, special folders, moves, Gmail archive, UIDPLUS guards. |
@@ -31,7 +35,7 @@ longer without making it safer or clearer is probably a bad change.
 | `tools/journal.py` | Append-only undo journal. |
 | `tools/unsub.py` | RFC 8058/mailto unsubscribe, SSRF guard. |
 | `tools/rules.py` | Gmail filter XML and Sieve export. |
-| `docs/` | `SAFETY.md`, `PROVIDERS.md`, `TROUBLESHOOTING.md`, `UNSUBSCRIBE.md`, `FOLDERS.md`. |
+| `docs/` | `SAFETY.md`, `PROVIDERS.md`, `TROUBLESHOOTING.md`, `UNSUBSCRIBE.md`, `FOLDERS.md`, `FAQ.md`. |
 | `tests/` | `unittest` suite with an in-process fake IMAP server. No real mail. |
 | `examples/cleanyourmail.toml` | Annotated example config. |
 
@@ -52,7 +56,8 @@ Never do these in a PR, a test, a doc or a command:
   IDs, real email addresses, Message-IDs from a real mailbox, or screenshots of a real inbox.
   `password_env` is the default; inline passwords only produce a warning.
 - **No telemetry, analytics, ads or third-party services.** The only network calls are IMAP, SMTP for
-  a mailto unsubscribe, and the validated one-click HTTPS request.
+  a mailto unsubscribe, and the validated one-click HTTPS request. The website is static HTML/CSS/JS
+  with no analytics, no external fonts and no API calls.
 - **No OAuth acquisition or refresh.** The person supplies a token. Do not add a browser flow, a
   client secret, a token store or a refresh loop.
 - **No server-side filter upload.** Export Gmail XML or Sieve; the person reviews and imports it.
@@ -95,6 +100,7 @@ Never do these in a PR, a test, a doc or a command:
 ```bash
 python -m unittest discover -s tests -v
 python -m compileall -q tools tests
+python -m ruff check tools tests
 ```
 
 The suite must pass on Windows, macOS and Linux and must not need a real mailbox or network. It uses
