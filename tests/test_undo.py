@@ -9,6 +9,7 @@ class FakeClient:
     def __init__(self):
         self.moves = []
         self.selected = []
+        self.unmarked = []
         self.ids = {}
         self.by_message_id = {}
         self.by_gm = {}
@@ -25,6 +26,9 @@ class FakeClient:
 
     def find_by_gm_msgid(self, message_id):
         return list(self.by_gm.get(message_id, []))
+
+    def unmark_deleted(self, uids):
+        self.unmarked.append(list(uids))
 
     def move(self, uids, destination):
         self.moves.append((list(uids), destination))
@@ -53,6 +57,19 @@ class UndoTest(unittest.TestCase):
         }
         self.assertEqual(_undo_move(client, entry), (1, 0))
         self.assertEqual(client.moves, [([10], "INBOX")])
+
+    def test_undo_move_skips_copy_when_source_already_has_message(self):
+        client = FakeClient()
+        client.ids[10] = "expected@test"
+        client.by_message_id[("INBOX", "expected@test")] = [1]
+        entry = {
+            "src": "INBOX", "dst": "CleanYourMail/Newsletters", "uids": [1],
+            "mapping": {"1": 10},
+            "messages": [{"uid": 1, "message_id": "expected@test"}],
+        }
+        self.assertEqual(_undo_move(client, entry), (1, 0))
+        self.assertEqual(client.moves, [])
+        self.assertEqual(client.unmarked, [[1]])
 
     def test_undo_move_without_copyuid_uses_message_id(self):
         client = FakeClient()

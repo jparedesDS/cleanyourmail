@@ -135,6 +135,14 @@ class PlanningTest(unittest.TestCase):
         self.assertEqual(spam.recommended, "keep (policy)")
         self.assertFalse(any(a["type"] == "move" for a in plan.actions))
 
+    def test_spam_never_gets_unsubscribe_target(self):
+        messages = [message(1, "spam", "winner@spam.example",
+                            list_unsub="<https://spam.example/u>",
+                            list_unsub_post="List-Unsubscribe=One-Click")]
+        plan = build_plan(messages, config())
+        self.assertIsNone(plan.groups[0].unsub)
+        self.assertFalse(any(action["type"] == "unsubscribe" for action in plan.actions))
+
     def test_unsubscribe_only_for_recent_mail(self):
         messages = [message(1, date=RECENT,
                             list_unsub="<https://example.com/u>",

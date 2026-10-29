@@ -26,16 +26,17 @@ def rfc_date(value) -> str:
 
 
 def raw_message(from_addr: str, subject: str, when, extra: dict | None = None,
-                message_id: str | None = None) -> bytes:
+                message_id: str | None = None, include_message_id: bool = True) -> bytes:
     lines = [
         f"From: {from_addr}",
         "To: me@example.com",
         f"Subject: {subject}",
         f"Date: {rfc_date(when)}",
-        f"Message-ID: <{message_id or ('id-' + str(abs(hash(subject + from_addr))))}@test>",
         "MIME-Version: 1.0",
         "Content-Type: text/plain; charset=utf-8",
     ]
+    if include_message_id:
+        lines.insert(4, f"Message-ID: <{message_id or ('id-' + str(abs(hash(subject + from_addr))))}@test>")
     for key, value in (extra or {}).items():
         lines.append(f"{key}: {value}")
     return ("\r\n".join(lines) + "\r\n\r\n").encode("utf-8")

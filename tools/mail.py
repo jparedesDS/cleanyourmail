@@ -9,6 +9,7 @@ import os
 import sys
 from collections import Counter
 from pathlib import Path
+from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -24,8 +25,8 @@ from safety import classify, flags_protected, sender_protected
 from store import Store, StoredMessage
 from unsub import UnsubResult, perform, polite_delay
 from util import (FileLock, LockedError, atomic_write_json, atomic_write_text,
-                  days_between, ensure_private_file, from_iso, human_bytes,
-                  human_count, parse_imap_date, redact_address, to_iso, truncate,
+                  days_between, domain_of, ensure_private_file, from_iso, human_bytes,
+                  human_count, parse_imap_date, to_iso, truncate,
                   utcnow)
 
 EXIT_OK = 0
@@ -409,32 +410,119 @@ def cmd_scan(args) -> int:
 
 # --- report ---------------------------------------------------------------
 
+def _redact_target(value: str | None) -> str:
+    if not value:
+        return ""
+    if value.lower().startswith("mailto:"):
+        return "mailto:***"
+    try:
+        parsed = urlsplit(value)
+    except ValueError:
+        return "***"
+    if parsed.scheme:
+        return f"{parsed.scheme}://***/***"
+    return "***"
+
+
+def _unsub_domain(target: str) -> str:
+    target = (target or "").strip()
+    if target.lower().startswith("mailto:"):
+        return domain_of(target[7:])
+    try:
+        return (urlsplit(target).hostname or "").lower()
+    except ValueError:
+        return ""
+
+
+def _domain_blocked(domain: str, blocked: list[str] | None) -> bool:
+    domain = (domain or "").lower().strip(".")
+    if not domain:
+        return False
+    for item in blocked or []:
+        item = (item or "").lower().strip(".")
+        if item and (domain == item or domain.endswith("." + item)):
+            return True
+    return False
+
+
+def _redact_unsub(value: dict | None) -> dict | None:
+    if not value:
+        return value
+    out = {key: item for key, item in value.items()
+           if key not in {"raw", "subject", "body"}}
+    if out.get("url"):
+        out["url"] = _redact_target(out["url"])
+    if out.get("address"):
+        out["address"] = "***"
+    return out
+
+
+def _redact_journal_entry(entry: dict) -> dict:
+    out = dict(entry)
+    if out.get("account"):
+        out["account"] = "***"
+    if out.get("target"):
+        out["target"] = _redact_target(out["target"])
+    if out.get("domain"):
+        out["domain"] = "***"
+    if out.get("sender"):
+        out["sender"] = "***"
+    if out.get("note"):
+        out["note"] = "redacted"
+    if out.get("messages"):
+        out["messages"] = [
+            {"uid": item.get("uid"), "message_id": "***"}
+            for item in out["messages"]
+        ]
+    if out.get("msgids"):
+        out["msgids"] = {key: "***" for key in out["msgids"]}
+    return out
+
+
+def _report_group(group, redact: bool, no_subjects: bool) -> dict:
+    data = group.to_dict()
+    if no_subjects:
+        data["samples"] = []
+    if redact:
+        data["key"] = "***"
+        data["domain"] = "***"
+        data["senders"] = ["***"] if data.get("senders") else []
+        data["samples"] = []
+        data["reasons"] = ["redacted"]
+        if data.get("protected_reason"):
+            data["protected_reason"] = "protected by policy"
+        if data.get("unsubscribe"):
+            data["unsubscribe"] = _redact_unsub(data["unsubscribe"])
+    return data
+
+
 def _report_payload(config: Config, messages: list[StoredMessage], plan: Plan,
-                    redact: bool = False) -> dict:
+                    redact: bool = False, no_subjects: bool = False) -> dict:
     oldest, newest = None, None
     dates = sorted(message.date for message in messages if message.date)
     if dates:
         oldest, newest = dates[0], dates[-1]
-    groups = []
-    for group in plan.groups:
-        data = group.to_dict()
-        if redact:
-            data["senders"] = [redact_address(address) for address in data["senders"]]
-            if data.get("samples"):
-                data["samples"] = [truncate(item, 60) for item in data["samples"]]
-        groups.append(data)
+    groups = [_report_group(group, redact, no_subjects) for group in plan.groups]
     stale = []
     now = utcnow()
     for group in plan.groups:
+        if group.category == "spam":
+            continue
         age = days_between(from_iso(group.oldest), now)
         if age is not None and age >= 180 and group.count and group.unread / group.count >= 0.8:
-            stale.append(group.to_dict())
-    manual = [group.to_dict() for group in plan.groups
-              if group.unsub and not group.unsub.get("automatic") and not group.protected
+            stale.append(_report_group(group, redact, no_subjects))
+    manual = [_report_group(group, redact, no_subjects) for group in plan.groups
+              if group.category != "spam" and group.unsub
+              and not group.unsub.get("automatic") and not group.protected
               and group.actionable]
-    protected = [group.to_dict() for group in plan.groups if group.protected]
+    protected = [_report_group(group, redact, no_subjects)
+                 for group in plan.groups if group.protected]
+    auto = [_report_group(group, redact, no_subjects) for group in plan.groups
+            if group.category != "spam" and group.unsub
+            and group.unsub.get("automatic") and not group.protected
+            and group.actionable]
     return {
-        "account": config.account.email,
+        "account": "***" if redact else config.account.email,
         "cached": len(messages),
         "oldest": oldest,
         "newest": newest,
@@ -444,9 +532,7 @@ def _report_payload(config: Config, messages: list[StoredMessage], plan: Plan,
         "stale": stale,
         "manual_unsubscribe": manual,
         "protected": protected,
-        "auto_unsubscribe": [group.to_dict() for group in plan.groups
-                             if group.unsub and group.unsub.get("automatic")
-                             and not group.protected and group.actionable],
+        "auto_unsubscribe": auto,
     }
 
 
@@ -460,14 +546,16 @@ def cmd_report(args) -> int:
     if not messages:
         raise ConfigError("The cache is empty. Run `python tools/mail.py scan` first.")
     plan = build_plan(messages, config, mode="folders")
-    data = _report_payload(config, messages, plan, redact=args.redact)
+    data = _report_payload(config, messages, plan, redact=args.redact,
+                           no_subjects=args.no_subjects)
     if args.json:
         emit_json(data)
         return EXIT_OK
 
     totals = data["totals"]
     say("CleanYourMail report")
-    say(f"Account ..... {config.account.email}")
+    account = "***" if args.redact else config.account.email
+    say(f"Account ..... {account}")
     say(f"Cached ...... {human_count(len(messages), 'message')} "
         f"({data['oldest'] or '?'} -> {data['newest'] or '?'})")
     say(f"Unread ...... {human_count(totals.get('unread', 0), 'message')}")
@@ -482,15 +570,14 @@ def cmd_report(args) -> int:
     rows = []
     for group in groups:
         sender = group["domain"]
-        if args.redact:
-            sender = "***"
         age = days_between(from_iso(group["oldest"]), utcnow())
         unsub = (group.get("unsubscribe") or {}).get("mode", "-")
         rows.append([
             group["category"], sender, group["count"], group["unread"],
             f"{age}d" if age is not None else "?",
             unsub, group["recommended"],
-            "" if args.no_subjects else truncate("; ".join(group["samples"][:1]), 42),
+            "" if args.no_subjects or args.redact else
+            truncate("; ".join(group["samples"][:1]), 42),
         ])
     headers = ["Category", "Domain/Sender", "Msgs", "Unread", "Oldest", "Unsub", "Recommended", "Sample"]
     if args.format == "markdown":
@@ -583,7 +670,9 @@ def cmd_plan(args) -> int:
     if plan.stats.get("protected"):
         say("Protected groups are shown but excluded from every action.")
     say("Nothing has changed yet. Review the plan, then run:")
-    say(f"  python tools/mail.py apply {path} --yes")
+    say(f"  python tools/mail.py apply {path} --yes --action move")
+    if any(action.get("type") == "unsubscribe" for action in plan.actions):
+        say(f"  python tools/mail.py unsubscribe {path} --yes --limit 10")
     return EXIT_OK
 
 
@@ -626,6 +715,24 @@ def _execute_unsubs(config: Config, store: Store, journal: Journal, run: str,
     results = []
     maximum = int(limit if limit is not None else config.unsubscribe.max_requests)
     maximum = max(0, min(maximum, config.unsubscribe.max_requests))
+
+    def skip(action: dict, note: str) -> None:
+        target = action.get("target") or ""
+        mode = action.get("mode") or "manual"
+        domain = action.get("domain") or ""
+        sender = action.get("sender") or ""
+        result = UnsubResult("skipped", mode, target, note=note)
+        store.record_unsub(run=run, domain=domain, sender=sender, target=target,
+                           mode=mode, status=result.status, note=result.note)
+        journal.append({
+            "run": run, "account": config.account.email, "op": "unsubscribe",
+            "domain": domain, "sender": sender, "target": target, "mode": mode,
+            "status": result.status, "code": None, "note": result.note,
+        })
+        results.append(result.to_dict())
+        if not quiet:
+            say(f"  skip   {domain:<34} {truncate(note, 60)}")
+
     for action in actions:
         if len(results) >= maximum:
             warn(f"Unsubscribe limit reached ({maximum}); remaining targets were skipped.")
@@ -634,6 +741,48 @@ def _execute_unsubs(config: Config, store: Store, journal: Journal, run: str,
         mode = action.get("mode") or "manual"
         domain = action.get("domain") or ""
         sender = action.get("sender") or ""
+        if not target:
+            skip(action, "empty target")
+            continue
+        if not config.unsubscribe.enabled:
+            skip(action, "unsubscribe is disabled by config")
+            continue
+        if action.get("category") == "spam":
+            skip(action, "spam is never unsubscribed")
+            continue
+        reason = sender_protected(sender, config.policy.protect_domains,
+                                  config.policy.protect_addresses)
+        if reason:
+            skip(action, reason)
+            continue
+        target_domain = _unsub_domain(target)
+        if _domain_blocked(domain, config.policy.never_unsubscribe_domains) or \
+                _domain_blocked(target_domain, config.policy.never_unsubscribe_domains):
+            skip(action, "domain is on never_unsubscribe_domains")
+            continue
+        categories, cached_protected = store.sender_state(domain, sender)
+        if not categories:
+            skip(action, "no cached metadata for this sender; re-scan")
+            continue
+        if cached_protected:
+            skip(action, "sender/domain is protected in the current cache")
+            continue
+        if categories & {"transactional", "personal", "spam"}:
+            skip(action, "sender is now classified as " +
+                 ", ".join(sorted(categories & {"transactional", "personal", "spam"})))
+            continue
+        if mode == "one-click" and not config.unsubscribe.one_click:
+            skip(action, "one-click unsubscribe is disabled by config")
+            continue
+        if mode == "mailto" and not config.unsubscribe.mailto:
+            skip(action, "mailto unsubscribe is disabled by config")
+            continue
+        if mode == "http" and not config.unsubscribe.http_get:
+            skip(action, "HTTP GET unsubscribe is disabled by config")
+            continue
+        if mode not in {"one-click", "http", "mailto", "manual"}:
+            skip(action, f"unknown unsubscribe mode {mode!r}")
+            continue
         previous = store.last_unsub_for(domain, target)
         if previous and previous.get("status") == "sent" and previous.get("ts"):
             previous_at = from_iso(previous.get("ts"))
@@ -665,6 +814,8 @@ def _execute_unsubs(config: Config, store: Store, journal: Journal, run: str,
         if not quiet:
             label = result.status
             say(f"  {label:<6} {domain:<34} {truncate(result.note, 60)}")
+            if result.manual_url:
+                say(f"  manual {truncate(result.manual_url, 90)}")
         if result.status in {"sent", "failed"}:
             polite_delay(config.unsubscribe.delay_seconds)
     return results
@@ -680,16 +831,24 @@ def _journal_messages(store: Store, mailbox: str, uids: list[int]) -> list[dict]
 
 def _execute_moves(config: Config, client: MailClient, store: Store, journal: Journal,
                    plan: Plan, run: str, actions: list[dict],
-                   dry_run: bool = False, quiet: bool = False) -> tuple[int, list[str]]:
+                   dry_run: bool = False, quiet: bool = False,
+                   limit: int | None = None) -> tuple[int, list[str], int]:
     moved_total = 0
+    skipped_total = 0
     failures: list[str] = []
     batch_limit = 100
+    remaining = limit
     for action in actions:
         mailbox = action.get("mailbox") or "INBOX"
         dest = action.get("dest") or ""
         uids = [int(uid) for uid in action.get("uids") or []]
         if not uids:
             continue
+        if remaining is not None:
+            if remaining <= 0:
+                break
+            uids = uids[:remaining]
+            remaining -= len(uids)
         try:
             client.select(mailbox, readonly=False)
             current_uidvalidity = client.uidvalidity()
@@ -697,8 +856,10 @@ def _execute_moves(config: Config, client: MailClient, store: Store, journal: Jo
             if not planned_uidvalidity:
                 raise SafetyError(
                     f"{mailbox}: the plan has no UIDVALIDITY. Re-run scan and plan.")
-            if current_uidvalidity and \
-                    int(planned_uidvalidity) != int(current_uidvalidity):
+            if not current_uidvalidity:
+                raise SafetyError(
+                    f"{mailbox}: the server did not report UIDVALIDITY; refusing to move.")
+            if int(planned_uidvalidity) != int(current_uidvalidity):
                 raise SafetyError(
                     f"{mailbox}: UIDVALIDITY changed since the plan was made "
                     f"({planned_uidvalidity} -> {current_uidvalidity}). Re-run scan and plan.")
@@ -715,6 +876,9 @@ def _execute_moves(config: Config, client: MailClient, store: Store, journal: Jo
                     skipped_flags.append((uid, reason))
                     continue
                 stored = store.message(mailbox, uid)
+                if stored is None:
+                    skipped_policy.append((uid, "cached metadata is missing; re-scan"))
+                    continue
                 if stored is not None:
                     if action.get("category") and stored.category != action.get("category"):
                         skipped_policy.append((uid, "category changed since the plan"))
@@ -738,7 +902,9 @@ def _execute_moves(config: Config, client: MailClient, store: Store, journal: Jo
             if skipped_flags:
                 warn(f"{mailbox}: {len(skipped_flags)} messages are starred/replied; skipped.")
             if skipped_policy:
-                warn(f"{mailbox}: {len(skipped_policy)} messages are now protected by policy; skipped.")
+                warn(f"{mailbox}: {len(skipped_policy)} messages skipped by policy or "
+                     "missing metadata.")
+            skipped_total += len(missing) + len(skipped_flags) + len(skipped_policy)
             if not keep_uids:
                 continue
             kind, destination = _resolve_destination(client, dest, config)
@@ -753,11 +919,37 @@ def _execute_moves(config: Config, client: MailClient, store: Store, journal: Jo
                 if kind == "archive-label":
                     messages = _journal_messages(store, mailbox, batch)
                     msgids = client.gm_msgids(batch)
-                    if not msgids and not any(item.get("message_id") for item in messages):
+                    by_uid = {item["uid"]: item for item in messages}
+                    identifiable = [
+                        uid for uid in batch
+                        if msgids.get(uid) or by_uid.get(uid, {}).get("message_id")
+                    ]
+                    if not identifiable:
                         raise SafetyError(
                             "Gmail did not return a stable message ID and the cache has no "
                             "Message-ID; refusing to archive because it could not be undone.")
-                    client.archive(batch)
+                    if len(identifiable) != len(batch):
+                        skipped = len(batch) - len(identifiable)
+                        message = (f"{mailbox}: {skipped} messages have no stable identity "
+                                   "and were not archived")
+                        warn(message + ".")
+                        skipped_total += skipped
+                    batch = identifiable
+                    messages = [by_uid[uid] for uid in batch]
+                    msgids = {key: value for key, value in msgids.items()
+                              if int(key) in set(batch)}
+                    try:
+                        client.archive(batch)
+                    except MailError:
+                        journal.append({
+                            "run": run, "account": config.account.email,
+                            "op": "label_remove", "mailbox": mailbox,
+                            "uids": batch, "label": "\\Inbox",
+                            "msgids": {str(key): str(value)
+                                       for key, value in msgids.items()},
+                            "messages": messages, "incomplete": True,
+                        })
+                        raise
                     journal.append({
                         "run": run, "account": config.account.email, "op": "label_remove",
                         "mailbox": mailbox, "uids": batch, "label": "\\Inbox",
@@ -765,25 +957,37 @@ def _execute_moves(config: Config, client: MailClient, store: Store, journal: Jo
                         "messages": messages,
                     })
                 else:
-                    mapping = client.move(batch, destination)
+                    messages = _journal_messages(store, mailbox, batch)
+                    try:
+                        mapping = client.move(batch, destination)
+                    except (MailError, SafetyError):
+                        # The COPY/MOVE command may have partially applied.
+                        # Keep an identity-only entry; undo checks the source
+                        # before moving anything back.
+                        journal.append({
+                            "run": run, "account": config.account.email, "op": "move",
+                            "src": mailbox, "dst": destination, "uids": batch,
+                            "mapping": {}, "messages": messages, "incomplete": True,
+                        })
+                        raise
                     journal.append({
                         "run": run, "account": config.account.email, "op": "move",
                         "src": mailbox, "dst": destination, "uids": batch,
                         "mapping": {str(key): value for key, value in mapping.items()},
-                        "messages": _journal_messages(store, mailbox, batch),
+                        "messages": messages,
                     })
                     leftovers = client.fetch_flags(batch)
                     if leftovers:
-                        warn(f"{mailbox}: {len(leftovers)} messages still in source after move; "
-                             "check them before continuing.")
+                        message = (f"{mailbox}: {len(leftovers)} messages still in source "
+                                   "after move")
+                        warn(message + "; check them before continuing.")
+                        failures.append(message)
                 moved_total += len(batch)
                 if not quiet:
                     say(f"  moved  {len(batch):>4} {mailbox} -> {destination}")
-        except SafetyError as exc:
-            warn(f"Refused: {exc}")
-            failures.append(str(exc))
-            continue
-    return moved_total, failures
+        except SafetyError:
+            raise
+    return moved_total, failures, skipped_total
 
 
 def cmd_apply(args) -> int:
@@ -792,9 +996,22 @@ def cmd_apply(args) -> int:
     plan = _load_plan(plan_path)
     _check_plan_account(plan, config)
     actions = _filter_actions(plan, args)
+    if not args.action:
+        # The default is moves only. Unsubscribe is irreversible and must be
+        # requested explicitly (or run through the `unsubscribe` command).
+        actions = [item for item in actions if item.get("type") == "move"]
     if not actions:
         if args.json:
-            emit_json({"dry_run": True, "actions": [], "confirmation_required": False})
+            payload = {"dry_run": True, "actions": [],
+                       "confirmation_required": False}
+            if not args.action and any(item.get("type") == "unsubscribe"
+                                       for item in plan.actions):
+                payload["hint"] = "This plan only has unsubscribe actions; use the unsubscribe command."
+            emit_json(payload)
+        elif not args.action and any(item.get("type") == "unsubscribe"
+                                     for item in plan.actions):
+            say("This plan only has unsubscribe actions. Run:")
+            say(f"  python tools/mail.py unsubscribe {plan_path} --yes --limit 10")
         else:
             say("Nothing to do for this plan and filter.")
         return EXIT_OK
@@ -819,21 +1036,28 @@ def cmd_apply(args) -> int:
     unsub_results: list[dict] = []
     secret = ""
     try:
-        with FileLock(config.state_path() / "apply.lock"):
+        with FileLock(config.state_path() / "mail.lock"):
             client, secret = _connect(config)
             unsub_actions = [item for item in actions if item.get("type") == "unsubscribe"]
             move_actions = [item for item in actions if item.get("type") == "move"]
-            unsub_results = _execute_unsubs(config, store, journal, run, secret,
-                                            unsub_actions,
-                                            args.limit if args.limit is not None else None,
-                                            quiet=args.json)
-            moved, move_failures = _execute_moves(config, client, store, journal, plan,
-                                                  run, move_actions, quiet=args.json)
+            moved, move_failures, move_skipped = _execute_moves(
+                config, client, store, journal, plan, run, move_actions,
+                quiet=args.json, limit=args.limit)
             failures.extend(move_failures)
+            if move_skipped:
+                failures.append(f"{move_skipped} messages skipped during move")
+            if not move_failures and not move_skipped:
+                unsub_results = _execute_unsubs(
+                    config, store, journal, run, secret, unsub_actions,
+                    args.limit if args.limit is not None else None, quiet=args.json)
+                failed_unsubs = sum(1 for item in unsub_results
+                                    if item.get("status") == "failed")
+                if failed_unsubs:
+                    failures.append(f"{failed_unsubs} unsubscribe request(s) failed")
             if not args.json:
                 say("")
                 say(f"Run {run}: {moved} messages filed, {len(unsub_results)} unsubscribe "
-                    f"attempts, {len(failures)} refused.")
+                    f"attempts, {len(failures)} problem(s).")
                 if moved or unsub_results:
                     say(f"Undo: python tools/mail.py undo --run {run} --yes")
             if args.json:
@@ -841,8 +1065,8 @@ def cmd_apply(args) -> int:
                     "run": run, "moved": moved,
                     "unsubscribes": unsub_results, "failures": failures,
                 })
-    except MailError as exc:
-        warn(f"Stopped after a server error: {exc}")
+    except (MailError, SafetyError) as exc:
+        warn(f"Stopped after a server or safety error: {exc}")
         if args.json:
             emit_json({"run": run, "moved": moved, "error": str(exc)})
         else:
@@ -874,7 +1098,8 @@ def cmd_unsubscribe(args) -> int:
                    if any((item.get("group") or "").lower().startswith(prefix)
                           for prefix in wanted)]
     manual = [group for group in plan.groups
-              if group.unsub and not group.unsub.get("automatic")
+              if group.category != "spam" and group.unsub
+              and not group.unsub.get("automatic")
               and not group.protected and group.actionable]
     if args.target:
         manual = [group for group in manual
@@ -918,7 +1143,7 @@ def cmd_unsubscribe(args) -> int:
     run = Journal.new_run_id()
     failed = 0
     try:
-        with FileLock(config.state_path() / "unsubscribe.lock"):
+        with FileLock(config.state_path() / "mail.lock"):
             secret = resolve_secret(config.account)
             results = _execute_unsubs(config, store, journal, run, secret, actions,
                                       args.limit if args.limit is not None else None,
@@ -933,7 +1158,9 @@ def cmd_unsubscribe(args) -> int:
                 if manual:
                     say("Manual links:")
                     for group in manual:
-                        target = (group.unsub or {}).get("url") or ""
+                        unsub = group.unsub or {}
+                        target = unsub.get("url") or (
+                            "mailto:" + unsub["address"] if unsub.get("address") else "")
                         if target:
                             say(f"  {group.domain}: {target}")
     finally:
@@ -967,6 +1194,8 @@ def cmd_unsubs(args) -> int:
                     item["verdict"] = "no new mail since the request"
                 else:
                     item["verdict"] = f"{after} message(s) since the request"
+            if args.redact:
+                item = _redact_journal_entry(item)
             checked.append(item)
     finally:
         store.close()
@@ -999,6 +1228,8 @@ def cmd_journal(args) -> int:
     journal = open_journal(config)
     if args.run:
         entries = journal.run_entries(args.run)
+        if args.redact:
+            entries = [_redact_journal_entry(entry) for entry in entries]
         if args.json:
             emit_json({"run": args.run, "entries": entries})
             return EXIT_OK
@@ -1009,6 +1240,9 @@ def cmd_journal(args) -> int:
             say(json.dumps(entry, ensure_ascii=False))
         return EXIT_OK
     runs = journal.summary(limit=args.limit)
+    if args.redact:
+        runs = [{**run, "account": "***" if run.get("account") else ""}
+                for run in runs]
     if args.json:
         emit_json({"runs": runs})
         return EXIT_OK
@@ -1057,13 +1291,30 @@ def _undo_move(client: MailClient, entry: dict) -> tuple[int, int]:
     actual = client.message_ids(sorted(candidates))
     verified = []
     for uid, expected in candidates.items():
-        if expected and _norm_message_id(actual.get(uid, "")) != expected:
+        if not expected or _norm_message_id(actual.get(uid, "")) != expected:
             continue
         verified.append(uid)
     if not verified:
         return 0, len(uids)
-    client.move(verified, src)
-    return len(verified), max(0, len(uids) - len(verified))
+    to_move = []
+    already_present = 0
+    for uid in verified:
+        expected = candidates[uid]
+        in_source = client.find_by_message_id(src, expected)
+        if in_source:
+            # A partial move can leave the source original in place while the
+            # destination copy exists. Do not move the copy back and create a
+            # duplicate in the source; just clear any \Deleted flag.
+            client.select(src, readonly=False)
+            client.unmark_deleted(in_source)
+            already_present += 1
+        else:
+            to_move.append(uid)
+    if to_move:
+        client.select(dst, readonly=False)
+        client.move(to_move, src)
+    restored = len(to_move) + already_present
+    return restored, max(0, len(uids) - restored)
 
 
 def _norm_message_id(value: str) -> str:
@@ -1162,8 +1413,9 @@ def cmd_undo(args) -> int:
     new_run = Journal.new_run_id()
     restored = 0
     failed = 0
+    refused = 0
     try:
-        with FileLock(config.state_path() / "undo.lock"):
+        with FileLock(config.state_path() / "mail.lock"):
             client, _secret = _connect(config)
             for entry in reversed(reversible):
                 try:
@@ -1201,18 +1453,21 @@ def cmd_undo(args) -> int:
                         if not json_mode:
                             say(f"  re-added Inbox to {len(uids)} messages")
                 except (MailError, SafetyError) as exc:
-                    failed += 1
+                    refused += 1
                     warn(f"Could not undo one operation: {exc}")
     finally:
         if client is not None:
             client.close()
     if json_mode:
         emit_json({"run": new_run, "source_run": run, "restored": restored,
-                   "failed": failed, "operations": operations})
+                   "failed": failed, "refused": refused, "operations": operations})
     else:
         say("")
-        say(f"Undo {new_run}: {restored} operations restored, {failed} could not be undone.")
+        say(f"Undo {new_run}: {restored} operations restored, {failed} missing, "
+            f"{refused} refused.")
         say("Unsubscribe requests are not reversible: the sender already received them.")
+    if refused:
+        return EXIT_CONFIG
     return EXIT_FAIL if failed else EXIT_OK
 
 
@@ -1321,7 +1576,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--action", action="append", choices=["move", "unsubscribe"])
     p.add_argument("--group", action="append")
     p.add_argument("--category", action="append")
-    p.add_argument("--limit", type=int, default=None, help="Max unsubscribe requests")
+    p.add_argument("--limit", type=int, default=None,
+                   help="Max messages to move and max unsubscribe requests")
     p.set_defaults(func=cmd_apply)
 
     p = sub.add_parser("unsubscribe", parents=[common],
@@ -1337,11 +1593,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--check", action="store_true")
     p.add_argument("--limit", type=int, default=50)
     p.add_argument("--domain", default=None)
+    p.add_argument("--redact", action="store_true", help="Mask addresses and targets")
     p.set_defaults(func=cmd_unsubs)
 
     p = sub.add_parser("journal", parents=[common], help="Show the undo journal")
     p.add_argument("--run", default=None)
     p.add_argument("--limit", type=int, default=20)
+    p.add_argument("--redact", action="store_true", help="Mask addresses and targets")
     p.set_defaults(func=cmd_journal)
 
     p = sub.add_parser("undo", parents=[common], help="Undo a run (needs --yes)")

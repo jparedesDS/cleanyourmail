@@ -96,6 +96,10 @@ python tools/mail.py apply <plan.json> --yes --action move
 python tools/mail.py unsubscribe <plan.json> --yes --limit 10
 ```
 
+`apply` sin `--action` solo mueve, a propósito. La baja es irreversible y debe pedirse
+explícitamente. Si se eligen ambas acciones, primero se mueven los mensajes y las bajas solo se envían
+si los movimientos no tuvieron problemas.
+
 Deshaz una ejecución:
 
 ```bash
@@ -118,7 +122,7 @@ salen con código **1**.
 | `scan` | Cachea cabeceras y clasifica. | No |
 | `report` | Muestra remitentes, categorías, listas antiguas y protegidos. | No |
 | `plan` | Escribe `plan.json` con movimientos y bajas. | No |
-| `apply` | Ejecuta las acciones elegidas (necesita `--yes`). | Mueve/archiva |
+| `apply` | Ejecuta movimientos por defecto; añade `--action unsubscribe` para bajas (necesita `--yes`). | Mueve/archiva |
 | `unsubscribe` | Envía solo las bajas automáticas. | Envía solicitudes |
 | `unsubs` | Historial de bajas; `--check` lee la caché. | No |
 | `journal` | Muestra ejecuciones y entradas del journal. | No |
@@ -157,9 +161,8 @@ El planificador también omite:
 
 - **Separación plan/apply.** `plan` escribe JSON; `apply` lo lee y vuelve a comprobar UIDVALIDITY,
   flags, categoría y la lista de protegidos antes de cada lote.
-- **Sin borrado permanente.** Los movimientos copian primero y hacen expunge solo de los UIDs
-  copiados. Sin UIDPLUS, se rechaza un expunge general si hay otros mensajes marcados como borrados.
-  Trash nunca se vacía.
+- **Sin borrado permanente.** Los movimientos copian primero y usan solo `UID EXPUNGE`. Sin UIDPLUS
+  ni MOVE, los movimientos se rechazan; no hay expunge general. Trash nunca se vacía.
 - **Journal de undo.** JSONL en el directorio de estado. Los movimientos guardan COPYUID y
   Message-ID; el archivado de Gmail guarda `X-GM-MSGID` y Message-ID. `undo` verifica el Message-ID
   antes de restaurar, para que un UID reutilizado no mueva el mensaje equivocado.
@@ -216,7 +219,7 @@ python -m unittest discover -s tests -v
 
 La suite usa un servidor IMAP falso en proceso; no necesita un buzón real ni red. Cubre clasificación,
 parseo, planificación, store/journal, configuración, seguridad de URLs, archivado/undo de Gmail,
-fallbacks sin MOVE y sin UIDPLUS, flujos de CLI y el documento de la skill.
+fallbacks sin MOVE y rechazo sin UIDPLUS, flujos de CLI y el documento de la skill.
 
 ## Documentación
 

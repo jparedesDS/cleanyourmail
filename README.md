@@ -92,6 +92,10 @@ python tools/mail.py apply <plan.json> --yes --action move
 python tools/mail.py unsubscribe <plan.json> --yes --limit 10
 ```
 
+`apply` without `--action` is moves-only on purpose. Unsubscribe is irreversible and must be
+requested explicitly. If both actions are selected, moves run first and unsubscribes run only if the
+moves had no problems.
+
 Undo a run:
 
 ```bash
@@ -114,7 +118,7 @@ code **1**.
 | `scan` | Cache headers and classify messages. | No |
 | `report` | Show senders, categories, stale lists, protected mail. | No |
 | `plan` | Write `plan.json` with moves and unsubscribe targets. | No |
-| `apply` | Execute selected plan actions (needs `--yes`). | Moves/archives |
+| `apply` | Execute moves by default; add `--action unsubscribe` for requests (needs `--yes`). | Moves/archives |
 | `unsubscribe` | Send only automatic unsubscribe requests. | Sends requests |
 | `unsubs` | Show unsubscribe history; `--check` reads the cache. | No |
 | `journal` | Show runs and journal entries. | No |
@@ -153,8 +157,8 @@ The planner also skips:
 
 - **Plan/apply split.** `plan` writes JSON; `apply` reads it and re-checks UIDVALIDITY, flags,
   category and the current protected list before each batch.
-- **No permanent deletion.** Moves copy first and expunge only the copied UIDs. Without UIDPLUS, a
-  mailbox-wide expunge is refused if other messages are marked deleted. Trash is never emptied.
+- **No permanent deletion.** Moves copy first and use `UID EXPUNGE` only. Without UIDPLUS or MOVE,
+  moves are refused; there is no mailbox-wide expunge. Trash is never emptied.
 - **Undo journal.** JSONL under the state directory. Moves record COPYUID mapping and Message-ID;
   Gmail archive records `X-GM-MSGID` and Message-ID. `undo` verifies the Message-ID before restoring,
   so a reused UID cannot move the wrong message.
@@ -210,7 +214,7 @@ python -m unittest discover -s tests -v
 
 The suite uses an in-process fake IMAP server; it does not need a real mailbox or network. It covers
 classification, parsing, planning, store/journal, config, URL safety, Gmail archive/undo, no-MOVE and
-no-UIDPLUS fallbacks, CLI flows and the skill document.
+no-MOVE and no-UIDPLUS refusals, CLI flows and the skill document.
 
 ## Documentation
 

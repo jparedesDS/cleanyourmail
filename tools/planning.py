@@ -183,6 +183,10 @@ def _build_group(category: str, domain: str, items: list[StoredMessage],
     if chosen and not allowed_domain:
         chosen = None
         group.unsub = None
+    if category == "spam":
+        # A spam unsubscribe target is untrusted and can confirm the address.
+        chosen = None
+        group.unsub = None
 
     skip: Counter = Counter()
     uids: dict[str, list[int]] = defaultdict(list)

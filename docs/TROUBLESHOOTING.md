@@ -102,13 +102,11 @@ rotate the secret if the file was ever shared.
 
 ### `server has neither UIDPLUS nor MOVE`
 
-The tool can still move mail, but it must use a mailbox-wide `EXPUNGE` when UIDPLUS is missing. It
-refuses if another message in the mailbox is already marked `\Deleted`, because that message would be
-destroyed too. Options:
+The CLI refuses to move mail in this case. A fallback would need a mailbox-wide `EXPUNGE`, which can
+permanently delete another client's `\Deleted` message. Options:
 
 - use a client/server that supports UIDPLUS or MOVE;
-- clear the other `\Deleted` flags in the mail client (after checking them);
-- move the messages manually;
+- move the messages manually in the mail client;
 - do not apply the move plan.
 
 ### `IMAP STARTTLS failed`
@@ -145,9 +143,10 @@ The server does not advertise the special-use flag and none of the known names m
 folder in the mail client, or set the taxonomy to the provider's name. The tool will not guess a
 destination that might be wrong.
 
-### `Refused: ... mailbox contains other messages marked for deletion`
+### `Refused: ... neither MOVE nor UIDPLUS`
 
-See the UIDPLUS section above. The refusal happens before the copy, so the mailbox is unchanged.
+See the UIDPLUS section above. The refusal happens before the copy, so the mailbox is unchanged. The
+CLI will not run a mailbox-wide expunge.
 
 ### A message is missing from the plan
 

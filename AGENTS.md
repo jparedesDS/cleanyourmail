@@ -43,8 +43,9 @@ cache, `plan.json`, `journal.jsonl`, locks. Never commit it.
 Never do these in a PR, a test, a doc or a command:
 
 - **No permanent deletion.** No `EXPUNGE` on Trash, no emptying Trash/Junk, no "delete forever", no
-  server-side retention change. The only deletion the code may perform is expunging the source copy
-  after a successful COPY/MOVE, and only the UIDs it just copied.
+  server-side retention change. The only deletion the code may perform is a `UID EXPUNGE` of the
+  source copy after a successful COPY, and only the UIDs it just copied. If the server has neither
+  UIDPLUS nor MOVE, refuse; never run a mailbox-wide `EXPUNGE`.
 - **No bodies or attachments.** Scan fetches `BODY.PEEK[HEADER.FIELDS (...)]` only. Do not add a
   body fetch, attachment download, full-message export or content index.
 - **No secrets in the repo or logs.** No passwords, OAuth tokens, app passwords, cookies, session
@@ -83,8 +84,8 @@ Never do these in a PR, a test, a doc or a command:
   mapping and Message-IDs. Gmail archive entries record `X-GM-MSGID` and Message-IDs.
 - Gmail archive is a label removal (`X-GM-LABELS`), not a copy to an Archive folder. Non-Gmail
   archive uses `\Archive`/`\All`; if absent, refuse.
-- The no-UIDPLUS path must preflight `DELETED` before COPY and refuse a mailbox-wide expunge if other
-  messages are marked deleted.
+- If the server has neither UIDPLUS nor MOVE, refuse to move; never fall back to a mailbox-wide
+  `EXPUNGE`.
 - Unsubscribe URLs must stay public HTTPS (or HTTP only when explicitly allowed), no credentials, no
   local/private/link-local targets, no redirects, no cookies, no proxies, bounded response.
 - Manual unsubscribe links are printed, never fetched by the tool.
@@ -107,7 +108,7 @@ Add a test for every new guard, parser, plan rule, undo path or CLI behavior. In
 - plan generation, caps and protected exclusions;
 - apply-time re-checks (UIDVALIDITY, flags, category, protected sender);
 - Gmail archive/undo and Message-ID fallback;
-- no-MOVE and no-UIDPLUS fallbacks;
+- no-MOVE and no-UIDPLUS refusals;
 - store pruning and journal behavior;
 - CLI exit codes and JSON output.
 
@@ -124,7 +125,7 @@ message and exit code 2 when the config or connection is wrong.
 
 ## Commit and PR style
 
-- Titles: `area: what changed`, e.g. `imap: preflight expunge when UIDPLUS is missing`,
+- Titles: `area: what changed`, e.g. `imap: refuse mailbox-wide expunge without UIDPLUS`,
   `planning: keep spam in Junk in archive mode`, `docs: explain Gmail labels`.
 - The body says what changed, why, the command used, and the test output.
 - One topic per PR. A bug fix and its regression test can be one PR.

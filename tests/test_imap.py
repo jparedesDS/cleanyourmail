@@ -8,7 +8,8 @@ from helpers import imap_date, raw_message
 from fakeimap import FakeIMAPServer, FakeIMAPState
 
 from config import Account
-from imap import (MailClient, SafetyError, _expand_uid_set, _parse_list_line)
+from imap import (MailClient, MailError, SafetyError, _expand_uid_set,
+                  _parse_list_line)
 
 
 NOW = dt.datetime(2025, 1, 1, 10, 0, tzinfo=dt.timezone.utc)
@@ -101,16 +102,17 @@ class ImapTest(unittest.TestCase):
         self.assertEqual(set(self.state.box("INBOX").messages), {first.uid, other.uid})
         self.assertEqual(self.state.box("Archive").messages, {})
 
-    def test_move_without_uidplus_clean_mailbox(self):
+    def test_move_without_uidplus_or_move_is_refused(self):
         self.state.uidplus = False
         self.state.move = False
         self.client.capabilities.discard("MOVE")
         self.client.capabilities.discard("UIDPLUS")
         first = self.add("One")
         self.client.select("INBOX")
-        mapping = self.client.move([first.uid], "Archive")
-        self.assertEqual(mapping[first.uid], 1)
-        self.assertEqual(self.state.box("INBOX").messages, {})
+        with self.assertRaises(SafetyError):
+            self.client.move([first.uid], "Archive")
+        self.assertIn(first.uid, self.state.box("INBOX").messages)
+        self.assertEqual(self.state.box("Archive").messages, {})
 
     def test_gmail_archive_and_inbox_label(self):
         self.state.gmail = True
@@ -156,6 +158,17 @@ class ImapTest(unittest.TestCase):
             client.close()
         self.assertEqual(calls[:3], [("connect", "127.0.0.1", 143), "starttls", "login"])
         self.assertIn("UIDPLUS", client.capabilities)
+
+    def test_search_failure_is_fail_closed(self):
+        class Denied:
+            def uid(self, *args):
+                return "NO", [b"SEARCH denied"]
+
+        client = MailClient(account(143), "secret")
+        client.connection = Denied()
+        with mock.patch.object(client, "select", return_value=1):
+            with self.assertRaises(MailError):
+                client.find_by_message_id("INBOX", "id@test")
 
     def test_parse_list_line_and_expand_set(self):
         folder = _parse_list_line('(\\HasNoChildren \\Junk) "/" "Junk"')

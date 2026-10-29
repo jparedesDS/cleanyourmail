@@ -305,6 +305,22 @@ class Store:
             "SELECT MAX(date) FROM messages WHERE from_addr LIKE ?", (f"%@{domain}",)).fetchone()
         return row[0]
 
+    def sender_state(self, domain: str, sender: str = "") -> tuple[set[str], bool]:
+        """Return current cached categories and protected flag for a sender/domain."""
+        if domain:
+            rows = self.connection.execute(
+                "SELECT DISTINCT category, protected FROM messages WHERE from_addr LIKE ?",
+                (f"%@{domain}",)).fetchall()
+        elif sender:
+            rows = self.connection.execute(
+                "SELECT DISTINCT category, protected FROM messages WHERE from_addr = ?",
+                (sender,)).fetchall()
+        else:
+            rows = []
+        categories = {row["category"] or "personal" for row in rows}
+        protected = any(bool(row["protected"]) for row in rows)
+        return categories, protected
+
     # --- meta -------------------------------------------------------------
 
     def get_meta(self, key: str) -> str | None:

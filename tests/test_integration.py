@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import os
+import sqlite3
 import unittest
 
 from helpers import TempDir, imap_date, raw_message, run_cli
@@ -203,13 +204,84 @@ class IntegrationTest(unittest.TestCase):
             encoding="utf-8")
         before = len(self.state.box("INBOX").messages)
         code, out, err = run_cli("apply", str(plan_file), *self.extra_args,
-                                 "--yes", "--action", "move")
-        self.assertEqual(code, 0, err + out)
-        self.assertIn("protected by policy", err)
+                                 "--yes", "--action", "move", "--action", "unsubscribe")
+        self.assertEqual(code, 1, err + out)
+        self.assertIn("skipped by policy", err)
+        journal = next((self.dir / "state").glob("*/journal.jsonl"))
+        entries = [json.loads(line) for line in
+                   journal.read_text(encoding="utf-8").splitlines() if line.strip()]
+        self.assertFalse(any(entry.get("op") == "unsubscribe" for entry in entries))
         inbox_subjects = b" ".join(
             message.headers for message in self.state.box("INBOX").messages.values())
         self.assertIn(b"Weekly newsletter", inbox_subjects)
         self.assertLess(len(self.state.box("INBOX").messages), before)
+
+    def test_unsubscribe_rechecks_current_policy(self):
+        self.assertEqual(run_cli("scan", *self.extra_args)[0], 0)
+        self.assertEqual(run_cli("plan", *self.extra_args)[0], 0)
+        plan_file = next((self.dir / "state").glob("*/plan.json"))
+        text = self.config.read_text(encoding="utf-8")
+        text = text.replace('protect_domains = ["bank.example"]',
+                            'protect_domains = ["bank.example", "example.com"]')
+        text = text.replace("mailto = true", "mailto = false")
+        self.config.write_text(text, encoding="utf-8")
+        code, out, err = run_cli("unsubscribe", str(plan_file), *self.extra_args, "--yes")
+        self.assertEqual(code, 0, err + out)
+        self.assertIn("skip", out.lower())
+        journal = next((self.dir / "state").glob("*/journal.jsonl"))
+        entries = [json.loads(line) for line in
+                   journal.read_text(encoding="utf-8").splitlines() if line.strip()]
+        unsubs = [entry for entry in entries if entry.get("op") == "unsubscribe"]
+        self.assertTrue(unsubs)
+        self.assertTrue(all(entry.get("status") == "skipped" for entry in unsubs))
+
+    def test_unsubscribe_rechecks_current_category(self):
+        self.assertEqual(run_cli("scan", *self.extra_args)[0], 0)
+        self.assertEqual(run_cli("plan", *self.extra_args)[0], 0)
+        plan_file = next((self.dir / "state").glob("*/plan.json"))
+        cache = next((self.dir / "state").glob("*/cache.sqlite3"))
+        connection = sqlite3.connect(str(cache))
+        try:
+            connection.execute(
+                "UPDATE messages SET category = 'transactional' "
+                "WHERE from_addr = 'news@example.com'")
+            connection.commit()
+        finally:
+            connection.close()
+        code, out, err = run_cli("unsubscribe", str(plan_file), *self.extra_args, "--yes")
+        self.assertEqual(code, 0, err + out)
+        self.assertIn("now classified", out)
+        journal = next((self.dir / "state").glob("*/journal.jsonl"))
+        entries = [json.loads(line) for line in
+                   journal.read_text(encoding="utf-8").splitlines() if line.strip()]
+        self.assertFalse(any(entry.get("op") == "unsubscribe"
+                             and entry.get("status") == "sent" for entry in entries))
+
+    def test_apply_refuses_plan_without_uidvalidity(self):
+        self.assertEqual(run_cli("scan", *self.extra_args)[0], 0)
+        self.assertEqual(run_cli("plan", *self.extra_args)[0], 0)
+        plan_file = next((self.dir / "state").glob("*/plan.json"))
+        plan = json.loads(plan_file.read_text(encoding="utf-8"))
+        plan["uidvalidity"] = {}
+        plan_file.write_text(json.dumps(plan), encoding="utf-8")
+        before = len(self.state.box("INBOX").messages)
+        code, out, err = run_cli("apply", str(plan_file), *self.extra_args,
+                                 "--yes", "--action", "move")
+        self.assertEqual(code, 2, err + out)
+        self.assertEqual(len(self.state.box("INBOX").messages), before)
+
+    def test_apply_move_limit_and_undo(self):
+        self.assertEqual(run_cli("scan", *self.extra_args)[0], 0)
+        self.assertEqual(run_cli("plan", *self.extra_args)[0], 0)
+        plan_file = next((self.dir / "state").glob("*/plan.json"))
+        before = len(self.state.box("INBOX").messages)
+        code, out, err = run_cli("apply", str(plan_file), *self.extra_args,
+                                 "--yes", "--action", "move", "--limit", "1")
+        self.assertEqual(code, 0, err + out)
+        self.assertEqual(len(self.state.box("INBOX").messages), before - 1)
+        code, out, err = run_cli("undo", *self.extra_args, "--yes")
+        self.assertEqual(code, 0, err + out)
+        self.assertEqual(len(self.state.box("INBOX").messages), before)
 
     def test_doctor_rejects_bad_password(self):
         os.environ["CYM_PASSWORD"] = "wrong"
@@ -230,6 +302,8 @@ class GmailArchiveIntegrationTest(unittest.TestCase):
     def setUp(self):
         for box in self.state.boxes.values():
             box.messages.clear()
+        if "All Mail" not in self.state.boxes:
+            self.state.add_box("All Mail", ["\\All"])
         self.state.add_message("INBOX", raw_message(
             "news@example.com", "Weekly newsletter", OLD, {
                 "List-Unsubscribe": "<https://example.com/u>",
@@ -285,6 +359,37 @@ class GmailArchiveIntegrationTest(unittest.TestCase):
                 entry["msgids"] = {}
             lines.append(json.dumps(entry))
         journal.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        code, out, err = run_cli("undo", *self.extra_args, "--yes")
+        self.assertEqual(code, 0, err + out)
+        self.assertEqual(len(self.state.box("INBOX").messages), 1)
+
+    def test_undo_refuses_without_all_mail(self):
+        plan_file = self._prepare()
+        code, out, err = run_cli("apply", str(plan_file), *self.extra_args,
+                                 "--yes", "--action", "move")
+        self.assertEqual(code, 0, err + out)
+        del self.state.boxes["All Mail"]
+        code, out, err = run_cli("undo", *self.extra_args, "--yes")
+        self.assertEqual(code, 2, err + out)
+
+    def test_gmail_archive_without_message_id_uses_gm_msgid(self):
+        for box in self.state.boxes.values():
+            box.messages.clear()
+        self.state.add_message("INBOX", raw_message(
+            "news@example.com", "Weekly newsletter", OLD, {
+                "List-Unsubscribe": "<https://example.com/u>",
+                "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            }, include_message_id=False), imap_date(OLD))
+        plan_file = self._prepare()
+        code, out, err = run_cli("apply", str(plan_file), *self.extra_args,
+                                 "--yes", "--action", "move")
+        self.assertEqual(code, 0, err + out)
+        self.assertEqual(len(self.state.box("INBOX").messages), 0)
+        journal = next((self.dir / "state").glob("*/journal.jsonl"))
+        entry = next(json.loads(line) for line in
+                     journal.read_text(encoding="utf-8").splitlines()
+                     if line.strip() and json.loads(line).get("op") == "label_remove")
+        self.assertTrue(entry["msgids"])
         code, out, err = run_cli("undo", *self.extra_args, "--yes")
         self.assertEqual(code, 0, err + out)
         self.assertEqual(len(self.state.box("INBOX").messages), 1)

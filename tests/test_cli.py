@@ -128,6 +128,24 @@ class CliTest(unittest.TestCase):
         payload = json.loads(out)
         self.assertEqual(payload["total"], 2)
 
+    def test_report_redaction(self):
+        self.assertEqual(self.cli("scan")[0], 0)
+        code, out, err = self.cli("report", "--json", "--redact", "--no-subjects")
+        self.assertEqual(code, 0, err)
+        self.assertNotIn("me@example.com", out)
+        self.assertNotIn("example.com", out)
+        self.assertNotIn("https://example.com/u", out)
+        report = json.loads(out)
+        self.assertTrue(all(group["samples"] == [] for group in report["groups"]))
+        self.assertEqual(report["account"], "***")
+        for group in report["groups"]:
+            self.assertEqual(group["domain"], "***")
+        code, out, err = self.cli("report", "--redact", "--no-subjects")
+        self.assertEqual(code, 0, err)
+        self.assertNotIn("me@example.com", out)
+        self.assertNotIn("example.com", out)
+        self.assertNotIn("https://example.com/u", out)
+
     def test_scan_report_plan_and_rules(self):
         self.assertEqual(self.cli("scan")[0], 0)
         code, out, err = self.cli("report", "--json", "--redact")
@@ -155,6 +173,7 @@ class CliTest(unittest.TestCase):
         plan_file = next((self.temp / "state").glob("*/plan.json"))
         code, out, err = self.cli("apply", str(plan_file), "--dry-run")
         self.assertEqual(code, 0, err)
+        self.assertIn("0 unsubscribe", out)
         code, out, err = self.cli("apply", str(plan_file))
         self.assertEqual(code, 3)
         self.assertIn("--yes", out)

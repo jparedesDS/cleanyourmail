@@ -59,20 +59,26 @@ plan must be built from fresh metadata.
 3. `plan` writes `plan.json`. It changes nothing.
 4. The person reviews the plan. The agent must show the categories, destinations, protected senders
    and unsubscribe targets.
-5. `apply --yes` executes the selected actions. Without `--yes` it prints them and exits 3.
+5. `apply --yes` executes the selected actions. Without `--action`, it is moves-only; unsubscribe
+   requires `--action unsubscribe` or the separate `unsubscribe` command. Without `--yes` it prints
+   the actions and exits 3.
 6. `journal` shows what ran. `undo --run <id> --yes` restores moves/archives.
 
 `apply` re-checks, for every batch:
 
-- the account matches the plan;
-- UIDVALIDITY matches the plan;
-- the messages still exist;
-- the messages are not starred/answered;
-- the messages are not now protected by `protect_domains`/`protect_addresses`;
-- the category has not changed since the plan;
-- spam filing is still enabled if the action is spam.
+- the account matches the plan (run-level: abort);
+- UIDVALIDITY is present and matches the plan (run-level: abort);
+- the messages still exist (per-message: skip);
+- the messages are not starred/answered (per-message: skip);
+- the messages are not now protected by `protect_domains`/`protect_addresses` (per-message: skip);
+- the category has not changed since the plan (per-message: skip);
+- spam filing is still enabled if the action is spam (per-message: skip).
 
-If any check fails, that message is skipped and reported. A skip is not an error; a partial move is.
+Run-level checks abort the run and exit 2; earlier batches may already be filed, so the CLI reports
+the moved count and the undo command. Per-message checks skip that message and report it; a partial
+move is a failure, not a silent success. Unsubscribe execution also re-checks `unsubscribe.enabled`,
+the selected mode, spam, protected senders, `never_unsubscribe_domains`, and the current cached
+category/protected state before sending anything.
 
 ## Deletion policy
 
@@ -81,12 +87,16 @@ COPY/MOVE:
 
 1. Copy the UIDs to the destination.
 2. Mark only those UIDs `\Deleted`.
-3. Expunge only those UIDs with `UID EXPUNGE` (UIDPLUS), or, if the server has no UIDPLUS, run a
-   mailbox-wide `EXPUNGE` **only after** confirming that no other message is marked deleted.
+3. Expunge only those UIDs with `UID EXPUNGE` (UIDPLUS).
 
-If another message is marked deleted, the no-UIDPLUS path refuses **before** copying or marking
-anything, so a refusal leaves the mailbox unchanged. The check is repeated before the expunge; a
-concurrent client could still mark a message in between, which is why the tool prefers UIDPLUS/MOVE.
+If the server has neither UIDPLUS nor MOVE, the CLI refuses to move: only a mailbox-wide `EXPUNGE`
+would be available, and another client can mark an unrelated message `\Deleted` between a check and
+that command. There is no mailbox-wide expunge path.
+
+If the cleanup fails after the COPY (for example, `UID EXPUNGE` is refused or the connection drops),
+the destination copy may remain. The CLI writes an incomplete journal entry and reports the partial
+move. Undo detects that the source still contains the message and does not move the destination copy
+back, so the source is not duplicated; the extra destination copy can be removed manually.
 
 Trash and Junk are destinations, not delete commands. The tool never empties them, never runs
 `EXPUNGE` on them, and never changes server retention.

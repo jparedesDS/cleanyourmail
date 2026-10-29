@@ -17,6 +17,10 @@ class MailError(Exception):
     """Connection, authentication or protocol problem."""
 
 
+class PartialMoveError(MailError):
+    """A move copied messages but could not finish the source cleanup."""
+
+
 class SafetyError(Exception):
     """The requested action is refused by policy."""
 
@@ -375,11 +379,15 @@ class MailClient:
             except imaplib.IMAP4.error:
                 pass
 
-        # Copy + delete + expunge only UIDs we just copied. Gmail has no MOVE.
-        # Without UIDPLUS, EXPUNGE is mailbox-wide: check before we create a
-        # copy or mark anything deleted, so a refusal leaves no partial state.
+        # Copy + delete + expunge only UIDs we just copied. A mailbox-wide
+        # EXPUNGE is not safe: another client can mark an unrelated message
+        # deleted between our check and the command. Require UIDPLUS or MOVE.
         if "UIDPLUS" not in self.capabilities:
-            self._assert_expunge_safe(uids)
+            raise SafetyError(
+                "This server advertises neither MOVE nor UIDPLUS. Refusing to move: "
+                "only a mailbox-wide EXPUNGE is available, which could permanently "
+                "delete another client's message. Use a client that supports UIDPLUS/MOVE, "
+                "or move the messages manually.")
         try:
             typ, data = connection.uid("COPY", uidset, encoded)
         except imaplib.IMAP4.error as exc:
@@ -387,8 +395,11 @@ class MailClient:
         if typ != "OK":
             raise MailError(f"COPY to {destination} failed: {_clean_error(data)}")
         mapping = _copyuid_map(connection)
-        self._mark_deleted(uids)
-        self._expunge_only(uids)
+        try:
+            self._mark_deleted(uids)
+            self._expunge_only(uids)
+        except (MailError, SafetyError) as exc:
+            raise PartialMoveError(f"Move partially applied: {exc}") from exc
         return mapping
 
     def _mark_deleted(self, uids: list[int]) -> None:
@@ -403,47 +414,15 @@ class MailClient:
 
     def _expunge_only(self, uids: list[int]) -> None:
         connection = self._require()
-        if "UIDPLUS" in self.capabilities:
-            try:
-                typ, data = connection.uid("EXPUNGE", ",".join(str(uid) for uid in uids))
-            except imaplib.IMAP4.error as exc:
-                raise MailError(f"UID EXPUNGE failed: {_clean_error(exc)}") from exc
-            if typ != "OK":
-                raise MailError(f"UID EXPUNGE failed: {_clean_error(data)}")
-            return
-        # No UIDPLUS: EXPUNGE is mailbox-wide. Refuse if anyone else has a
-        # \Deleted message, because it would be destroyed too.
-        self._assert_expunge_safe(uids)
-        try:
-            typ, data = connection.expunge()
-        except imaplib.IMAP4.error as exc:
-            raise MailError(f"EXPUNGE failed: {_clean_error(exc)}") from exc
-        if typ != "OK":
-            raise MailError(f"EXPUNGE failed: {_clean_error(data)}")
-
-    def _assert_expunge_safe(self, uids: list[int]) -> None:
-        deleted = self._search_uids("DELETED")
-        extras = set(deleted) - set(uids)
-        if extras:
+        if "UIDPLUS" not in self.capabilities:
             raise SafetyError(
-                "This server has no UID EXPUNGE and the mailbox contains other messages "
-                "marked for deletion. Refusing to run a mailbox-wide EXPUNGE. "
-                "Use a client that supports UIDPLUS, or move the messages manually."
-            )
-
-    def _search_uids(self, criterion: str) -> list[int]:
-        connection = self._require()
+                "This server has no UIDPLUS; refusing a mailbox-wide EXPUNGE.")
         try:
-            typ, data = connection.uid("SEARCH", criterion)
-        except imaplib.IMAP4.error:
-            return []
+            typ, data = connection.uid("EXPUNGE", ",".join(str(uid) for uid in uids))
+        except imaplib.IMAP4.error as exc:
+            raise MailError(f"UID EXPUNGE failed: {_clean_error(exc)}") from exc
         if typ != "OK":
-            return []
-        found = []
-        for line in data:
-            if isinstance(line, bytes):
-                found.extend(int(token) for token in line.split() if token.isdigit())
-        return found
+            raise MailError(f"UID EXPUNGE failed: {_clean_error(data)}")
 
     def archive(self, uids: list[int]) -> None:
         if not uids:
@@ -455,7 +434,8 @@ class MailClient:
                     "STORE", ",".join(str(uid) for uid in uids),
                     "-X-GM-LABELS", "(\\Inbox)")
             except imaplib.IMAP4.error as exc:
-                raise MailError(f"Gmail archive failed: {_clean_error(exc)}") from exc
+                raise PartialMoveError(
+                    f"Gmail archive may be partially applied: {_clean_error(exc)}") from exc
             if typ != "OK":
                 raise MailError(f"Gmail archive failed: {_clean_error(data)}")
             return
@@ -488,6 +468,9 @@ class MailClient:
     def mark_unread(self, uids: list[int]) -> None:
         self._store_flags(uids, "-FLAGS.SILENT", "(\\Seen)")
 
+    def unmark_deleted(self, uids: list[int]) -> None:
+        self._store_flags(uids, "-FLAGS.SILENT", "(\\Deleted)")
+
     def add_inbox_label(self, uids: list[int]) -> None:
         if "X-GM-EXT-1" not in self.capabilities:
             raise SafetyError("This is not a Gmail account; cannot re-add the Inbox label.")
@@ -513,10 +496,10 @@ class MailClient:
         try:
             typ, data = connection.uid("SEARCH", "HEADER", "Message-ID",
                                        imap_quote(f"<{message_id.strip('<>')}>"))
-        except imaplib.IMAP4.error:
-            return []
+        except imaplib.IMAP4.error as exc:
+            raise MailError(f"SEARCH by Message-ID failed: {_clean_error(exc)}") from exc
         if typ != "OK":
-            return []
+            raise MailError(f"SEARCH by Message-ID failed: {_clean_error(data)}")
         found = []
         for line in data:
             if isinstance(line, bytes):

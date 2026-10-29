@@ -179,8 +179,9 @@ Do not commit tokens. Do not paste them into chat. If a token is exposed, revoke
 - **Gmail "Trash" is a label.** Moving to Trash is reversible until the person empties it; this tool
   never empties it.
 - **Outlook "Deleted Items"** is the Trash folder. The CLI resolves it by special-use flag or name.
-- **Some servers do not support MOVE.** The CLI falls back to COPY + `\Deleted` + UID EXPUNGE. Without
-  UIDPLUS it refuses a mailbox-wide expunge if other messages are marked deleted.
+- **Some servers do not support MOVE.** The CLI falls back to COPY + `\Deleted` + `UID EXPUNGE` when
+  UIDPLUS is available. If the server has neither UIDPLUS nor MOVE, it refuses to move rather than run
+  a mailbox-wide expunge.
 - **Some servers rate-limit.** A large scan or a burst of unsubscribes can trigger a temporary block.
   Use smaller `--days`, `--limit` and `delay_seconds`.
 - **Some providers rewrite Message-IDs** or do not preserve them across folders. The journal keeps

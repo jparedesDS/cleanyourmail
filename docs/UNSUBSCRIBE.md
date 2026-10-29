@@ -15,7 +15,7 @@ point at private services. The header is the sender's declared machine-readable 
 | `mailto` | A `mailto:` target, and the target domain is related to the sender or a known ESP | Sends a short email with `Auto-Submitted: auto-generated` | No |
 | `manual` | HTTPS target without one-click, or a mailto target that is unrelated/disabled | Prints the URL/address; does not fetch it | N/A |
 | `http` | `unsubscribe.http_get = true` and an HTTPS target | `GET` the URL | No |
-| skipped/failed | Unsafe URL, missing SMTP, rate limit, network error, redirect, server error | Records the reason; does not retry in a loop | N/A |
+| skipped/manual/failed | Unsafe URL, missing SMTP, rate limit, network error, redirect, server error | Records the reason; does not retry in a loop | N/A |
 
 Default configuration:
 
