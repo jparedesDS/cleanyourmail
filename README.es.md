@@ -11,7 +11,7 @@ Inspirada en [cleanyour.tv](https://www.cleanyour.tv) y construida como
 [CleanYourPhone](https://github.com/cleanyourphone): un procedimiento y una CLI pequeña de biblioteca
 estándar, no un servicio alojado. Sin cuenta, sin telemetría, sin API de terceros.
 
-[Read in English](README.md) · [Web](https://jparedesds.github.io/clean-your-mail/es.html) · [La skill](SKILL.md) · [Prompt](PROMPT.es.md) · [Seguridad](docs/SAFETY.md)
+[Read in English](README.md) · [Web](https://jparedesds.github.io/clean-your-mail-web/es.html) · [La skill](SKILL.md) · [Prompt](PROMPT.es.md) · [Seguridad](docs/SAFETY.md)
 
 ## Qué hace
 

@@ -23,8 +23,8 @@ longer without making it safer or clearer is probably a bad change.
 | `README.md`, `README.es.md` | Front page and Spanish translation. |
 | `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` | Contribution rules and community standards. |
 | `CHANGELOG.md` | Release notes. |
-| `site/` | Static English/Spanish landing page (no build step, no analytics). |
-| `.github/` | CI, Pages deploy, issue templates and PR template. |
+| `https://github.com/jparedesDS/clean-your-mail-web` | Static English/Spanish landing page (separate repo). |
+| `.github/` | CI, issue templates and PR template. |
 | `tools/mail.py` | CLI: `init`, `validate`, `doctor`, `folders`, `scan`, `report`, `plan`, `apply`, `unsubscribe`, `unsubs`, `journal`, `undo`, `rules`. Stdlib only. |
 | `tools/config.py` | TOML loading, provider presets, secrets, validation. |
 | `tools/imap.py` | Minimal IMAP client, special folders, moves, Gmail archive, UIDPLUS guards. |
@@ -56,8 +56,8 @@ Never do these in a PR, a test, a doc or a command:
   IDs, real email addresses, Message-IDs from a real mailbox, or screenshots of a real inbox.
   `password_env` is the default; inline passwords only produce a warning.
 - **No telemetry, analytics, ads or third-party services.** The only network calls are IMAP, SMTP for
-  a mailto unsubscribe, and the validated one-click HTTPS request. The website is static HTML/CSS/JS
-  with no analytics, no external fonts and no API calls.
+  a mailto unsubscribe, and the validated one-click HTTPS request. The separate website repo is
+  static HTML/CSS/JS with no analytics, no external fonts and no API calls.
 - **No OAuth acquisition or refresh.** The person supplies a token. Do not add a browser flow, a
   client secret, a token store or a refresh loop.
 - **No server-side filter upload.** Export Gmail XML or Sieve; the person reviews and imports it.

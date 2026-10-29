@@ -13,16 +13,13 @@ DOCS = [
     "README.md", "README.es.md", "SKILL.md", "PROMPT.md", "PROMPT.es.md",
     "AGENTS.md", "SECURITY.md", "LICENSE",
     "CHANGELOG.md", "pyproject.toml", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md",
-    ".github/workflows/tests.yml", ".github/workflows/pages.yml",
+    ".github/workflows/tests.yml",
     ".github/PULL_REQUEST_TEMPLATE.md",
     ".github/ISSUE_TEMPLATE/bug_report.yml", ".github/ISSUE_TEMPLATE/feature_request.yml",
     ".github/ISSUE_TEMPLATE/config.yml",
     "docs/SAFETY.md", "docs/PROVIDERS.md", "docs/TROUBLESHOOTING.md",
     "docs/UNSUBSCRIBE.md", "docs/FOLDERS.md", "docs/FAQ.md",
     "examples/cleanyourmail.toml",
-    "site/index.html", "site/es.html", "site/styles.css", "site/app.js",
-    "site/README.md", "site/assets/logo.svg", "site/assets/favicon.svg",
-    "site/assets/og.svg", "site/assets/og.png",
 ]
 
 

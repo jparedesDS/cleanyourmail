@@ -23,10 +23,12 @@ python -m pip install ruff
 python -m ruff check tools tests
 ```
 
-Preview the website:
+Preview the website (separate repo):
 
 ```bash
-python -m http.server 8080 --directory site
+git clone https://github.com/jparedesDS/clean-your-mail-web.git
+cd clean-your-mail-web
+python -m http.server 8080
 ```
 
 ## What to work on
@@ -36,8 +38,8 @@ Good first contributions:
 - a new provider note in `docs/PROVIDERS.md`, with exact host/port/auth details;
 - a classification test for a real bulk-mail shape (redacted, no personal data);
 - a troubleshooting entry for an error you actually saw;
-- a translation improvement in `README.es.md`, `PROMPT.es.md` or `site/es.html`;
-- a small website accessibility or copy fix.
+- a translation improvement in `README.es.md`, `PROMPT.es.md` or the separate website repo;
+- a small website accessibility or copy fix in `clean-your-mail-web`.
 
 Ask before changing:
 
@@ -87,7 +89,7 @@ cookies, screenshots of a real inbox or state directories.
 ## Commit and PR style
 
 - Titles: `area: what changed`, e.g. `imap: refuse mailbox-wide expunge without UIDPLUS`,
-  `site: add Spanish landing page`, `docs: explain Gmail labels`.
+  `web: add Spanish landing page`, `docs: explain Gmail labels`.
 - The body says what changed, why, the command used, and the test output.
 - One topic per PR. A bug fix and its regression test can be one PR.
 - Link the issue when there is one.
