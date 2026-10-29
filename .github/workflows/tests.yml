@@ -23,6 +23,11 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python: ["3.11", "3.12", "3.13", "3.14"]
+        exclude:
+          # macOS 3.12 has repeatedly waited for a runner and been cancelled
+          # by GitHub's queue timeout. 3.12 is still covered on Linux/Windows.
+          - os: macos-latest
+            python: "3.12"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
