@@ -231,6 +231,7 @@ no-MOVE and no-UIDPLUS refusals, CLI flows and the skill document.
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — auth, IMAP, folders, rate limits, undo.
 - [docs/FAQ.md](docs/FAQ.md) — the questions people ask.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — development setup, tests and safety invariants.
+- [Website repo](https://github.com/jparedesDS/clean-your-mail-web) — the static landing page.
 
 ## Contributing
 

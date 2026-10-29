@@ -236,6 +236,7 @@ fallbacks sin MOVE y rechazo sin UIDPLUS, flujos de CLI y el documento de la ski
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — autenticación, IMAP, carpetas, límites, undo.
 - [docs/FAQ.md](docs/FAQ.md) — las preguntas que la gente hace.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — entorno de desarrollo, tests e invariantes de seguridad.
+- [Repo de la web](https://github.com/jparedesDS/clean-your-mail-web) — la landing estática.
 
 ## Contribuir
 
