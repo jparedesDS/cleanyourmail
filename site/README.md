@@ -25,8 +25,9 @@ Open <http://localhost:8080/>.
 
 ## Deploy
 
-The GitHub Actions workflow `.github/workflows/pages.yml` publishes the `site/` directory with
-GitHub Pages. In the repository settings, set **Pages → Build and deployment → Source** to
-**GitHub Actions** if it is not already selected.
+The GitHub Actions workflow `.github/workflows/pages.yml` publishes the `site/` directory to the
+`gh-pages` branch. In the repository settings, set **Pages → Build and deployment → Source** to
+**Deploy from a branch**, branch **`gh-pages`**, folder **`/ (root)`**. The workflow runs on every
+push to `master` and can also be started manually.
 
 The site is plain HTML/CSS/JS. It does not read the mailbox, call an API, or include analytics.
