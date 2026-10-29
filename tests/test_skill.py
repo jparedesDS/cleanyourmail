@@ -22,7 +22,7 @@ DOCS = [
     "examples/cleanyourmail.toml",
     "site/index.html", "site/es.html", "site/styles.css", "site/app.js",
     "site/README.md", "site/assets/logo.svg", "site/assets/favicon.svg",
-    "site/assets/og.svg",
+    "site/assets/og.svg", "site/assets/og.png",
 ]
 
 
@@ -118,6 +118,8 @@ class SkillTest(unittest.TestCase):
 
     def test_no_todo_markers(self):
         for relative in DOCS:
+            if (ROOT / relative).suffix.lower() in {".png", ".jpg", ".jpeg", ".gif", ".webp"}:
+                continue
             text = (ROOT / relative).read_text(encoding="utf-8")
             with self.subTest(path=relative):
                 self.assertNotIn("TODO", text)

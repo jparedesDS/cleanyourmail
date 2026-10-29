@@ -21,7 +21,7 @@ Open <http://localhost:8080/>.
 | `styles.css` | Shared styles. |
 | `app.js` | Provider tabs, before/after toggle, copy buttons. |
 | `assets/logo.svg`, `assets/favicon.svg` | Brand mark. |
-| `assets/og.svg` | Social preview image. |
+| `assets/og.svg`, `assets/og.png` | Social preview image. |
 
 ## Deploy
 
