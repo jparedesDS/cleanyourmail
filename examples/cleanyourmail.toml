@@ -1,0 +1,121 @@
+# CleanYourMail example configuration.
+#
+# Copy this file to cleanyourmail.toml (or run `python tools/mail.py init`) and edit it.
+# The secret is NOT stored here. Put it in an environment variable:
+#
+#   PowerShell:  $env:CYM_PASSWORD = "app-password"
+#   macOS/Linux: export CYM_PASSWORD='app-password'
+#
+# Never commit the real config. It is in .gitignore.
+
+# Optional: where the SQLite cache, plan and journal live.
+# Defaults to a per-user application directory. A relative path is resolved
+# against the current working directory.
+# state_dir = "state"
+
+[account]
+name = "personal"
+email = "you@example.com"
+
+# Provider presets are filled from the email domain when these are omitted
+# (gmail.com, outlook.com, yahoo.com, icloud.com, fastmail.com, gmx.com,
+# zoho.com, proton.me). Override them for a custom server.
+imap_host = "imap.example.com"
+imap_port = 993
+imap_ssl = true
+imap_starttls = false
+auth = "login"                 # login | xoauth2
+
+# Recommended: read the secret from the environment.
+password_env = "CYM_PASSWORD"
+
+# Alternatives (use one, not all):
+# password_command = ["pass", "show", "mail/personal"]
+# password_file = "~/.secrets/cleanyourmail.txt"
+# password = "never-commit-this"   # inline is supported but warned about
+
+# SMTP is only needed for mailto: unsubscribe. One-click HTTPS does not use it.
+# smtp_host = "smtp.example.com"
+# smtp_port = 587
+# smtp_ssl = false
+# smtp_starttls = true
+
+timeout = 30
+
+[scan]
+# Mailboxes to scan. Gmail labels can be listed too, e.g. "CleanYourMail/Newsletters".
+mailboxes = ["INBOX"]
+days = 365
+batch_size = 200
+
+[policy]
+# Messages younger than this are never moved or unsubscribed.
+min_age_days = 30
+
+# Starred and already-answered messages are kept.
+protect_answered = true
+protect_flagged = true
+
+# Exact addresses and domains that must never be auto-moved or auto-unsubscribed.
+# Domains also match subdomains.
+protect_domains = ["bank.example", "school.example"]
+protect_addresses = ["boss@work.example"]
+
+# Domains that may be filed but must not receive an automatic unsubscribe request.
+never_unsubscribe_domains = ["government.example"]
+
+# Caps per run and per sender group.
+max_messages_per_run = 500
+max_messages_per_group = 200
+
+# Set to false if you do not want spam moved to Junk.
+move_spam_to_junk = true
+
+[unsubscribe]
+enabled = true
+
+# RFC 8058 one-click POST when advertised.
+one_click = true
+
+# mailto: when the target domain is related to the sender or a known ESP.
+mailto = true
+
+# Plain GET when no one-click is advertised. Off by default: a GET can be a
+# tracking pixel or a confirmation page.
+http_get = false
+
+# Allow plain HTTP (port 80) as well as HTTPS. Off by default.
+allow_http = false
+
+max_requests = 25
+delay_seconds = 2.0
+verify_days = 7
+timeout_seconds = 15
+
+[folders]
+root = "CleanYourMail"
+create = true
+
+[taxonomy]
+newsletter = "Newsletters"
+promotion = "Promotions"
+social = "Social"
+notification = "Notifications"
+transactional = "Receipts"
+cold = "Cold"
+spam = "Spam"
+
+# Provider-specific examples:
+#
+# Gmail:
+#   imap_host = "imap.gmail.com"; imap_port = 993; imap_ssl = true
+#   smtp_host = "smtp.gmail.com"; smtp_port = 587; smtp_ssl = false; smtp_starttls = true
+#   password_env = "CYM_PASSWORD"  (App Password, 2FA required)
+#
+# Outlook / Microsoft 365:
+#   imap_host = "outlook.office365.com"; imap_port = 993; imap_ssl = true
+#   auth = "xoauth2"; password_env = "CYM_PASSWORD"  (access token, expires)
+#
+# Proton Bridge:
+#   imap_host = "127.0.0.1"; imap_port = 1143; imap_ssl = false; imap_starttls = true
+#   smtp_host = "127.0.0.1"; smtp_port = 1025; smtp_ssl = false; smtp_starttls = true
