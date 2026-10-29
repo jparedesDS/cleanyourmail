@@ -4,6 +4,13 @@ All notable changes to CleanYourMail are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-10-29
+
+### Fixed
+
+- CI: removed the pip cache setup that failed on runners with no dependencies to cache.
+- Version bump for the CI-only release.
+
 ## [1.0.0] - 2026-10-29
 
 ### Added
@@ -32,4 +39,5 @@ All notable changes to CleanYourMail are documented here. The format is based on
 - `report`, `plan`, `apply`, `unsubscribe`, `journal` and `unsubs` support redacted output.
 - Prompt-injection rules and hard stops for "skip the plan / delete everything" requests.
 
+[1.0.1]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.0.1
 [1.0.0]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.0.0
