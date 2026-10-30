@@ -1,9 +1,17 @@
+<p align="center">
+  <img src="assets/banner.png" alt="CleanYourMail — tu bandeja, sin el ruido" width="100%">
+</p>
+
 # CleanYourMail
 
-**Tu bandeja de entrada, sin el ruido.** Una skill local, pensada para agentes, que lee solo las
+**Tu bandeja de entrada, sin el ruido.** Una skill local, nativa para agentes, que lee solo las
 cabeceras del correo, encuentra newsletters, promociones, notificaciones sociales, contacto en frío y
 spam, los archiva en carpetas o etiquetas y envía solicitudes de baja — sin leer el cuerpo de los
 mensajes y sin borrar nada de forma permanente.
+
+La mayoría de los limpiadores piden tu contraseña, leen tu correo y borran la evidencia.
+CleanYourMail se ejecuta en local, lee solo cabeceras y registra cada movimiento para que puedas
+deshacerlo.
 
 [![tests](https://github.com/jparedesDS/clean-your-mail/actions/workflows/tests.yml/badge.svg)](https://github.com/jparedesDS/clean-your-mail/actions/workflows/tests.yml)
 

@@ -4,6 +4,18 @@ All notable changes to CleanYourMail are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.2] - 2026-10-30
+
+### Added
+
+- Repository banner and social preview assets in `assets/`, with three brand directions explored
+  for the website update.
+
+### Changed
+
+- Refreshed the English and Spanish README introductions to state the privacy and reversibility
+  difference up front.
+
 ## [1.1.1] - 2026-10-29
 
 ### Changed
@@ -56,6 +68,7 @@ All notable changes to CleanYourMail are documented here. The format is based on
 - `report`, `plan`, `apply`, `unsubscribe`, `journal` and `unsubs` support redacted output.
 - Prompt-injection rules and hard stops for "skip the plan / delete everything" requests.
 
+[1.1.2]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.1.2
 [1.1.1]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.1.1
 [1.1.0]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.1.0
 [1.0.1]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.0.1

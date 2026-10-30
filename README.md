@@ -1,9 +1,16 @@
+<p align="center">
+  <img src="assets/banner.png" alt="CleanYourMail — your inbox, minus the noise" width="100%">
+</p>
+
 # CleanYourMail
 
-**Your inbox, minus the noise.** A local, agent-friendly skill that reads email headers, finds the
+**Your inbox, minus the noise.** A local, agent-native skill that reads email headers, finds the
 newsletters, promotions, social notifications, cold outreach and spam, files them into folders or
 labels, and sends unsubscribe requests — without reading message bodies and without permanently
 deleting anything.
+
+Most inbox cleaners ask for your password, read your mail and delete the evidence. CleanYourMail
+runs locally, reads headers only and journals every move, so you can undo it.
 
 [![tests](https://github.com/jparedesDS/clean-your-mail/actions/workflows/tests.yml/badge.svg)](https://github.com/jparedesDS/clean-your-mail/actions/workflows/tests.yml)
 
