@@ -9,8 +9,13 @@ from helpers import ROOT, TempDir
 from config import load_config
 from mail import build_parser
 
-DOCS = [
-    "README.md", "README.es.md", "SKILL.md", "PROMPT.md", "PROMPT.es.md",
+READMES = [
+    "README.md", "README.es.md", "README.pt-BR.md", "README.fr.md", "README.de.md",
+    "README.it.md", "README.ja.md", "README.zh-CN.md", "README.zh-TW.md", "README.ko.md",
+]
+
+DOCS = READMES + [
+    "SKILL.md", "PROMPT.md", "PROMPT.es.md",
     "AGENTS.md", "SECURITY.md", "LICENSE",
     "CHANGELOG.md", "pyproject.toml", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md",
     ".github/workflows/tests.yml",
@@ -18,8 +23,9 @@ DOCS = [
     ".github/ISSUE_TEMPLATE/bug_report.yml", ".github/ISSUE_TEMPLATE/feature_request.yml",
     ".github/ISSUE_TEMPLATE/config.yml",
     "docs/SAFETY.md", "docs/PROVIDERS.md", "docs/TROUBLESHOOTING.md",
-    "docs/UNSUBSCRIBE.md", "docs/FOLDERS.md", "docs/FAQ.md",
+    "docs/UNSUBSCRIBE.md", "docs/FOLDERS.md", "docs/FAQ.md", "docs/TRANSLATIONS.md",
     "examples/cleanyourmail.toml",
+    "assets/banner.png", "assets/social-preview.png",
 ]
 
 
@@ -64,6 +70,17 @@ class SkillTest(unittest.TestCase):
                        "prompt-injection", "gmail", "outlook", "proton"):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, text)
+
+    def test_readme_languages(self):
+        for relative in READMES:
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(path=relative):
+                self.assertIn("assets/banner.png", text)
+                self.assertIn("docs/SAFETY.md", text)
+                self.assertIn("plan.json", text)
+                self.assertIn("python tools/mail.py", text)
+                for other in READMES:
+                    self.assertIn(other, text)
 
     def test_local_markdown_links_resolve(self):
         link = re.compile(r"\[[^\]]+\]\(([^)]+)\)")

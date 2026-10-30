@@ -38,7 +38,7 @@ Good first contributions:
 - a new provider note in `docs/PROVIDERS.md`, with exact host/port/auth details;
 - a classification test for a real bulk-mail shape (redacted, no personal data);
 - a troubleshooting entry for an error you actually saw;
-- a translation improvement in `README.es.md`, `PROMPT.es.md` or the separate website repo;
+- a translation improvement in any [`README.<code>.md`](docs/TRANSLATIONS.md) or `PROMPT.es.md`;
 - a small website accessibility or copy fix in `cleanyourmail-web`.
 
 Ask before changing:
@@ -50,6 +50,16 @@ Ask before changing:
 - the undo journal format.
 
 Open an issue first for those.
+
+## Translations
+
+The English [`README.md`](README.md) is the source of truth. The other README files are full
+translations of the same structure and safety claims. Read [`docs/TRANSLATIONS.md`](docs/TRANSLATIONS.md)
+before changing a translated README.
+
+When you change the English README, update the translations in the same pull request or state clearly
+which files are stale. Keep commands, code blocks, file paths, protocol names and provider names in
+English.
 
 ## Tests
 

@@ -20,7 +20,7 @@ longer without making it safer or clearer is probably a bad change.
 |---|---|
 | `SKILL.md` | The skill. Agent-agnostic procedure and safety rules. |
 | `PROMPT.md`, `PROMPT.es.md` | Short prompts for agents that do not support skills, in English and Spanish. |
-| `README.md`, `README.es.md` | Front page and Spanish translation. |
+| `README.md`, `README.<code>.md` | Front page and full translations (Spanish, Portuguese, French, German, Italian, Japanese, Simplified and Traditional Chinese, Korean). |
 | `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` | Contribution rules and community standards. |
 | `CHANGELOG.md` | Release notes. |
 | `https://github.com/jparedesDS/cleanyourmail-web` | Static English/Spanish landing page (separate repo). |
@@ -35,12 +35,16 @@ longer without making it safer or clearer is probably a bad change.
 | `tools/journal.py` | Append-only undo journal. |
 | `tools/unsub.py` | RFC 8058/mailto unsubscribe, SSRF guard. |
 | `tools/rules.py` | Gmail filter XML and Sieve export. |
-| `docs/` | `SAFETY.md`, `PROVIDERS.md`, `TROUBLESHOOTING.md`, `UNSUBSCRIBE.md`, `FOLDERS.md`, `FAQ.md`. |
+| `docs/` | `SAFETY.md`, `PROVIDERS.md`, `TROUBLESHOOTING.md`, `UNSUBSCRIBE.md`, `FOLDERS.md`, `FAQ.md`, `TRANSLATIONS.md`. |
 | `tests/` | `unittest` suite with an in-process fake IMAP server. No real mail. |
 | `examples/cleanyourmail.toml` | Annotated example config. |
 
 Runtime state is created under `state_dir` (by default a per-user application directory): SQLite
 cache, `plan.json`, `journal.jsonl`, locks. Never commit it.
+
+Translations: English `README.md` is the source of truth. Keep commands, code blocks, file paths,
+protocol names and provider names in English. Update every translation or state clearly which files
+are stale.
 
 ## Hard rules
 

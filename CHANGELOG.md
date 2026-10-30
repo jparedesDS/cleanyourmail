@@ -4,6 +4,16 @@ All notable changes to CleanYourMail are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.5] - 2026-10-30
+
+### Added
+
+- Rewrote the README with a professional structure: banner, badges, language switcher, “Start here”,
+  agent and CLI quick starts, safety model, providers, commands, classification and docs.
+- Full translations in Spanish, Portuguese (Brazil), French, German, Italian, Japanese, Simplified
+  Chinese, Traditional Chinese and Korean.
+- `docs/TRANSLATIONS.md` with the translation policy and the list of maintained languages.
+
 ## [1.1.4] - 2026-10-30
 
 ### Changed
@@ -84,6 +94,7 @@ All notable changes to CleanYourMail are documented here. The format is based on
 - `report`, `plan`, `apply`, `unsubscribe`, `journal` and `unsubs` support redacted output.
 - Prompt-injection rules and hard stops for "skip the plan / delete everything" requests.
 
+[1.1.5]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.5
 [1.1.4]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.4
 [1.1.3]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.3
 [1.1.2]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.2
