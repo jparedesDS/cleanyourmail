@@ -23,7 +23,7 @@ longer without making it safer or clearer is probably a bad change.
 | `README.md`, `README.es.md` | Front page and Spanish translation. |
 | `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` | Contribution rules and community standards. |
 | `CHANGELOG.md` | Release notes. |
-| `https://github.com/jparedesDS/clean-your-mail-web` | Static English/Spanish landing page (separate repo). |
+| `https://github.com/jparedesDS/cleanyourmail-web` | Static English/Spanish landing page (separate repo). |
 | `.github/` | CI, issue templates and PR template. |
 | `tools/mail.py` | CLI: `init`, `validate`, `doctor`, `folders`, `scan`, `report`, `plan`, `apply`, `unsubscribe`, `unsubs`, `journal`, `undo`, `rules`. Stdlib only. |
 | `tools/config.py` | TOML loading, provider presets, secrets, validation. |

@@ -78,7 +78,7 @@ Add the sender to `policy.protect_addresses` or `policy.protect_domains`, then r
 ## Is the website part of the CLI?
 
 No. The landing page lives in a separate repository,
-[clean-your-mail-web](https://github.com/jparedesDS/clean-your-mail-web). It is static HTML/CSS/JS:
+[cleanyourmail-web](https://github.com/jparedesDS/cleanyourmail-web). It is static HTML/CSS/JS:
 it does not read mail, call an API or include analytics. The CLI is Python standard library only.
 
 ## Where do I report a security issue?

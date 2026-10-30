@@ -4,6 +4,15 @@ All notable changes to CleanYourMail are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.4] - 2026-10-30
+
+### Changed
+
+- Renamed the repository from `clean-your-mail` to `cleanyourmail`. Existing GitHub URLs redirect
+  to the new name.
+- Updated the website URL to `https://jparedesds.github.io/cleanyourmail-web/` and refreshed the
+  banner and social preview with the new addresses.
+
 ## [1.1.3] - 2026-10-30
 
 ### Changed
@@ -28,7 +37,7 @@ All notable changes to CleanYourMail are documented here. The format is based on
 ### Changed
 
 - Moved the static website to the separate
-  [clean-your-mail-web](https://github.com/jparedesDS/clean-your-mail-web) repository. The skill repo
+  [cleanyourmail-web](https://github.com/jparedesDS/cleanyourmail-web) repository. The skill repo
   no longer publishes GitHub Pages.
 
 ## [1.1.0] - 2026-10-29
@@ -75,9 +84,10 @@ All notable changes to CleanYourMail are documented here. The format is based on
 - `report`, `plan`, `apply`, `unsubscribe`, `journal` and `unsubs` support redacted output.
 - Prompt-injection rules and hard stops for "skip the plan / delete everything" requests.
 
-[1.1.3]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.1.3
-[1.1.2]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.1.2
-[1.1.1]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.1.1
-[1.1.0]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.1.0
-[1.0.1]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.0.1
-[1.0.0]: https://github.com/jparedesDS/clean-your-mail/releases/tag/v1.0.0
+[1.1.4]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.4
+[1.1.3]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.3
+[1.1.2]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.2
+[1.1.1]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.1
+[1.1.0]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.0
+[1.0.1]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.0.1
+[1.0.0]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.0.0

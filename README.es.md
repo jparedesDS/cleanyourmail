@@ -13,13 +13,13 @@ La mayoría de los limpiadores piden tu contraseña, leen tu correo y borran la 
 CleanYourMail se ejecuta en local, lee solo cabeceras y registra cada movimiento para que puedas
 deshacerlo.
 
-[![tests](https://github.com/jparedesDS/clean-your-mail/actions/workflows/tests.yml/badge.svg)](https://github.com/jparedesDS/clean-your-mail/actions/workflows/tests.yml)
+[![tests](https://github.com/jparedesDS/cleanyourmail/actions/workflows/tests.yml/badge.svg)](https://github.com/jparedesDS/cleanyourmail/actions/workflows/tests.yml)
 
 Inspirada en [cleanyour.tv](https://www.cleanyour.tv) y construida como
 [CleanYourPhone](https://github.com/cleanyourphone): un procedimiento y una CLI pequeña de biblioteca
 estándar, no un servicio alojado. Sin cuenta, sin telemetría, sin API de terceros.
 
-[Read in English](README.md) · [Web](https://jparedesds.github.io/clean-your-mail-web/es.html) · [La skill](SKILL.md) · [Prompt](PROMPT.es.md) · [Seguridad](docs/SAFETY.md)
+[Read in English](README.md) · [Web](https://jparedesds.github.io/cleanyourmail-web/es.html) · [La skill](SKILL.md) · [Prompt](PROMPT.es.md) · [Seguridad](docs/SAFETY.md)
 
 ## Qué hace
 
@@ -244,7 +244,7 @@ fallbacks sin MOVE y rechazo sin UIDPLUS, flujos de CLI y el documento de la ski
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — autenticación, IMAP, carpetas, límites, undo.
 - [docs/FAQ.md](docs/FAQ.md) — las preguntas que la gente hace.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — entorno de desarrollo, tests e invariantes de seguridad.
-- [Repo de la web](https://github.com/jparedesDS/clean-your-mail-web) — la landing estática.
+- [Repo de la web](https://github.com/jparedesDS/cleanyourmail-web) — la landing estática.
 
 ## Contribuir
 

@@ -10,8 +10,8 @@ Before changing code, read [AGENTS.md](AGENTS.md). The safety invariants are not
 Requirements: Python 3.11+ and Git. There are no runtime dependencies.
 
 ```bash
-git clone https://github.com/jparedesDS/clean-your-mail.git
-cd clean-your-mail
+git clone https://github.com/jparedesDS/cleanyourmail.git
+cd cleanyourmail
 python -m compileall -q tools tests
 python -m unittest discover -s tests -v
 ```
@@ -26,8 +26,8 @@ python -m ruff check tools tests
 Preview the website (separate repo):
 
 ```bash
-git clone https://github.com/jparedesDS/clean-your-mail-web.git
-cd clean-your-mail-web
+git clone https://github.com/jparedesDS/cleanyourmail-web.git
+cd cleanyourmail-web
 python -m http.server 8080
 ```
 
@@ -39,7 +39,7 @@ Good first contributions:
 - a classification test for a real bulk-mail shape (redacted, no personal data);
 - a troubleshooting entry for an error you actually saw;
 - a translation improvement in `README.es.md`, `PROMPT.es.md` or the separate website repo;
-- a small website accessibility or copy fix in `clean-your-mail-web`.
+- a small website accessibility or copy fix in `cleanyourmail-web`.
 
 Ask before changing:
 
