@@ -44,6 +44,7 @@ deshacerlo.
 | Tienes | Empieza por |
 |---|---|
 | Un buzón y un agente | El inicio rápido con agente, abajo. |
+| Prefieres botones a comandos | [Descarga la app CleanYourMail](https://github.com/jparedesDS/cleanyourmail-app). |
 | Una terminal y ningún agente | El inicio rápido con la CLI, abajo. |
 | Quieres verlo primero | [La web](https://jparedesds.github.io/cleanyourmail-web/es.html). |
 | Necesitas las reglas de seguridad | [docs/SAFETY.md](docs/SAFETY.md). |

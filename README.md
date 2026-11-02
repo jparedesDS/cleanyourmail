@@ -43,6 +43,7 @@ runs locally, reads headers only and journals every move, so you can undo it.
 | You have | Start with |
 |---|---|
 | A mailbox and a coding agent | The agent quick start below. |
+| Prefer buttons over prompts | [Download the CleanYourMail app](https://github.com/jparedesDS/cleanyourmail-app). |
 | A terminal and no agent | The CLI quick start below. |
 | Want to see it first | [The website](https://jparedesds.github.io/cleanyourmail-web/). |
 | Need the safety rules | [docs/SAFETY.md](docs/SAFETY.md). |
