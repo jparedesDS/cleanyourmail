@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">CleanYourMail monochrome app icon</title>
+  <desc id="desc">Single-light-ink app icon for high-contrast system surfaces.</desc>
+  <rect x="96" y="96" width="832" height="832" rx="192" fill="#15161A"/>
+  <g transform="translate(96 96) scale(13)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#ECE9E2">
+    <path d="M12 35 V20 A4 4 0 0 1 16 16 H48 A4 4 0 0 1 52 20 V42 A4 4 0 0 1 48 46 H23" stroke-width="4.5"/>
+    <path d="M14 18 L32 31 L50 18" stroke-width="4.5"/>
+    <path d="M29 40 L22 46 L29 52" stroke-width="4.5"/>
+  </g>
+</svg>

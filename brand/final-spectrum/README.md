@@ -1,5 +1,7 @@
 # CleanYourMail — Spectrum Brand Identity & App Icon Guide
 
+> **Primary app-first identity:** [Family](../final-family/README.md) — lavender envelope and gold return arrow aligned with CleanYourPhone. This package is the **Spectrum Pastel alternate**.
+
 ## 1. Brand idea & colorway overview
 
 - **Name:** `CleanYourMail` (exact casing: capital **C**, **Y**, **M**; never rename, split with spaces, or publicly abbreviate).

@@ -1,6 +1,6 @@
 # CleanYourMail — Forest Brand Identity & App Icon Guide
 
-> **Primary app-first identity:** [Spectrum](../final-spectrum/README.md) — orange/yellow/mint Return Fold on carbon. This package is the **Forest/Lime alternate**, kept for the classic CLI theme.
+> **Primary app-first identity:** [Family](../final-family/README.md) — lavender envelope and gold return arrow aligned with CleanYourPhone. This package is the **Forest/Lime alternate**, kept for the classic CLI theme.
 
 ## 1. Brand idea & final decision
 

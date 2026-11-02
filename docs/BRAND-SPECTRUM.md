@@ -1,6 +1,8 @@
 # CleanYourMail — Spectrum Brand Cheat Sheet
 
-**Final decision: Return Fold in the Spectrum colorway.** CleanYourMail pairs the **Return Fold** envelope-and-undo mark (`↩`) with a neutral carbon canvas (`#121316`), warm off-white text (`#F3F1EC`), and three semantic signal colors: **Orange `#FFB38A`** (plan, primary action, logo tile), **Mint `#A8E6CF`** (journal & undo), and **Yellow `#FFE08A`** (attention & irreversible unsubscribe). Full specifications live in [`brand/final-spectrum/README.md`](../brand/final-spectrum/README.md).
+> **Primary app-first identity:** [Family](BRAND-FAMILY.md) — lavender envelope and gold return arrow aligned with CleanYourPhone. This document covers the **Spectrum Pastel alternate**.
+
+**Previous colorway: Return Fold in the Spectrum palette.** CleanYourMail pairs the **Return Fold** envelope-and-undo mark (`↩`) with a neutral carbon canvas (`#121316`), warm off-white text (`#F3F1EC`), and three semantic signal colors: **Orange `#FFB38A`** (plan, primary action, logo tile), **Mint `#A8E6CF`** (journal & undo), and **Yellow `#FFE08A`** (attention & irreversible unsubscribe). Full specifications live in [`brand/final-spectrum/README.md`](../brand/final-spectrum/README.md).
 
 ## Identity essentials
 
