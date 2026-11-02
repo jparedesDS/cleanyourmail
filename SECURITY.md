@@ -41,8 +41,8 @@ tokens redacted, and the version (`python tools/mail.py --version`).
 ### Controls
 
 - **Headers only.** No body/attachment fetch, so malicious content is not parsed or rendered.
-- **No permanent deletion.** COPY/MOVE first; expunge only copied UIDs; refuse a mailbox-wide expunge
-  when other `\Deleted` messages exist; never empty Trash.
+- **No permanent deletion.** COPY/MOVE first; expunge only the copied UIDs with `UID EXPUNGE`; never
+  run a mailbox-wide `EXPUNGE`; never empty Trash.
 - **Plan/apply split.** The plan is reviewable JSON; `apply` re-checks UIDVALIDITY, flags, category
   and the current protected-sender list.
 - **Protected mail.** Conservative classification and policy lists; transactional/personal are kept.

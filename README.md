@@ -187,11 +187,13 @@ More detail: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 | `init` | Write a starter `cleanyourmail.toml`. | No |
 | `validate` | Check the TOML without connecting. | No |
 | `doctor` | Log in, list capabilities and special folders. | No |
+| `folders` | List or create mail folders. | No |
 | `scan` | Cache headers and classify messages. | No |
 | `report` | Show senders, categories, stale lists and protected mail. | No |
 | `plan` | Write `plan.json` with moves and unsubscribe targets. | No |
 | `apply` | Execute moves; add `--action unsubscribe` for requests. | Moves/archives |
 | `unsubscribe` | Send automatic unsubscribe requests only. | Sends requests |
+| `unsubs` | Show unsubscribe history. | No |
 | `journal` | Show runs and journal entries. | No |
 | `undo` | Restore a run's moves/archives. | Moves/archives |
 | `rules` | Export Gmail filter XML or Sieve. | No |

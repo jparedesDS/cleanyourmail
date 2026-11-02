@@ -82,6 +82,12 @@ Add a test for every new guard, parser, plan rule, undo path or CLI behavior. In
 Never point a test at a real account. Do not commit real email addresses, Message-IDs, tokens,
 cookies, screenshots of a real inbox or state directories.
 
+## Releasing
+
+Releases follow [RELEASING.md](RELEASING.md). Real-provider smoke tests are recorded in
+[docs/VALIDATION.md](docs/VALIDATION.md); the automated suite uses the fake IMAP server and does not
+replace them.
+
 ## Safety invariants
 
 - No permanent deletion. No mailbox-wide `EXPUNGE`. Moves require UIDPLUS or MOVE.

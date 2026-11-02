@@ -190,11 +190,13 @@ Più dettagli: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 | `init` | Scrive un `cleanyourmail.toml` iniziale. | No |
 | `validate` | Controlla il TOML senza connettersi. | No |
 | `doctor` | Accede, elenca capacità e cartelle speciali. | No |
+| `folders` | Elenca o crea cartelle di posta. | No |
 | `scan` | Salva le intestazioni e classifica i messaggi. | No |
 | `report` | Mostra mittenti, categorie, liste vecchie e posta protetta. | No |
 | `plan` | Scrive `plan.json` con spostamenti e obiettivi di disiscrizione. | No |
 | `apply` | Esegue gli spostamenti; `--action unsubscribe` per le disiscrizioni. | Sposta/archivia |
 | `unsubscribe` | Invia solo richieste automatiche di disiscrizione. | Invia richieste |
+| `unsubs` | Mostra la cronologia delle disiscrizioni. | No |
 | `journal` | Mostra esecuzioni e voci del journal. | No |
 | `undo` | Ripristina spostamenti/archivi di un’esecuzione. | Sposta/archivia |
 | `rules` | Esporta XML filtri Gmail o Sieve. | No |

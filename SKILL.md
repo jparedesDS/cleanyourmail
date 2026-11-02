@@ -1,6 +1,6 @@
 ---
 name: CleanYourMail
-description: Use when the user wants to clean an email inbox like cleanyour.tv — triage spam, newsletters, promotions and cold outreach, organize folders or labels, unsubscribe from mailing lists, and reduce marketing mail — over IMAP/SMTP, reversibly, without reading message bodies and without permanently deleting anything.
+description: Use when the user wants to clean an email inbox — triage spam, newsletters, promotions and cold outreach, organize folders or labels, unsubscribe from mailing lists, and reduce marketing mail — over IMAP/SMTP, reversibly, without reading message bodies and without permanently deleting anything.
 ---
 
 # CleanYourMail

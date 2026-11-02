@@ -190,11 +190,13 @@ Mais detalhes: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 | `init` | Escreve um `cleanyourmail.toml` inicial. | Não |
 | `validate` | Valida o TOML sem conectar. | Não |
 | `doctor` | Entra na conta, lista recursos e pastas especiais. | Não |
+| `folders` | Lista ou cria pastas de correio. | Não |
 | `scan` | Guarda cabeçalhos e classifica mensagens. | Não |
 | `report` | Mostra remetentes, categorias, listas antigas e e-mail protegido. | Não |
 | `plan` | Escreve `plan.json` com movimentos e alvos de descadastro. | Não |
 | `apply` | Executa movimentos; adicione `--action unsubscribe` para descadastros. | Move/arquiva |
 | `unsubscribe` | Envia apenas pedidos automáticos de descadastro. | Envia pedidos |
+| `unsubs` | Mostra o histórico de descadastros. | Não |
 | `journal` | Mostra execuções e entradas do journal. | Não |
 | `undo` | Restaura movimentos/arquivamentos de uma execução. | Move/arquiva |
 | `rules` | Exporta XML de filtros do Gmail ou Sieve. | Não |

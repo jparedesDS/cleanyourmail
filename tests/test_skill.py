@@ -17,13 +17,14 @@ READMES = [
 DOCS = READMES + [
     "SKILL.md", "PROMPT.md", "PROMPT.es.md",
     "AGENTS.md", "SECURITY.md", "LICENSE",
-    "CHANGELOG.md", "pyproject.toml", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md",
+    "CHANGELOG.md", "RELEASING.md", "pyproject.toml", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md",
     ".github/workflows/tests.yml",
     ".github/PULL_REQUEST_TEMPLATE.md",
     ".github/ISSUE_TEMPLATE/bug_report.yml", ".github/ISSUE_TEMPLATE/feature_request.yml",
     ".github/ISSUE_TEMPLATE/config.yml",
     "docs/SAFETY.md", "docs/PROVIDERS.md", "docs/TROUBLESHOOTING.md",
     "docs/UNSUBSCRIBE.md", "docs/FOLDERS.md", "docs/FAQ.md", "docs/TRANSLATIONS.md",
+    "docs/VALIDATION.md",
     "examples/cleanyourmail.toml",
     "assets/banner.png", "assets/social-preview.png",
 ]
@@ -129,6 +130,12 @@ class SkillTest(unittest.TestCase):
                         "__pycache__/"):
             with self.subTest(pattern=pattern):
                 self.assertIn(pattern, text)
+
+    def test_version_matches_changelog(self):
+        from cym_version import __version__
+
+        text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+        self.assertIn(f"## [{__version__}]", text)
 
     def test_no_todo_markers(self):
         for relative in DOCS:
