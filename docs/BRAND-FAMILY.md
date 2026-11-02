@@ -1,6 +1,8 @@
 # CleanYourMail — Family Brand Cheat Sheet
 
-**Final decision: Return Fold in the CleanYourPhone family palette.** The mark is a lavender envelope with a gold return arrow on a carbon tile. “CleanYour” stays off-white and “Mail” is lavender. Full specifications live in [`brand/final-family/README.md`](../brand/final-family/README.md).
+> **Alternate identity:** CleanYourPhone-aligned lavender/gold palette. The primary CleanYourMail identity is [Spectrum](BRAND-SPECTRUM.md): pastel orange envelope and mint return arrow.
+
+**Alternate colorway: Return Fold in the CleanYourPhone family palette.** The mark is a lavender envelope with a gold return arrow on a carbon tile. “CleanYour” stays off-white and “Mail” is lavender. Full specifications live in [`brand/final-family/README.md`](../brand/final-family/README.md).
 
 ## Identity essentials
 
