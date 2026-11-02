@@ -183,11 +183,13 @@ python tools/mail.py undo --run <run> --yes
 | `init` | 초기 `cleanyourmail.toml`을 작성합니다. | 아니요 |
 | `validate` | 연결 없이 TOML을 검사합니다. | 아니요 |
 | `doctor` | 로그인하고 기능과 특수 폴더를 나열합니다. | 아니요 |
+| `folders` | 메일 폴더를 나열하거나 만듭니다. | 아니요 |
 | `scan` | 헤더를 캐시하고 메시지를 분류합니다. | 아니요 |
 | `report` | 발신자, 카테고리, 오래된 목록, 보호 메일을 표시합니다. | 아니요 |
 | `plan` | 이동과 수신 거부 대상이 담긴 `plan.json`을 작성합니다. | 아니요 |
 | `apply` | 이동을 실행합니다. `--action unsubscribe`로 수신 거부도 가능합니다. | 이동/보관 |
 | `unsubscribe` | 자동 수신 거부 요청만 보냅니다. | 요청 전송 |
+| `unsubs` | 수신 거부 기록을 표시합니다. | 아니요 |
 | `journal` | 실행과 저널 항목을 표시합니다. | 아니요 |
 | `undo` | 실행의 이동/보관을 복원합니다. | 이동/보관 |
 | `rules` | Gmail 필터 XML 또는 Sieve를 내보냅니다. | 아니요 |

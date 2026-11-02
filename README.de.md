@@ -192,11 +192,13 @@ Mehr Details: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 | `init` | Schreibt eine Start-`cleanyourmail.toml`. | Nein |
 | `validate` | Prüft die TOML ohne Verbindung. | Nein |
 | `doctor` | Loggt ein, listet Fähigkeiten und Spezialordner. | Nein |
+| `folders` | Listet E-Mail-Ordner auf oder erstellt sie. | Nein |
 | `scan` | Cacht Header und klassifiziert Nachrichten. | Nein |
 | `report` | Zeigt Absender, Kategorien, alte Listen und geschützte Mail. | Nein |
 | `plan` | Schreibt `plan.json` mit Verschiebungen und Abmeldezielen. | Nein |
 | `apply` | Führt Verschiebungen aus; `--action unsubscribe` für Abmeldungen. | Verschiebt/archiviert |
 | `unsubscribe` | Sendet nur automatische Abmeldungen. | Sendet Anfragen |
+| `unsubs` | Zeigt den Abmeldeverlauf. | Nein |
 | `journal` | Zeigt Läufe und Journal-Einträge. | Nein |
 | `undo` | Stellt Verschiebungen/Archivierungen eines Laufs wieder her. | Verschiebt/archiviert |
 | `rules` | Exportiert Gmail-Filter-XML oder Sieve. | Nein |

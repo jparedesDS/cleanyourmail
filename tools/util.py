@@ -11,7 +11,6 @@ import unicodedata
 from pathlib import Path
 
 APP = "CleanYourMail"
-VERSION = "1.0.0"
 
 MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")

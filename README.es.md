@@ -190,11 +190,13 @@ Más detalle: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 | `init` | Escribe un `cleanyourmail.toml` inicial. | No |
 | `validate` | Comprueba el TOML sin conectar. | No |
 | `doctor` | Inicia sesión, lista capacidades y carpetas especiales. | No |
+| `folders` | Lista o crea carpetas de correo. | No |
 | `scan` | Guarda cabeceras y clasifica mensajes. | No |
 | `report` | Muestra remitentes, categorías, listas antiguas y correo protegido. | No |
 | `plan` | Escribe `plan.json` con movimientos y objetivos de baja. | No |
 | `apply` | Ejecuta movimientos; añade `--action unsubscribe` para bajas. | Mueve/archiva |
 | `unsubscribe` | Envía solo solicitudes automáticas de baja. | Envía solicitudes |
+| `unsubs` | Muestra el historial de bajas. | No |
 | `journal` | Muestra ejecuciones y entradas del journal. | No |
 | `undo` | Restaura los movimientos/archivados de una ejecución. | Mueve/archiva |
 | `rules` | Exporta XML de filtros de Gmail o Sieve. | No |

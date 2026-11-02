@@ -180,11 +180,13 @@ python tools/mail.py undo --run <run> --yes
 | `init` | 生成初始 `cleanyourmail.toml`。 | 否 |
 | `validate` | 不连接即可检查 TOML。 | 否 |
 | `doctor` | 登录，列出能力和特殊文件夹。 | 否 |
+| `folders` | 列出或创建邮件文件夹。 | 否 |
 | `scan` | 缓存邮件头并分类邮件。 | 否 |
 | `report` | 显示发件人、类别、旧列表和受保护邮件。 | 否 |
 | `plan` | 生成包含移动和退订目标的 `plan.json`。 | 否 |
 | `apply` | 执行移动；加 `--action unsubscribe` 可退订。 | 移动/归档 |
 | `unsubscribe` | 只发送自动退订请求。 | 发送请求 |
+| `unsubs` | 显示退订历史。 | 否 |
 | `journal` | 显示运行和日志条目。 | 否 |
 | `undo` | 恢复某次运行的移动/归档。 | 移动/归档 |
 | `rules` | 导出 Gmail 过滤器 XML 或 Sieve。 | 否 |
