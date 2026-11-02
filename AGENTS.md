@@ -24,6 +24,7 @@ longer without making it safer or clearer is probably a bad change.
 | `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` | Contribution rules and community standards. |
 | `CHANGELOG.md` | Release notes. |
 | `RELEASING.md` | Maintainer release checklist, versioning and tag steps. |
+| `CLAUDE.md` | Concise Claude Code context; this file is the full maintainer guide. |
 | `https://github.com/jparedesDS/cleanyourmail-web` | Static English/Spanish landing page (separate repo). |
 | `.github/` | CI, issue templates and PR template. |
 | `tools/mail.py` | CLI: `init`, `validate`, `doctor`, `folders`, `scan`, `report`, `plan`, `apply`, `unsubscribe`, `unsubs`, `journal`, `undo`, `rules`. Stdlib only. |
