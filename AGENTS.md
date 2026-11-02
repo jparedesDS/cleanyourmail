@@ -25,7 +25,8 @@ longer without making it safer or clearer is probably a bad change.
 | `CHANGELOG.md` | Release notes. |
 | `RELEASING.md` | Maintainer release checklist, versioning and tag steps. |
 | `CLAUDE.md` | Concise Claude Code context; this file is the full maintainer guide. |
-| `brand/final-spectrum/` | Primary app-first Spectrum identity: yellow/orange/purple Return Fold, app icon, banners, social card and offline preview. |
+| `brand/final-family/` | Primary app-first Family identity: lavender envelope, gold return arrow, app icon, banners, social card and offline preview. |
+| `brand/final-spectrum/` | Spectrum Pastel alternate identity. |
 | `brand/final/` | Forest/Lime alternate identity and classic CLI colorway. |
 | `https://github.com/jparedesDS/cleanyourmail-web` | Static English/Spanish landing page (separate repo). |
 | `.github/` | CI, issue templates and PR template. |
@@ -39,7 +40,7 @@ longer without making it safer or clearer is probably a bad change.
 | `tools/journal.py` | Append-only undo journal. |
 | `tools/unsub.py` | RFC 8058/mailto unsubscribe, SSRF guard. |
 | `tools/rules.py` | Gmail filter XML and Sieve export. |
-| `docs/` | `SAFETY.md`, `PROVIDERS.md`, `TROUBLESHOOTING.md`, `UNSUBSCRIBE.md`, `FOLDERS.md`, `FAQ.md`, `TRANSLATIONS.md`, `VALIDATION.md`, `BRAND-SPECTRUM.md`, `BRAND.md`. |
+| `docs/` | `SAFETY.md`, `PROVIDERS.md`, `TROUBLESHOOTING.md`, `UNSUBSCRIBE.md`, `FOLDERS.md`, `FAQ.md`, `TRANSLATIONS.md`, `VALIDATION.md`, `BRAND-FAMILY.md`, `BRAND-SPECTRUM.md`, `BRAND.md`. |
 | `tests/` | `unittest` suite with an in-process fake IMAP server. No real mail. |
 | `examples/cleanyourmail.toml` | Annotated example config. |
 
