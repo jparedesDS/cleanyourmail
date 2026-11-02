@@ -1,17 +1,17 @@
 # CleanYourMail — Forest Brand Identity & App Icon Guide
 
-> **Primary app-first identity:** [Spectrum](../final-spectrum/README.md) — yellow/orange/purple Return Fold on carbon. This package is the **Forest/Lime alternate**, kept for the classic CLI theme.
+> **Primary app-first identity:** [Spectrum](../final-spectrum/README.md) — yellow/peach/mint Return Fold on carbon. This package is the **Forest/Lime alternate**, kept for the classic CLI theme.
 
 ## 1. Brand idea & final decision
 
 - **Name:** `CleanYourMail` (exact casing: capital **C**, **Y**, **M**; never rename, split with spaces, or publicly abbreviate).
 - **Brand idea:** **Control, not magic.**
 - **One-liner:** CleanYourMail is a local-first IMAP cleanup product: a Python CLI and agent skill today, with a desktop app in development. It reads headers only, plans before action, and gives every move a way back.
-
-> The desktop app icon and app-first tokens are prepared for the planned app. Today the Python CLI and agent skill are the available interfaces.
 - **Tagline (EN):** **Your inbox, minus the noise.**
 - **Tagline (ES):** **Tu bandeja, sin el ruido.**
 - **Audience:** Non-technical people who want a calm visual app (the desktop app is in development), plus developers and coding agents who use the Python 3.11+ CLI engine. Today the CLI and agent skill are the available interfaces; the desktop app is the intended primary interface.
+
+> The desktop app icon and app-first tokens are prepared for the planned app. Today the Python CLI and agent skill are the available interfaces.
 
 ### Three directions explored internally
 
