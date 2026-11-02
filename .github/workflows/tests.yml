@@ -21,15 +21,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-26-intel]
         python: ["3.11", "3.12", "3.13", "3.14"]
         exclude:
-          # macOS runner capacity has repeatedly queued 3.12/3.13 until
-          # GitHub cancelled the job. Those versions remain covered on
-          # Linux and Windows; macOS covers the oldest and newest supported.
-          - os: macos-latest
+          # macOS arm64 capacity has repeatedly queued jobs until GitHub
+          # cancelled them. Use the Intel image for reliable macOS coverage;
+          # 3.12/3.13 remain covered on Linux and Windows.
+          - os: macos-26-intel
             python: "3.12"
-          - os: macos-latest
+          - os: macos-26-intel
             python: "3.13"
     steps:
       - uses: actions/checkout@v4
