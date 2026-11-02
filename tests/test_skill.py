@@ -16,7 +16,7 @@ READMES = [
 
 DOCS = READMES + [
     "SKILL.md", "PROMPT.md", "PROMPT.es.md",
-    "AGENTS.md", "SECURITY.md", "LICENSE",
+    "AGENTS.md", "CLAUDE.md", "SECURITY.md", "LICENSE",
     "CHANGELOG.md", "RELEASING.md", "pyproject.toml", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md",
     ".github/workflows/tests.yml",
     ".github/PULL_REQUEST_TEMPLATE.md",
