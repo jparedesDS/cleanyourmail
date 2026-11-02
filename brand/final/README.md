@@ -1,6 +1,6 @@
 # CleanYourMail — Forest Brand Identity & App Icon Guide
 
-> **Primary app-first identity:** [Spectrum](../final-spectrum/README.md) — pastel orange envelope, mint return arrow and the Spectrum palette. This package is the **Forest/Lime alternate**, kept for the classic CLI theme.
+> **Primary skill-first identity:** [Spectrum](../final-spectrum/README.md) - pastel orange envelope, mint return arrow and the Spectrum palette. This package is the **Forest/Lime alternate**, kept for the classic CLI theme.
 
 ## 1. Brand idea & final decision
 
