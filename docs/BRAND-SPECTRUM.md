@@ -5,7 +5,7 @@
 ## Identity essentials
 
 - **Name:** `CleanYourMail` (capital **C**, **Y**, **M**; never rename, add spaces, or abbreviate).
-- **One-liner:** CleanYourMail is a local-first desktop app—powered by a standard-library Python CLI engine—for reversible IMAP inbox cleanup that reads headers only, plans before action, and gives every move a way back.
+- **One-liner:** CleanYourMail is a local-first IMAP cleanup product: a Python CLI and agent skill today, with a desktop app in development. It reads headers only, plans before action, and gives every move a way back.
 - **Taglines:** **Your inbox, minus the noise.** · **Tu bandeja, sin el ruido.**
 - **Brand idea:** **Control, not magic.**
 

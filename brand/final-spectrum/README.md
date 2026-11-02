@@ -5,7 +5,9 @@
 - **Name:** `CleanYourMail` (exact casing: capital **C**, **Y**, **M**; never rename, split with spaces, or publicly abbreviate).
 - **Mark:** **Return Fold** (identical geometry to `brand/final/`): a rounded-square tile containing an envelope whose right and bottom perimeter folds continuously into a left-return arrow (`↩`) below a symmetric V-flap.
 - **Brand idea:** **Control, not magic.**
-- **One-liner:** CleanYourMail is a local-first desktop app—powered by a standard-library Python CLI engine—for reversible IMAP inbox cleanup that reads headers only, plans before action, and gives every move a way back.
+- **One-liner:** CleanYourMail is a local-first IMAP cleanup product: a Python CLI and agent skill today, with a desktop app in development. It reads headers only, plans before action, and gives every move a way back.
+
+> The desktop app icon and app-first tokens are prepared for the planned app. Today the Python CLI and agent skill are the available interfaces.
 - **Tagline (EN):** **Your inbox, minus the noise.**
 - **Tagline (ES):** **Tu bandeja, sin el ruido.**
 

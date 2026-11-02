@@ -7,14 +7,14 @@
 ## Identity essentials
 
 - **Name:** `CleanYourMail` (exact casing: capital **C**, **Y**, **M**; never rename, add spaces, or abbreviate).
-- **One-liner:** CleanYourMail is a local-first desktop app—powered by a standard-library Python CLI engine—for reversible IMAP inbox cleanup that reads headers only, plans before action, and gives every move a way back.
+- **One-liner:** CleanYourMail is a local-first IMAP cleanup product: a Python CLI and agent skill today, with a desktop app in development. It reads headers only, plans before action, and gives every move a way back.
 - **Tagline (EN):** **Your inbox, minus the noise.**
 - **Tagline (ES):** **Tu bandeja, sin el ruido.**
 - **Core idea:** **Control, not magic.**
 
 ## Three pillars
 
-1. **Local by construction.** Runs locally as a desktop GUI app with a Python 3.11+ stdlib CLI engine (MIT). No CleanYourMail account, no telemetry, no third-party API. Reads **headers only** (sender, subject, date, size, flags, unsubscribe headers)—never bodies or attachments.
+1. **Local by construction.** Runs locally today as a Python 3.11+ standard-library CLI and agent skill, with a desktop app in development (MIT). No CleanYourMail account, no telemetry, no third-party API. Reads **headers only** (sender, subject, date, size, flags, unsubscribe headers)—never bodies or attachments.
 2. **Plan before action.** Generates a reviewable plan before moving a single message. Protected mail stays untouched, and there is **no permanent deletion**. Supports Gmail, Outlook/Microsoft 365, Yahoo, iCloud, Fastmail, Proton Bridge, and custom IMAP with `UIDPLUS`/`MOVE`.
 3. **A way back.** Every move is logged in an append-only local journal and verified by `Message-ID` (or `X-GM-MSGID`) on undo. **Reversible applies to moves, not unsubscribe; unsubscribe is separate and irreversible.**
 
@@ -26,7 +26,7 @@
 
 ## Do / Don’t
 
-- **Do** lead with the desktop app as the primary visual interface and the Python CLI as the engine for power users and coding agents.
+- **Do** lead with the local-first product and the Python CLI today; present the desktop app as in development, not shipped.
 - **Do** use `app-icon.svg` for macOS/Windows docks and launchers, `favicon.svg` at 16–32 px, `light.svg` on light surfaces, and `mono.svg` / `app-icon-mono.svg` for single-ink uses.
 - **Don’t** use sparkles, magic wands, robots, shields, clouds, or gradients.
 - **Don’t** distort, rotate, recolor, or place the dark-surface wordmark on a light background.
