@@ -1,8 +1,7 @@
 # CleanYourMail — Spectrum Brand Cheat Sheet
 
-> **Primary app-first identity:** [Family](BRAND-FAMILY.md) — lavender envelope and gold return arrow aligned with CleanYourPhone. This document covers the **Spectrum Pastel alternate**.
 
-**Previous colorway: Return Fold in the Spectrum palette.** CleanYourMail pairs the **Return Fold** envelope-and-undo mark (`↩`) with a neutral carbon canvas (`#121316`), warm off-white text (`#F3F1EC`), and three semantic signal colors: **Orange `#FFB38A`** (plan, primary action, logo tile), **Mint `#A8E6CF`** (journal & undo), and **Yellow `#FFE08A`** (attention & irreversible unsubscribe). Full specifications live in [`brand/final-spectrum/README.md`](../brand/final-spectrum/README.md).
+**Primary identity: Return Fold in the Spectrum palette.** CleanYourMail pairs the **Return Fold** envelope-and-undo mark (`↩`) with a neutral carbon canvas (`#121316`), warm off-white text (`#F3F1EC`), and three semantic signal colors: **Orange `#FFB38A`** (plan, primary action, envelope/arrow mark), **Mint `#A8E6CF`** (journal & undo), and **Yellow `#FFE08A`** (attention & irreversible unsubscribe). Full specifications live in [`brand/final-spectrum/README.md`](../brand/final-spectrum/README.md).
 
 ## Identity essentials
 
@@ -13,18 +12,18 @@
 
 ## Semantic color roles & contrast ratios
 
-- **Orange `#FFB38A` (Primary / Plan / Logo Tile):** Solid Return Fold tile, `Mail` in dark wordmark, primary CTAs, Step 1 (*Plan*). Always pair orange fills with near-black `#121316` text/ink (**10.67:1** AAA; `#FFB38A` on `#2A2C31` panel is **8.03:1** AAA).
+- **Orange `#FFB38A` (Primary / Plan / Mark):** Return Fold line-art mark, `Mail` in dark wordmark, primary CTAs, Step 1 (*Plan*). Always pair orange fills with near-black `#121316` text/ink (**10.67:1** AAA; `#FFB38A` on `#2A2C31` panel is **8.03:1** AAA).
 - **Yellow `#FFE08A` (Attention / Irreversible Unsubscribe):** Warning states and separate unsubscribe badges. Always use near-black `#121316` text on yellow fills (**14.40:1** AAA; `#FFE08A` on `#2A2C31` is **10.83:1** AAA).
-- **Mint `#A8E6CF` (Journal / Undo / Secondary Path):** Undo markers, journal badges, and third ribbon segment (**13.17:1** on `#121316`; **9.90:1** on `#2A2C31`). Use for step markers, icons, and large accents—never small body text on dark.
+- **Mint `#A8E6CF` (Journal / Undo / Secondary Path):** Undo markers, journal badges, and return arrow (**13.17:1** on `#121316`; **9.90:1** on `#2A2C31`). Use for step markers, icons, and large accents—never small body text on dark.
 - **Neutrals:** Carbon background `#121316` · Panel gray `#2A2C31` · Off-white text `#F3F1EC` (**16.46:1** on `#121316`, **12.38:1** on `#2A2C31`) · Muted gray `#A19E96` (**6.94:1** on `#121316`, **5.22:1** on `#2A2C31`).
 - **Light surface (`light.svg` on `#F3F1EC`):** Near-black tile/text `#121316` (**16.46:1**), secondary `#4E4D48` (**7.50:1**), and accessible deep amber `Mail` accent `#7A5A00` (**5.65:1** AA).
 
-## Three-stripe ribbon & logo rules
+## Mark rules
 
-- **Solid symbol tile:** Keep `symbol.svg`, `favicon.svg`, and `app-icon.svg` as a single solid `#FFB38A` tile with `#121316` ink. Never split the symbol into three colors or place the ribbon inside the 16 px favicon.
-- **Restrained horizontal ribbon:** Use a thin (`4–6 px`), orange-dominant (`#FFB38A` / `#FFE08A` / `#A8E6CF`) horizontal rule as a top banner border or small section divider under lockup headers. Never use diagonal esports stripes or put the ribbon behind body copy.
+- **Line-art mark:** Keep the dark `#1B1C21` tile, orange `#FFB38A` envelope and mint `#A8E6CF` return arrow. Never split the mark into more colors.
+- **No decorative ribbon:** The family-aligned mark uses the envelope/arrow split, not a three-stripe ribbon.
 - **Typography:** Wordmark (`wordmark.svg` and lockups) uses outlined `<path>` vectors. Supporting copy uses `"Segoe UI", "Helvetica Neue", Arial, sans-serif` and `Consolas, Menlo, monospace`.
-- **Guardrail copy:** Always state **"headers only"** (never *"no email data at all"*) and state that **reversible applies to moves, while unsubscribe is separate and irreversible**.
+- **Guardrail copy:** Always state **"headers only"** and **reversible moves**, never "no email data at all" or "everything is reversible".
 
 ## Asset map (`brand/final-spectrum/`) & recommendation
 

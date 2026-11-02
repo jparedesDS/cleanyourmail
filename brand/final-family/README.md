@@ -1,5 +1,7 @@
 # CleanYourMail — Family Brand Identity
 
+> **Alternate identity:** CleanYourPhone-aligned lavender/gold palette. The primary CleanYourMail identity is [Spectrum](../final-spectrum/README.md): pastel orange envelope and mint return arrow.
+
 ## 1. The idea
 
 CleanYourMail now follows the **CleanYourPhone family** language: a carbon rounded-square tile, a lavender outline and a single gold action. The mark is the **Return Fold**: an envelope whose right and bottom perimeter folds into a left-return arrow. The envelope is lavender; the return arrow is gold. The wordmark keeps “CleanYour” in off-white and “Mail” in lavender.

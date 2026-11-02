@@ -1,6 +1,5 @@
 # CleanYourMail — Spectrum Brand Identity & App Icon Guide
 
-> **Primary app-first identity:** [Family](../final-family/README.md) — lavender envelope and gold return arrow aligned with CleanYourPhone. This package is the **Spectrum Pastel alternate**.
 
 ## 1. Brand idea & colorway overview
 
@@ -13,7 +12,7 @@
 
 > The desktop app icon and app-first tokens are prepared for the planned app. Today the Python CLI and agent skill are the available interfaces.
 
-The **Spectrum** colorway pairs a neutral carbon background (`#121316`) and warm off-white typography (`#F3F1EC`) with three semantic signal colors—**Orange (`#FFB38A`)**, **Yellow (`#FFE08A`)**, and **Mint (`#A8E6CF`)**—plus a restrained, horizontal three-stripe structural accent. It takes only the color palette and a generic three-stripe bar as inspiration; it avoids diagonal esports slashes, condensed gaming display fonts, or third-party trade dress.
+The **Spectrum** colorway pairs a neutral carbon background (`#121316`) and warm off-white typography (`#F3F1EC`) with three semantic signal colors—**Orange (`#FFB38A`)**, **Yellow (`#FFE08A`)**, and **Mint (`#A8E6CF`)**—The mark uses the line-art envelope/arrow split; it takes only the color palette as inspiration and avoids diagonal esports slashes, condensed gaming display fonts or third-party trade dress.
 
 ---
 
@@ -21,8 +20,8 @@ The **Spectrum** colorway pairs a neutral carbon background (`#121316`) and warm
 
 Rather than using orange, yellow, and mint at equal weight inside the logo, **Spectrum assigns each accent color to a distinct product truth**:
 
-1. **Orange (`#FFB38A`) — Primary Action, Plan, CTA & Logo Tile:**
-   - Used for the solid Return Fold logo tile, `Mail` in the dark-background wordmark, primary action buttons (`Review Plan`), and Step 1 (*Plan before action*).
+1. **Orange (`#FFB38A`) — Primary Action, Plan, CTA & Mark:**
+   - Used for the Return Fold envelope and arrow, `Mail` in the dark-background wordmark, primary action buttons (`Review Plan`), and Step 1 (*Plan before action*).
    - Always use near-black (`#121316`) ink on orange fills (`10.67:1` AAA contrast).
 2. **Mint (`#A8E6CF`) — Journal, Undo & Secondary Path:**
    - Used for append-only journal badges, undo step markers (Step 2: *Journal & undo moves*), and secondary structural accents.
@@ -43,19 +42,19 @@ Rather than using orange, yellow, and mint at equal weight inside the logo, **Sp
 | `muted` | `#A19E96` | Secondary copy, subtitles, technical metadata | `6.94:1` on `#121316` (AA) / `5.22:1` on `#2A2C31` (AA) |
 | `orange` | `#FFB38A` | Logo tile, `Mail` on dark, Plan / primary CTA | `10.67:1` with `#121316` (AAA) / `8.03:1` on `#2A2C31` (AAA) |
 | `yellow` | `#FFE08A` | Warnings & irreversible unsubscribe badges | `14.40:1` with `#121316` (AAA) / `10.83:1` on `#2A2C31` (AAA) |
-| `mint` | `#A8E6CF` | Journal & undo step markers, ribbon third segment | `13.17:1` on `#121316` (AA Large / UI) |
+| `mint` | `#A8E6CF` | Journal & undo step markers, return arrow | `13.17:1` on `#121316` (AA Large / UI) |
 | `light-canvas` | `#F3F1EC` | Light-background surface (`light.svg`) | `16.46:1` with `#121316` (AAA) |
 | `light-secondary` | `#4E4D48` | Supporting text on `#F3F1EC` light canvas | `7.50:1` on `#F3F1EC` (AAA) |
 | `light-amber` | `#7A5A00` | Accessible `Mail` wordmark accent on `#F3F1EC` | `5.65:1` on `#F3F1EC` (AA) |
 
 ---
 
-## 3. Three-stripe ribbon usage
+## Mark usage
 
-- **Keep the symbol solid:** `symbol.svg`, `favicon.svg`, `app-icon.svg`, `mono.svg`, and `app-icon-mono.svg` never split the tile or glyph into three colors. The tile is solid `#FFB38A` with `#121316` ink.
-- **Unequal, orange-led weighting:** The three-stripe accent uses a **2 : 1 : 1** or **3 : 1 : 1** ratio (`#FFB38A` orange first and widest, followed by `#FFE08A` yellow and `#A8E6CF` mint) so orange remains the unmistakable primary brand color.
-- **Calm, horizontal structure:** Use the ribbon as a thin (`4–6 px`) horizontal top border on banners/cards or as a compact (`128–144 px` wide, `4–5 px` tall) horizontal section divider beneath lockup headers.
-- **Where not to use:** Never angle the ribbon as a diagonal background slash, never place it behind body text, and never include it inside `favicon.svg` or `symbol.svg`.
+- **Line-art mark:** `symbol.svg`, `favicon.svg`, `app-icon.svg`, `mono.svg`, and `app-icon-mono.svg` keep the envelope and arrow split. The tile is dark `#1B1C21`; the envelope is orange `#FFB38A`; the return arrow is mint `#A8E6CF`.
+- **No decorative ribbon:** The family-aligned mark does not use a three-stripe ribbon. The envelope/arrow split is the identity.
+- **App icon:** Use the same split at 1024 px with 96 px safe margins; no solid orange fill.
+- **Where not to use:** Never add gradients, glows, sparkles or a solid orange tile.
 
 ---
 
@@ -91,7 +90,7 @@ Rather than using orange, yellow, and mint at equal weight inside the logo, **Sp
 | File | Dimensions / ViewBox | Purpose |
 |---|---|---|
 | `symbol.svg` | `512 × 512` | Solid orange `#FFB38A` Return Fold symbol on `#121316` background. |
-| `favicon.svg` | `64 × 64` | Simplified `16–32 px` orange tile + `#121316` glyph (no ribbon). |
+| `favicon.svg` | `64 × 64` | Simplified 16–32 px line-art mark. |
 | `app-icon.svg` | `1024 × 1024` | Rounded-square desktop app icon with `96 px` safe margins and `#121316`/`#2A2C31` bezel. |
 | `app-icon-mono.svg` | `1024 × 1024` | Single-color (`#121316`) desktop app icon with `96 px` safe margins. |
 | `wordmark.svg` | `604 × 96` | Outlined `<path>` wordmark (`#F3F1EC` `CleanYour` + `#FFB38A` `Mail`). |
@@ -99,7 +98,7 @@ Rather than using orange, yellow, and mint at equal weight inside the logo, **Sp
 | `lockup-stacked.svg` | `640 × 640` | Square stacked lockup with centered 3-stripe structural bar. |
 | `mono.svg` | `512 × 512` | Single-ink (`#121316`) outlined symbol. |
 | `light.svg` | `860 × 192` | Light-background (`#F3F1EC`) lockup with `#121316` tile and `#7A5A00` accessible `Mail` accent. |
-| `banner.svg` | `1600 × 440` | Repository banner with restrained top ribbon, taglines, and semantic step card. |
+| `banner.svg` | `1600 × 440` | Repository banner with taglines, and semantic step card. |
 | `social.svg` | `1280 × 640` | Social / OG card with orange plan, mint undo, and yellow irreversible-unsubscribe roles. |
 | `preview.html` | Responsive HTML | Offline QA preview including side-by-side comparison with `brand/final/`. |
 | `README.md` | Markdown | Full Spectrum brand guide and recommendation. |
