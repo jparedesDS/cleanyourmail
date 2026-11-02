@@ -25,6 +25,7 @@ longer without making it safer or clearer is probably a bad change.
 | `CHANGELOG.md` | Release notes. |
 | `RELEASING.md` | Maintainer release checklist, versioning and tag steps. |
 | `CLAUDE.md` | Concise Claude Code context; this file is the full maintainer guide. |
+| `brand/final/` | Final Return Fold identity: symbol, app icon, wordmark, lockups, banner, social card and offline preview. |
 | `https://github.com/jparedesDS/cleanyourmail-web` | Static English/Spanish landing page (separate repo). |
 | `.github/` | CI, issue templates and PR template. |
 | `tools/mail.py` | CLI: `init`, `validate`, `doctor`, `folders`, `scan`, `report`, `plan`, `apply`, `unsubscribe`, `unsubs`, `journal`, `undo`, `rules`. Stdlib only. |
@@ -37,7 +38,7 @@ longer without making it safer or clearer is probably a bad change.
 | `tools/journal.py` | Append-only undo journal. |
 | `tools/unsub.py` | RFC 8058/mailto unsubscribe, SSRF guard. |
 | `tools/rules.py` | Gmail filter XML and Sieve export. |
-| `docs/` | `SAFETY.md`, `PROVIDERS.md`, `TROUBLESHOOTING.md`, `UNSUBSCRIBE.md`, `FOLDERS.md`, `FAQ.md`, `TRANSLATIONS.md`, `VALIDATION.md`. |
+| `docs/` | `SAFETY.md`, `PROVIDERS.md`, `TROUBLESHOOTING.md`, `UNSUBSCRIBE.md`, `FOLDERS.md`, `FAQ.md`, `TRANSLATIONS.md`, `VALIDATION.md`, `BRAND.md`. |
 | `tests/` | `unittest` suite with an in-process fake IMAP server. No real mail. |
 | `examples/cleanyourmail.toml` | Annotated example config. |
 

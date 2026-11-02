@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CleanYourMail — Final Brand Identity &amp; App Icon Package</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07100d;
+      --panel: #0d1a15;
+      --elevated: #11231b;
+      --text: #eef8ee;
+      --secondary: #9eb4a7;
+      --tertiary: #6f8578;
+      --lime: #b9f36a;
+      --teal: #6ee7c8;
+      --light-bg: #f4f8f1;
+      --light-text: #102019;
+      --light-secondary: #42564b;
+      --light-accent: #3f721c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+    }
+    main {
+      width: min(1440px, calc(100% - 64px));
+      margin: 0 auto;
+      padding: 48px 0 80px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 32px;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--elevated);
+      padding-bottom: 28px;
+      margin-bottom: 36px;
+    }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(28px, 4vw, 46px); letter-spacing: -0.03em; font-weight: 700; }
+    h2 { font-size: 22px; letter-spacing: -0.02em; margin-bottom: 6px; }
+    h3 { font-size: 14px; font-weight: 600; color: var(--secondary); margin-bottom: 12px; }
+    .eyebrow {
+      color: var(--lime);
+      font: 700 12px/1.4 Consolas, Menlo, monospace;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .lede {
+      color: var(--secondary);
+      max-width: 680px;
+      margin-top: 10px;
+      font-size: 17px;
+    }
+    .tagline-box { text-align: right; }
+    .tagline { color: var(--text); font-size: 20px; font-weight: 600; white-space: nowrap; }
+    .tagline-es { color: var(--teal); font-size: 15px; margin-top: 4px; white-space: nowrap; }
+    section { margin-top: 40px; }
+    .section-note { color: var(--secondary); font-size: 14px; margin-bottom: 18px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--elevated);
+      border-radius: 20px;
+      padding: 26px;
+    }
+    .sizes {
+      display: flex;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 32px;
+    }
+    .size {
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+      min-width: 56px;
+    }
+    .size img { display: block; }
+    .size span, .caption {
+      color: var(--tertiary);
+      font: 12px Consolas, Menlo, monospace;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
+    }
+    .asset { overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
+    .asset img { display: block; max-width: 100%; height: auto; }
+    .asset .caption { margin-top: 14px; }
+    .lockup-wide { width: 100%; border-radius: 12px; }
+    .stacked { max-width: 380px; margin: 0 auto; border-radius: 12px; }
+    .light-wrap {
+      background: var(--light-bg);
+      border-radius: 14px;
+      padding: 18px;
+      display: grid;
+      place-items: center;
+    }
+    .mono-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 24px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .dock-stage {
+      border-radius: 16px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .dock-stage.dark {
+      background: #050c09;
+      border: 1px solid var(--elevated);
+    }
+    .dock-stage.light {
+      background: #e4ede0;
+      border: 1px solid #c8d6c3;
+      color: var(--light-text);
+    }
+    .dock-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px;
+      border-radius: 22px;
+    }
+    .dock-stage.dark .dock-bar {
+      background: #0d1a15;
+      border: 1px solid #193327;
+    }
+    .dock-stage.light .dock-bar {
+      background: #f4f8f1;
+      border: 1px solid #cad8c5;
+    }
+    .dock-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .dock-placeholder {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font: 700 12px Consolas, Menlo, monospace;
+    }
+    .dock-stage.dark .dock-placeholder {
+      background: #11231b;
+      color: var(--tertiary);
+      border: 1px solid #1c362a;
+    }
+    .dock-stage.light .dock-placeholder {
+      background: #dce6d7;
+      color: var(--light-secondary);
+      border: 1px solid #c2d0bc;
+    }
+    .dock-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--lime);
+    }
+    .dock-stage.light .dock-dot {
+      background: var(--light-accent);
+    }
+    .taskbar-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font: 12px Consolas, Menlo, monospace;
+    }
+    .dock-stage.dark .taskbar-row { color: var(--secondary); }
+    .dock-stage.light .taskbar-row { color: var(--light-secondary); }
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 12px;
+    }
+    .swatch {
+      border: 1px solid var(--elevated);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--panel);
+    }
+    .swatch-color { height: 56px; }
+    .swatch-info {
+      padding: 10px 12px;
+      font: 12px/1.5 Consolas, Menlo, monospace;
+      color: var(--secondary);
+    }
+    .swatch-info strong {
+      color: var(--text);
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-weight: 600;
+    }
+    .card img { width: 100%; height: auto; border-radius: 12px; display: block; }
+    footer {
+      border-top: 1px solid var(--elevated);
+      margin-top: 48px;
+      padding-top: 24px;
+      color: var(--tertiary);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <div class="eyebrow">App-First Final Identity · Return Fold</div>
+        <h1>CleanYourMail</h1>
+        <p class="lede">Control, not magic. A local-first desktop app and Python CLI engine for reversible IMAP inbox cleanup—headers only, plan before action, and a way back for every move.</p>
+      </div>
+      <div class="tagline-box">
+        <p class="tagline">Your inbox, minus the noise.</p>
+        <p class="tagline-es">Tu bandeja, sin el ruido.</p>
+      </div>
+    </header>
+
+    <section>
+      <h2>Symbol scale test (16 px – 256 px)</h2>
+      <p class="section-note">The dark-background Return Fold symbol across 16, 24, 32, 64, 128 and 256 px. The envelope's right and bottom perimeter forms a continuous left-return arrow (↩) with generous negative space.</p>
+      <div class="panel sizes">
+        <div class="size"><img src="symbol.svg" alt="CleanYourMail symbol at 16 pixels" width="16" height="16"><span>16 px</span></div>
+        <div class="size"><img src="symbol.svg" alt="CleanYourMail symbol at 24 pixels" width="24" height="24"><span>24 px</span></div>
+        <div class="size"><img src="symbol.svg" alt="CleanYourMail symbol at 32 pixels" width="32" height="32"><span>32 px</span></div>
+        <div class="size"><img src="symbol.svg" alt="CleanYourMail symbol at 64 pixels" width="64" height="64"><span>64 px</span></div>
+        <div class="size"><img src="symbol.svg" alt="CleanYourMail symbol at 128 pixels" width="128" height="128"><span>128 px</span></div>
+        <div class="size"><img src="symbol.svg" alt="CleanYourMail symbol at 256 pixels" width="256" height="256"><span>256 px</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Desktop app icon — dark &amp; light dock / taskbar mock</h2>
+      <p class="section-note">1024×1024 rounded-square desktop app icon with macOS and Windows safe margins, shown on dark and light docks (64 px), Windows taskbar size (32 px), and large launcher view (128 px).</p>
+      <div class="grid">
+        <div class="panel asset">
+          <div class="dock-stage dark">
+            <div class="taskbar-row">
+              <img src="app-icon.svg" alt="App icon at 128 pixels" width="128" height="128">
+              <div>
+                <strong style="color:#eef8ee;display:block;margin-bottom:4px;">Dark Desktop Dock &amp; Taskbar</strong>
+                <span>1024×1024 master · 64 px dock · 32 px taskbar</span>
+              </div>
+            </div>
+            <div class="dock-bar">
+              <div class="dock-item"><div class="dock-placeholder">IMAP</div></div>
+              <div class="dock-item">
+                <img src="app-icon.svg" alt="CleanYourMail app icon on dark dock" width="64" height="64">
+                <div class="dock-dot"></div>
+              </div>
+              <div class="dock-item"><div class="dock-placeholder">CLI</div></div>
+              <div class="dock-item">
+                <img src="app-icon.svg" alt="CleanYourMail app icon on dark taskbar" width="32" height="32">
+              </div>
+            </div>
+          </div>
+          <div class="caption">app-icon.svg · dark desktop dock &amp; taskbar</div>
+        </div>
+
+        <div class="panel asset">
+          <div class="dock-stage light">
+            <div class="taskbar-row">
+              <img src="app-icon.svg" alt="App icon on light surface at 128 pixels" width="128" height="128">
+              <img src="app-icon-mono.svg" alt="Monochrome app icon at 96 pixels" width="96" height="96">
+            </div>
+            <div class="dock-bar">
+              <div class="dock-item"><div class="dock-placeholder">MAIL</div></div>
+              <div class="dock-item">
+                <img src="app-icon.svg" alt="CleanYourMail app icon on light dock" width="64" height="64">
+                <div class="dock-dot"></div>
+              </div>
+              <div class="dock-item">
+                <img src="app-icon-mono.svg" alt="CleanYourMail monochrome app icon on light dock" width="64" height="64">
+              </div>
+              <div class="dock-item">
+                <img src="app-icon.svg" alt="CleanYourMail app icon at 32 pixels on light taskbar" width="32" height="32">
+              </div>
+            </div>
+          </div>
+          <div class="caption">app-icon.svg &amp; app-icon-mono.svg · light dock &amp; monochrome variant</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Favicon and monochrome symbol</h2>
+      <p class="section-note">favicon.svg simplifies the grid and thickens strokes for 16–32 px browser tabs. mono.svg and app-icon-mono.svg use a single ink with no fill dependency.</p>
+      <div class="grid">
+        <div class="panel asset">
+          <div class="sizes">
+            <div class="size"><img src="favicon.svg" alt="CleanYourMail favicon at 16 pixels" width="16" height="16"><span>16 px</span></div>
+            <div class="size"><img src="favicon.svg" alt="CleanYourMail favicon at 24 pixels" width="24" height="24"><span>24 px</span></div>
+            <div class="size"><img src="favicon.svg" alt="CleanYourMail favicon at 32 pixels" width="32" height="32"><span>32 px</span></div>
+            <div class="size"><img src="favicon.svg" alt="CleanYourMail favicon at 64 pixels" width="64" height="64"><span>64 px</span></div>
+          </div>
+          <div class="caption">favicon.svg · 16–32 px browser &amp; tray icon</div>
+        </div>
+        <div class="panel asset">
+          <div class="light-wrap">
+            <div class="mono-row">
+              <img src="mono.svg" alt="Single-color CleanYourMail symbol" width="128" height="128">
+              <img src="app-icon-mono.svg" alt="Single-color CleanYourMail app icon" width="128" height="128">
+            </div>
+          </div>
+          <div class="caption">mono.svg &amp; app-icon-mono.svg · one-color stamp, emboss &amp; monochrome icon</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Primary lockups</h2>
+      <p class="section-note">Horizontal lockup for app headers, documentation and website navigation; stacked lockup for square cards and social avatars.</p>
+      <div class="grid">
+        <div class="panel asset">
+          <img class="lockup-wide" src="lockup-horizontal.svg" alt="CleanYourMail horizontal lockup" width="860" height="192">
+          <div class="caption">lockup-horizontal.svg · primary lockup</div>
+        </div>
+        <div class="panel asset">
+          <img class="stacked" src="lockup-stacked.svg" alt="CleanYourMail stacked lockup" width="640" height="640">
+          <div class="caption">lockup-stacked.svg · square / social lockup</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Wordmark and light-background variant</h2>
+      <p class="section-note">The CleanYourMail wordmark uses outlined vector paths (no font dependency). light.svg pairs a dark forest tile with an accessible deep-green Mail accent (#3f721c).</p>
+      <div class="grid">
+        <div class="panel asset">
+          <img class="lockup-wide" src="wordmark.svg" alt="CleanYourMail outlined wordmark" width="604" height="96">
+          <div class="caption">wordmark.svg · outlined vector paths (capital C, Y, M)</div>
+        </div>
+        <div class="panel asset">
+          <div class="light-wrap">
+            <img class="lockup-wide" src="light.svg" alt="CleanYourMail horizontal lockup on light background" width="860" height="192">
+          </div>
+          <div class="caption">light.svg · light-background lockup (#f4f8f1 canvas)</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Repository banner (1600 × 440)</h2>
+      <p class="section-note">banner.svg · App-first positioning, English and Spanish taglines, and the 3 local guardrails.</p>
+      <div class="panel card"><img src="banner.svg" alt="CleanYourMail repository banner" width="1600" height="440"></div>
+    </section>
+
+    <section>
+      <h2>Social / Open Graph card (1280 × 640)</h2>
+      <p class="section-note">social.svg · Local desktop app + Python CLI engine, with explicit reversible-move and separate-unsubscribe truth.</p>
+      <div class="panel card"><img src="social.svg" alt="CleanYourMail social card" width="1280" height="640"></div>
+    </section>
+
+    <section>
+      <h2>Brand color tokens</h2>
+      <div class="swatches">
+        <div class="swatch"><div class="swatch-color" style="background:#07100d"></div><div class="swatch-info"><strong>Background</strong><br>#07100d</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#0d1a15"></div><div class="swatch-info"><strong>Panel</strong><br>#0d1a15</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#11231b"></div><div class="swatch-info"><strong>Elevated</strong><br>#11231b</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#eef8ee"></div><div class="swatch-info"><strong>Text</strong><br>#eef8ee</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#9eb4a7"></div><div class="swatch-info"><strong>Secondary</strong><br>#9eb4a7</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#6f8578"></div><div class="swatch-info"><strong>Tertiary</strong><br>#6f8578</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#b9f36a"></div><div class="swatch-info"><strong>Accent (Lime)</strong><br>#b9f36a</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#6ee7c8"></div><div class="swatch-info"><strong>Secondary Accent</strong><br>#6ee7c8</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#f4f8f1"></div><div class="swatch-info"><strong>Light Canvas</strong><br>#f4f8f1</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#3f721c"></div><div class="swatch-info"><strong>Light Accent</strong><br>#3f721c</div></div>
+      </div>
+    </section>
+
+    <footer>CleanYourMail · Your inbox, minus the noise. · Tu bandeja, sin el ruido. · Static offline preview: sibling SVG files only, no scripts or external network requests.</footer>
+  </main>
+</body>
+</html>

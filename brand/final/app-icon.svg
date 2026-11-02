@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">CleanYourMail desktop app icon</title>
+  <desc id="desc">1024x1024 rounded-square desktop app icon with macOS and Windows safe margins and the Return Fold mark.</desc>
+  <rect x="96" y="96" width="832" height="832" rx="192" fill="#07100d"/>
+  <rect x="104" y="104" width="816" height="816" rx="184" fill="none" stroke="#11231b" stroke-width="8"/>
+  <rect x="152" y="152" width="720" height="720" rx="156" fill="#b9f36a"/>
+  <g fill="none" stroke="#07100d" stroke-width="52" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M276 540 V356 A48 48 0 0 1 324 308 H700 A48 48 0 0 1 748 356 V616 A48 48 0 0 1 700 664 H392"/>
+    <path d="M290 328 L484 476 Q512 496 540 476 L734 328"/>
+    <path d="M460 588 L380 664 L460 740"/>
+  </g>
+</svg>
