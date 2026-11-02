@@ -12,8 +12,8 @@
       --panel-inner: #191B20;
       --text: #F3F1EC;
       --muted: #A19E96;
+      --orange: #FFB38A;
       --yellow: #FFE08A;
-      --peach: #FFB38A;
       --mint: #A8E6CF;
       --light-bg: #F3F1EC;
       --light-text: #121316;
@@ -33,8 +33,8 @@
       height: 5px;
       width: 100%;
     }
-    .top-ribbon .r-yellow { flex: 6; background: var(--yellow); }
-    .top-ribbon .r-peach { flex: 2; background: var(--peach); }
+    .top-ribbon .r-orange { flex: 6; background: var(--orange); }
+    .top-ribbon .r-yellow { flex: 2; background: var(--yellow); }
     .top-ribbon .r-mint { flex: 2; background: var(--mint); }
     main {
       width: min(1440px, calc(100% - 64px));
@@ -55,7 +55,7 @@
     h2 { font-size: 22px; letter-spacing: -0.02em; margin-bottom: 6px; }
     h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
     .eyebrow {
-      color: var(--yellow);
+      color: var(--orange);
       font: 700 12px/1.4 Consolas, Menlo, monospace;
       letter-spacing: 0.16em;
       text-transform: uppercase;
@@ -69,7 +69,7 @@
     }
     .tagline-box { text-align: right; }
     .tagline { color: var(--text); font-size: 20px; font-weight: 600; white-space: nowrap; }
-    .tagline-es { color: var(--yellow); font-size: 15px; font-weight: 600; margin-top: 4px; white-space: nowrap; }
+    .tagline-es { color: var(--orange); font-size: 15px; font-weight: 600; margin-top: 4px; white-space: nowrap; }
     section { margin-top: 42px; }
     .section-note { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
     .panel {
@@ -178,7 +178,7 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background: var(--yellow);
+      background: var(--orange);
     }
     .dock-stage.light .dock-dot {
       background: var(--light-text);
@@ -251,8 +251,8 @@
 </head>
 <body>
   <div class="top-ribbon" aria-hidden="true">
+    <div class="r-orange"></div>
     <div class="r-yellow"></div>
-    <div class="r-peach"></div>
     <div class="r-mint"></div>
   </div>
   <main>
@@ -260,7 +260,7 @@
       <div>
         <div class="eyebrow">Spectrum Colorway · Return Fold Identity</div>
         <h1>CleanYourMail</h1>
-        <p class="lede">Control, not magic. The Return Fold desktop app and CLI identity in the high-contrast Spectrum palette: warm yellow primary tile, mint journal/undo markers, and peach irreversible-unsubscribe warnings.</p>
+        <p class="lede">Control, not magic. The Return Fold desktop app and CLI identity in the high-contrast Spectrum palette: warm orange primary tile, mint journal/undo markers, and yellow irreversible-unsubscribe warnings.</p>
       </div>
       <div class="tagline-box">
         <p class="tagline">Your inbox, minus the noise.</p>
@@ -270,7 +270,7 @@
 
     <section>
       <h2>Symbol scale test (16 px – 256 px)</h2>
-      <p class="section-note">Solid yellow (#FFE08A) tile with a single near-black (#121316) Return Fold glyph (14.40:1 contrast). The three-stripe ribbon is never placed inside the symbol or favicon.</p>
+      <p class="section-note">Solid orange (#FFB38A) tile with a single near-black (#121316) Return Fold glyph (10.67:1 contrast). The three-stripe ribbon is never placed inside the symbol or favicon.</p>
       <div class="panel sizes">
         <div class="size"><img src="symbol.svg" alt="CleanYourMail Spectrum symbol at 16 pixels" width="16" height="16"><span>16 px</span></div>
         <div class="size"><img src="symbol.svg" alt="CleanYourMail Spectrum symbol at 24 pixels" width="24" height="24"><span>24 px</span></div>
@@ -283,7 +283,7 @@
 
     <section>
       <h2>Desktop app icon — dark &amp; light dock / taskbar mock</h2>
-      <p class="section-note">1024×1024 rounded-square desktop app icon with 96 px macOS/Windows safe margins, dark #121316 outer bezel, #2A2C31 inner rim, and #FFE08A Return Fold badge.</p>
+      <p class="section-note">1024×1024 rounded-square desktop app icon with 96 px macOS/Windows safe margins, dark #121316 outer bezel, #2A2C31 inner rim, and #FFB38A Return Fold badge.</p>
       <div class="grid">
         <div class="panel asset">
           <div class="dock-stage dark">
@@ -361,7 +361,7 @@
 
     <section>
       <h2>Primary lockups &amp; restrained three-stripe accent</h2>
-      <p class="section-note">The symbol stays a solid yellow tile; the three-stripe structural rule (yellow dominant, peach, mint) sits calmly below the wordmark.</p>
+      <p class="section-note">The symbol stays a solid orange tile; the three-stripe structural rule (orange dominant, yellow, mint) sits calmly below the wordmark.</p>
       <div class="grid">
         <div class="panel asset">
           <img class="lockup-wide" src="lockup-horizontal.svg" alt="CleanYourMail Spectrum horizontal lockup" width="860" height="192">
@@ -376,7 +376,7 @@
 
     <section>
       <h2>Wordmark and light-background variant</h2>
-      <p class="section-note">wordmark.svg uses outlined vector paths (#F3F1EC CleanYour + #FFE08A Mail). light.svg uses #F3F1EC canvas, #121316 tile, and accessible deep amber #7A5A00 (5.65:1) for Mail.</p>
+      <p class="section-note">wordmark.svg uses outlined vector paths (#F3F1EC CleanYour + #FFB38A Mail). light.svg uses #F3F1EC canvas, #121316 tile, and accessible deep amber #7A5A00 (5.65:1) for Mail.</p>
       <div class="grid">
         <div class="panel asset">
           <img class="lockup-wide" src="wordmark.svg" alt="CleanYourMail Spectrum outlined wordmark" width="604" height="96">
@@ -399,7 +399,7 @@
 
     <section>
       <h2>Social / Open Graph card (1280 × 640)</h2>
-      <p class="section-note">social.svg · Local desktop app + Python CLI engine with yellow plan, mint undo, and peach irreversible-unsubscribe callout.</p>
+      <p class="section-note">social.svg · Local desktop app + Python CLI engine with orange plan, mint undo, and yellow irreversible-unsubscribe callout.</p>
       <div class="panel card"><img src="social.svg" alt="CleanYourMail Spectrum social card" width="1280" height="640"></div>
     </section>
 
@@ -408,9 +408,9 @@
       <p class="section-note">Each accent color maps to a specific product truth rather than equal-weight decoration.</p>
       <div class="roles-grid">
         <div class="role-card">
-          <span class="role-pill" style="background:#FFE08A;color:#121316;">YELLOW · #FFE08A · 14.40:1</span>
+          <span class="role-pill" style="background:#FFB38A;color:#121316;">ORANGE · #FFB38A · 10.67:1</span>
           <h3>Primary Action, Plan &amp; Logo Tile</h3>
-          <p class="section-note" style="margin:0;">Used for the Return Fold tile, "Mail" in the dark wordmark, primary CTAs ("Review Plan"), and step 1. Always pair yellow surfaces with near-black (#121316) ink.</p>
+          <p class="section-note" style="margin:0;">Used for the Return Fold tile, "Mail" in the dark wordmark, primary CTAs ("Review Plan"), and step 1. Always pair orange surfaces with near-black (#121316) ink.</p>
         </div>
         <div class="role-card">
           <span class="role-pill" style="background:#A8E6CF;color:#121316;">MINT · #A8E6CF · 13.17:1</span>
@@ -418,9 +418,9 @@
           <p class="section-note" style="margin:0;">Used for append-only journal badges, undo step markers, and secondary graphic accents. Never use for small body text on dark backgrounds.</p>
         </div>
         <div class="role-card">
-          <span class="role-pill" style="background:#FFB38A;color:#121316;">PEACH · #FFB38A · 10.67:1</span>
+          <span class="role-pill" style="background:#FFE08A;color:#121316;">YELLOW · #FFE08A · 14.40:1</span>
           <h3>Attention &amp; Irreversible Unsubscribe</h3>
-          <p class="section-note" style="margin:0;">Reserved for warnings and the separate, irreversible unsubscribe flow. Use near-black (#121316) text on peach badges.</p>
+          <p class="section-note" style="margin:0;">Reserved for warnings and the separate, irreversible unsubscribe flow. Use near-black (#121316) text on yellow badges.</p>
         </div>
       </div>
 
@@ -429,8 +429,8 @@
         <div class="swatch"><div class="swatch-color" style="background:#2A2C31"></div><div class="swatch-info"><strong>Panel Gray</strong><br>#2A2C31</div></div>
         <div class="swatch"><div class="swatch-color" style="background:#F3F1EC"></div><div class="swatch-info"><strong>Off-White Text</strong><br>#F3F1EC · 16.46:1</div></div>
         <div class="swatch"><div class="swatch-color" style="background:#A19E96"></div><div class="swatch-info"><strong>Muted Gray</strong><br>#A19E96 · 6.94:1</div></div>
-        <div class="swatch"><div class="swatch-color" style="background:#FFE08A"></div><div class="swatch-info"><strong>Primary Yellow</strong><br>#FFE08A · 14.40:1</div></div>
-        <div class="swatch"><div class="swatch-color" style="background:#FFB38A"></div><div class="swatch-info"><strong>Warning Peach</strong><br>#FFB38A · 10.67:1</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#FFB38A"></div><div class="swatch-info"><strong>Primary Orange</strong><br>#FFB38A · 10.67:1</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#FFE08A"></div><div class="swatch-info"><strong>Warning Yellow</strong><br>#FFE08A · 14.40:1</div></div>
         <div class="swatch"><div class="swatch-color" style="background:#A8E6CF"></div><div class="swatch-info"><strong>Undo Mint</strong><br>#A8E6CF · 13.17:1</div></div>
         <div class="swatch"><div class="swatch-color" style="background:#7A5A00"></div><div class="swatch-info"><strong>Light Amber</strong><br>#7A5A00 · 5.65:1</div></div>
       </div>
@@ -449,7 +449,7 @@
           </div>
           <img class="lockup-wide" src="lockup-horizontal.svg" alt="Spectrum horizontal lockup" width="860" height="192">
           <div style="margin-top:14px;"><img class="lockup-wide" src="banner.svg" alt="Spectrum banner" width="1600" height="440"></div>
-          <div class="caption">Neutral carbon #121316 + #FFE08A / #FFB38A / #A8E6CF semantic accents</div>
+          <div class="caption">Neutral carbon #121316 + #FFB38A / #FFE08A / #A8E6CF semantic accents</div>
         </div>
 
         <div class="panel asset" style="background:#07100d;border-color:#11231b;">

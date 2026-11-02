@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="860" height="192" viewBox="0 0 860 192" role="img" aria-labelledby="title desc">
   <title id="title">CleanYourMail Spectrum light-background lockup</title>
-  <desc id="desc">Light-background lockup on warm off-white (#F3F1EC) with a near-black (#121316) tile, yellow (#FFE08A) Return Fold glyph, and accessible deep amber (#7A5A00) Mail wordmark accent.</desc>
+  <desc id="desc">Light-background lockup on warm off-white (#F3F1EC) with a near-black (#121316) tile, yellow (#FFB38A) Return Fold glyph, and accessible deep amber (#7A5A00) Mail wordmark accent.</desc>
   <rect width="860" height="192" fill="#F3F1EC"/>
   <g transform="translate(24 8) scale(0.34375)">
     <rect x="40" y="40" width="432" height="432" rx="112" fill="#121316"/>
-    <g fill="none" stroke="#FFE08A" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
+    <g fill="none" stroke="#FFB38A" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
     <path d="M116 276 V168 A28 28 0 0 1 144 140 H368 A28 28 0 0 1 396 168 V320 A28 28 0 0 1 368 348 H184"/>
     <path d="M124 152 L240 238 Q256 250 272 238 L388 152"/>
     <path d="M224 304 L178 348 L224 392"/>
@@ -16,8 +16,8 @@
     <path fill="#7A5A00" d="M494.5 76H480.8V39Q480.8 33 481.3 25.7H480.9Q479.9 31.4 479 33.9L464.5 76H453.1L438.3 34.4Q437.7 32.7 436.4 25.7H436Q436.6 34.9 436.6 41.8V76H424V14.1H444.4L457.1 50.8Q458.6 55.2 459.3 59.6H459.5Q460.7 54.5 462 50.7L474.6 14.1H494.5Z M543.1 76H530.2V69.7H530Q525.6 77.1 516.8 77.1Q510.4 77.1 506.7 73.4Q503 69.8 503 63.7Q503 50.8 518.3 48.9L530.3 47.3Q530.3 40 522.4 40Q514.5 40 507.4 44.7V34.4Q510.2 33 515.2 31.9Q520.1 30.7 524.2 30.7Q543.1 30.7 543.1 49.6ZM530.3 58V55.1L522.2 56.1Q515.6 57 515.6 62.1Q515.6 64.4 517.2 65.9Q518.8 67.4 521.6 67.4Q525.4 67.4 527.9 64.8Q530.3 62.1 530.3 58Z M559.8 24.8Q556.4 24.8 554.2 22.8Q552 20.7 552 17.7Q552 14.7 554.2 12.7Q556.4 10.8 559.8 10.8Q563.3 10.8 565.5 12.7Q567.7 14.7 567.7 17.7Q567.7 20.8 565.5 22.8Q563.3 24.8 559.8 24.8ZM566.6 76H552.9V31.8H566.6Z M590.7 76H577.1V10.6H590.7Z"/>
   </g>
   <g transform="translate(224 140)">
-    <rect x="0" y="0" width="64" height="5" rx="2.5" fill="#FFE08A"/>
-    <rect x="72" y="0" width="32" height="5" rx="2.5" fill="#FFB38A"/>
+    <rect x="0" y="0" width="64" height="5" rx="2.5" fill="#FFB38A"/>
+    <rect x="72" y="0" width="32" height="5" rx="2.5" fill="#FFE08A"/>
     <rect x="112" y="0" width="32" height="5" rx="2.5" fill="#A8E6CF"/>
   </g>
 </svg>
