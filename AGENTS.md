@@ -25,7 +25,7 @@ longer without making it safer or clearer is probably a bad change.
 | `CHANGELOG.md` | Release notes. |
 | `RELEASING.md` | Maintainer release checklist, versioning and tag steps. |
 | `CLAUDE.md` | Concise Claude Code context; this file is the full maintainer guide. |
-| `brand/final-spectrum/` | Primary app-first Spectrum identity: pastel orange envelope, mint return arrow, app icon, banners, social card and offline preview. |
+| `brand/final-spectrum/` | Primary skill-first Spectrum identity: pastel orange envelope, mint return arrow, app icon, banners, social card and offline preview. |
 | `brand/final-family/` | CleanYourPhone-aligned lavender/gold alternate identity. |
 | `brand/final/` | Forest/Lime alternate identity and classic CLI colorway. |
 | `https://github.com/jparedesDS/cleanyourmail-app` | Local app UI; wraps the CLI and uses the same plan, journal and safety rules. |

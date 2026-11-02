@@ -109,9 +109,9 @@ See [`docs/BRAND-SPECTRUM.md`](../../docs/BRAND-SPECTRUM.md) for the one-page ch
 
 ## 7. Recommendation: Replace Green or Keep Spectrum as an Alternate?
 
-**Recommendation: Adopt Spectrum (`brand/final-spectrum/`) as the primary app-first identity—or offer it as the default dark theme while retaining Forest/Lime (`brand/final/`) as a classic CLI theme.**
+**Recommendation: Adopt Spectrum (`brand/final-spectrum/`) as the primary skill-first identity-or offer it as the default dark theme while retaining Forest/Lime (`brand/final/`) as a classic CLI theme.**
 
-Why **Spectrum** is exceptionally strong for an **app-first** CleanYourMail:
+Why **Spectrum** is exceptionally strong for a **skill-first** CleanYourMail:
 1. **Built-in semantic hierarchy for a safety-critical GUI:** Unlike the monochrome green/teal palette (where both safe moves and warnings have to borrow outside colors or rely on subtle green shades), Spectrum gives the desktop app a native, high-contrast functional vocabulary right out of the brand palette:
    - **Orange (`#FFB38A`)** = *Plan / Review before action* (primary constructive action).
    - **Mint (`#A8E6CF`)** = *Journal / Undo* (the verified way back).
