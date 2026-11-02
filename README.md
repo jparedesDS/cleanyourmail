@@ -261,7 +261,8 @@ no-UIDPLUS refusals, CLI flows and the skill document.
 - [docs/UNSUBSCRIBE.md](docs/UNSUBSCRIBE.md) — RFC 8058, mailto, manual links, SSRF guard.
 - [docs/FOLDERS.md](docs/FOLDERS.md) — taxonomy, Gmail labels, archive mode, rules.
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — auth, IMAP, folders, rate limits, undo.
-- [docs/FAQ.md](docs/FAQ.md) — the questions people ask.
+- [docs/FAQ.md](docs/FAQ.md) - the questions people ask.
+- [docs/BRAND-SPECTRUM.md](docs/BRAND-SPECTRUM.md) - primary app-first identity; [docs/BRAND.md](docs/BRAND.md) - Forest/Lime alternate.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — development setup, tests and safety invariants.
 - [Website](https://github.com/jparedesDS/cleanyourmail-web) — the static landing page.
 

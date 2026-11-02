@@ -6,10 +6,12 @@
 
 - **Name:** `CleanYourMail` (exact casing: capital **C**, **Y**, **M**; never rename, split with spaces, or publicly abbreviate).
 - **Brand idea:** **Control, not magic.**
-- **One-liner:** CleanYourMail is a local-first desktop app—powered by a standard-library Python CLI engine—for reversible IMAP inbox cleanup that reads headers only, plans before action, and gives every move a way back.
+- **One-liner:** CleanYourMail is a local-first IMAP cleanup product: a Python CLI and agent skill today, with a desktop app in development. It reads headers only, plans before action, and gives every move a way back.
+
+> The desktop app icon and app-first tokens are prepared for the planned app. Today the Python CLI and agent skill are the available interfaces.
 - **Tagline (EN):** **Your inbox, minus the noise.**
 - **Tagline (ES):** **Tu bandeja, sin el ruido.**
-- **Audience:** Non-technical people who want a calm visual desktop app, plus developers and coding agents who use the Python 3.11+ CLI engine. The desktop app is the primary interface; the CLI is the engine.
+- **Audience:** Non-technical people who want a calm visual app (the desktop app is in development), plus developers and coding agents who use the Python 3.11+ CLI engine. Today the CLI and agent skill are the available interfaces; the desktop app is the intended primary interface.
 
 ### Three directions explored internally
 
@@ -21,7 +23,7 @@
 
 ## 2. Three pillars & product truth
 
-1. **Local by construction.** CleanYourMail is a local desktop application with a Python 3.11+ standard-library CLI engine (MIT)—not a hosted SaaS. There is no CleanYourMail account, no telemetry, and no third-party API. It reads **headers only** (sender, subject, date, size, flags, and unsubscribe headers)—**say "headers only", never "no email data at all."** Message bodies and attachments are never fetched.
+1. **Local by construction.** CleanYourMail runs locally today as a Python 3.11+ standard-library CLI and agent skill, with a desktop app in development. It is not a hosted SaaS. There is no CleanYourMail account, no telemetry, and no third-party API. It reads **headers only** (sender, subject, date, size, flags, and unsubscribe headers)—**say "headers only", never "no email data at all."** Message bodies and attachments are never fetched.
 2. **Plan before action.** Every cleanup starts with an inspectable plan. Protected mail (personal, transactional, banking, security, medical, legal, travel, invoice, government, starred, answered, recent) is excluded from automatic actions, and there is **no permanent deletion**. Works with Gmail, Outlook/Microsoft 365, Yahoo, iCloud, Fastmail, Proton Bridge, and custom IMAP servers supporting `UIDPLUS` or `MOVE`.
 3. **A way back.** Every move is recorded in an append-only local journal and verified by `Message-ID` (or `X-GM-MSGID`) before restore. **“Reversible” applies strictly to moves, not unsubscribe. Unsubscribe is a separate, irreversible flow.**
 
@@ -101,7 +103,7 @@ The existing dark forest, lime, and teal palette is preserved without gradients.
 
 ### Do
 - Keep the exact `CleanYourMail` casing (capital **C**, **Y**, **M**) and exact tagline punctuation.
-- Lead with the **local desktop app** powered by the **Python CLI engine**.
+- Lead with the **local-first product** and the **Python CLI engine** today; present the desktop app as **in development**, not shipped.
 - State clearly that CleanYourMail reads **headers only** (sender, subject, date, size, flags, unsubscribe headers), never bodies or attachments.
 - State clearly that **reversible applies to moves**, while **unsubscribe is separate and irreversible**.
 - Use `favicon.svg` at 16–32 px, `app-icon.svg` for desktop bundles/docks, `light.svg` on light surfaces, and `mono.svg` / `app-icon-mono.svg` for one-ink contexts.
