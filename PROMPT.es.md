@@ -1,9 +1,10 @@
 # El prompt
 
 Pega esto en Claude Code, Codex, Cursor, Gemini CLI, OpenCode o cualquier agente con acceso a shell.
-Funciona con cualquier cuenta IMAP: Gmail, Outlook/Microsoft 365, Yahoo, iCloud, Fastmail, Proton
-Bridge o un servidor propio. **No** funciona si IMAP está desactivado, si la cuenta es de una empresa
-que bloquea IMAP, o si el proveedor exige un login interactivo que el agente no puede completar.
+Funciona con Gmail, Outlook/Microsoft 365, Yahoo, iCloud, Fastmail, Proton Bridge y
+servidores IMAP propios que admitan UIDPLUS o MOVE y las carpetas que necesite tu plan.
+**No** funciona si IMAP está desactivado, si la cuenta es de una empresa que bloquea IMAP,
+o si el proveedor exige un login interactivo que el agente no puede completar.
 
 Antes de empezar, instala Python 3.11+ y crea una contraseña de aplicación (o token OAuth2, o
 contraseña de Proton Bridge). Ponla en `CYM_PASSWORD`; nunca la pegues en el chat. Si clonaste este

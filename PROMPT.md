@@ -1,9 +1,10 @@
 # The prompt
 
 Paste this into Claude Code, Codex, Cursor, Gemini CLI, OpenCode or any coding agent with shell
-access. It works with any IMAP account: Gmail, Outlook/Microsoft 365, Yahoo, iCloud, Fastmail, Proton
-Bridge or a custom server. It does **not** work if IMAP is disabled, the account is managed by a
-tenant that blocks IMAP, or the provider requires an interactive login the agent cannot complete.
+access. It works with Gmail, Outlook/Microsoft 365, Yahoo, iCloud, Fastmail, Proton Bridge and custom
+IMAP servers that support UIDPLUS or MOVE and the folders your plan needs. It does **not** work if
+IMAP is disabled, the account is managed by a tenant that blocks IMAP, or the provider requires an
+interactive login the agent cannot complete.
 
 Before you start, install Python 3.11+ and create an app password (or OAuth2 token, or Proton Bridge
 password). Put it in `CYM_PASSWORD`; never paste it into the chat. If you cloned this repo, mention it:
