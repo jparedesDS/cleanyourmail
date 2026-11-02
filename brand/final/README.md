@@ -1,4 +1,6 @@
-# CleanYourMail — Final Brand Identity & App Icon Guide
+# CleanYourMail — Forest Brand Identity & App Icon Guide
+
+> **Primary app-first identity:** [Spectrum](../final-spectrum/README.md) — yellow/orange/purple Return Fold on carbon. This package is the **Forest/Lime alternate**, kept for the classic CLI theme.
 
 ## 1. Brand idea & final decision
 

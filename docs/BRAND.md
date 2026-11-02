@@ -1,6 +1,8 @@
-# CleanYourMail — Brand Cheat Sheet
+# CleanYourMail — Forest Brand Cheat Sheet
 
-**Final decision: Return Fold.** CleanYourMail replaces the old gradient-and-sparkle icon with the **Return Fold** mark: a bold envelope whose right and bottom perimeter folds continuously into a left-return undo arrow (`↩`) below a classic symmetric V-flap. It expresses mail plus a verified way back—**Control, not magic**—at every size from a 16 px favicon to a 1024 px desktop app icon. Full specifications and SVG masters live in [`brand/final/README.md`](../brand/final/README.md).
+> **Primary app-first identity:** [Spectrum](BRAND-SPECTRUM.md) — the yellow/orange/purple Return Fold on carbon. This document covers the **Forest/Lime alternate**, kept for the classic CLI theme.
+
+**Forest colorway: Return Fold.** CleanYourMail replaces the old gradient-and-sparkle icon with the **Return Fold** mark: a bold envelope whose right and bottom perimeter folds continuously into a left-return undo arrow (`↩`) below a classic symmetric V-flap. It expresses mail plus a verified way back—**Control, not magic**—at every size from a 16 px favicon to a 1024 px desktop app icon. Full specifications and SVG masters live in [`brand/final/README.md`](../brand/final/README.md).
 
 ## Identity essentials
 
