@@ -137,10 +137,11 @@ python tools/mail.py connect outlook --wait
 python tools/mail.py doctor
 ```
 
-If you are a person working in your own terminal, `python tools/mail.py connect outlook` does both
-steps and waits in one go. If the command says no application ID is configured, follow
-[`docs/MICROSOFT-OAUTH.md`](docs/MICROSOFT-OAUTH.md) once. Do not ask for the code, the token or the
-password.
+Give `--wait` a timeout of at least 15 minutes (the code lifetime), or run it in the background and
+read its output when it finishes. If you are a person working in your own terminal,
+`python tools/mail.py connect outlook` does both steps and waits in one go. If the command says no
+application ID is configured, follow [`docs/MICROSOFT-OAUTH.md`](docs/MICROSOFT-OAUTH.md) once. Do not
+ask for the code, the token or the password.
 
 #### Gmail
 
