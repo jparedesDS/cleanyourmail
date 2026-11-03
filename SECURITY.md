@@ -51,7 +51,8 @@ tokens redacted, and the version (`python tools/mail.py --version`).
   link-local addresses; DNS resolution checked; no redirects; no cookies; proxies disabled; 32 KB
   response cap; explicit timeouts; request cap and delay.
 - **Secrets.** `password_env` default; `password_command` and `password_file` supported; inline
-  password warning; private file permissions where supported; no secrets in JSON output.
+  password warning; private file permissions where supported; no secrets in JSON output. Microsoft
+  sign-in stores only a refresh token in a private local file; access tokens are memory-only.
 - **Concurrency.** Per-operation lock files; stale-lock recovery.
 - **Prompt injection.** Email content is data. The skill tells the agent not to follow instructions
   in headers, subjects or links; manual links are never fetched.
@@ -70,8 +71,11 @@ tokens redacted, and the version (`python tools/mail.py --version`).
 - **Local state.** The cache, plan and journal contain metadata and unsubscribe targets. They are
   private files, not encrypted at rest. Use full-disk encryption and delete the state directory when
   no longer needed.
-- **No OAuth refresh.** A token expires; the tool does not store or refresh it.
-- **No tenant-policy bypass.** If an administrator disables IMAP or app passwords, the tool stops.
+- **Microsoft refresh token.** It is stored unencrypted in `~/.secrets/cleanyourmail-oauth.json`,
+  protected by file permissions and the user profile. Revoke it in Microsoft and delete the file if
+  the machine is lost. Access tokens are not written to disk.
+- **No tenant-policy bypass.** If an administrator disables IMAP, app passwords or consent, the tool
+  stops.
 
 ## Scope
 
@@ -87,7 +91,8 @@ already deleted mail.
 - Add a permanent-delete or empty-Trash command.
 - Add body/attachment reading or a content index.
 - Add an override for protected mail, UIDVALIDITY, account checks or undo verification.
-- Add OAuth acquisition, a client secret, or a token refresh loop.
+- Add OAuth acquisition for providers other than Microsoft, a client secret, a browser callback or a
+  general-purpose token broker.
 - Add telemetry, analytics, ads or a third-party API.
 - Upload server-side filters automatically.
 - Publish real addresses, Message-IDs, tokens or screenshots of a real inbox.

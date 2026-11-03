@@ -36,8 +36,9 @@ landing page is a separate static repository: `jparedesDS/cleanyourmail-web`.
    never fetched.
 8. **No secrets in the repo or logs.** Passwords, OAuth tokens, cookies, real addresses and
    Message-IDs from a real mailbox do not belong in code, tests, docs, issues or commits.
-9. **No OAuth acquisition or refresh.** The person supplies a token; the CLI does not run a browser
-   flow, store a client secret or refresh tokens.
+9. **Microsoft OAuth only.** The device-code flow in `tools/oauth_ms.py` may acquire and refresh a
+   Microsoft token with a public client. No client secret, browser callback or Google OAuth. The
+   refresh token stays local and is never logged.
 10. **No filter upload.** Export Gmail XML or Sieve; the person reviews and imports it.
 11. **No policy bypass.** Do not work around tenant IMAP restrictions, 2FA, conditional access or
     Proton Bridge requirements.

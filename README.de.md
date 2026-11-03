@@ -85,7 +85,8 @@ rückgängig machen kannst.
 - Es liest keine Nachrichtentexte und keine Anhänge.
 - Es sendet keine normalen E-Mails, antwortet nicht, leitet nicht weiter und ändert keine
   Passwörter/2FA.
-- Es holt und erneuert keine OAuth-Tokens.
+- Es nutzt kein Google OAuth (Gmail verwendet ein App-Passwort); Microsoft nutzt die integrierte
+  Device-Code-Anmeldung und speichert lokal nur ein Refresh-Token.
 - Es lädt keine serverseitigen Filter hoch; es exportiert sie zur Prüfung.
 - Es garantiert nicht, dass eine Abmeldung einen Absender stoppt.
 - Es macht aus Gmail-Labels keine echten Ordner.
@@ -108,25 +109,25 @@ erst danach Abmeldungen. Die Prüfung wird nicht übersprungen.
 
 ## Schnellstart mit der CLI
 
-**Voraussetzungen:** Python 3.11+, IMAP im Konto aktiviert, ein App-Passwort oder OAuth2-Token und ein
-Terminal. Kein `pip install`.
+**Voraussetzungen:** Python 3.11+, IMAP im Konto aktiviert und ein Terminal. Kein `pip install`.
 
 ```bash
 git clone https://github.com/jparedesDS/cleanyourmail.git
 cd cleanyourmail
-python tools/mail.py init --email du@beispiel.com
+python tools/mail.py init --email du@beispiel.com --secret-file ~/.secrets/cleanyourmail.txt
 ```
 
-Lege das Secret in eine Umgebungsvariable, nie in die TOML:
-
-```powershell
-# Windows PowerShell
-$env:CYM_PASSWORD = "dein-app-passwort"
-```
+Speichere das App-Passwort, ohne es anzuzeigen (füge `--clipboard` hinzu, um es aus der Zwischenablage
+zu lesen):
 
 ```bash
-# macOS / Linux
-export CYM_PASSWORD='dein-app-passwort'
+python tools/mail.py secret --provider gmail
+```
+
+Für Outlook überspringst du das App-Passwort und nutzt die Microsoft-Anmeldung:
+
+```bash
+python tools/mail.py connect outlook
 ```
 
 Validiere, scanne, prüfe und plane:
@@ -167,7 +168,7 @@ Code **2**. Teilfehler enden mit Code **1**.
 | **Umkehrbare Verschiebungen** | Ein append-only JSONL-Journal speichert COPYUID und Message-ID. Gmail-Archiv speichert `X-GM-MSGID`. `undo` prüft die Nachricht vor der Wiederherstellung. |
 | **Sichere Abmeldung** | Nur `List-Unsubscribe`-Header, RFC-8058-POST, keine Redirects/Cookies/Proxys, 32-KB-Limit, nur öffentliches HTTPS, private/lokale Ziele abgelehnt. |
 | **Prompt-Injection-resistent** | Header und Betreffs sind Daten. Anweisungen in E-Mails werden nie befolgt; manuelle Links öffnest du selbst. |
-| **Secrets bleiben draußen** | `password_env` ist Standard. Inline-Passwörter warnen. State-Dateien nutzen private Rechte, wenn das OS es erlaubt. |
+| **Secrets bleiben draußen** | App-Passwörter gehen an `password_env` oder eine private `password_file`; `secret` zeigt sie nie an. Microsoft speichert nur ein Refresh-Token, nie das Kontopasswort. State-Dateien nutzen private Rechte, wenn das OS es erlaubt. |
 
 Vollständiges Bedrohungsmodell: [docs/SAFETY.md](docs/SAFETY.md).
 
@@ -176,7 +177,7 @@ Vollständiges Bedrohungsmodell: [docs/SAFETY.md](docs/SAFETY.md).
 | Anbieter | Authentifizierung | Hinweise |
 |---|---|---|
 | Gmail / Google Workspace | App-Passwort (2FA nötig) | IMAP aktivieren. Labels; Archiv; Junk; All Mail. |
-| Outlook.com / Microsoft 365 | OAuth2 (`auth = "xoauth2"`) | Basic Auth ist deaktiviert. Die CLI erneuert keine Tokens. Der Tenant kann SMTP AUTH blockieren. |
+| Outlook.com / Microsoft 365 | Microsoft-Anmeldung (`connect outlook`) | Speichert ein Refresh-Token und erneuert es automatisch. Der Tenant kann SMTP AUTH deaktivieren. |
 | Yahoo | App-Passwort | Account Security → Generate app password. |
 | iCloud | App-spezifisches Passwort | Apple 2FA nötig. |
 | Fastmail | App-Passwort | Begrenztes IMAP/SMTP-Passwort; Sieve-Export. |
@@ -190,6 +191,8 @@ Mehr Details: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 | Befehl | Was er macht | Ändert Mail? |
 |---|---|---|
 | `init` | Schreibt eine Start-`cleanyourmail.toml`. | Nein |
+| `connect` | Meldet sich bei Outlook mit Microsoft an (Device Code). | Nein |
+| `secret` | Speichert ein App-Passwort lokal, ohne es anzuzeigen. | Nein |
 | `validate` | Prüft die TOML ohne Verbindung. | Nein |
 | `doctor` | Loggt ein, listet Fähigkeiten und Spezialordner. | Nein |
 | `folders` | Listet E-Mail-Ordner auf oder erstellt sie. | Nein |
@@ -275,8 +278,9 @@ Gmail-Archiv/Undo, Verweigerungen ohne MOVE und ohne UIDPLUS, CLI-Flows und das 
 ## Mitwirken
 
 Lies [CONTRIBUTING.md](CONTRIBUTING.md) und [AGENTS.md](AGENTS.md). Die Suite muss ohne echtes Postfach
-laufen; nutze `tests/fakeimap.py`. Füge keine dauerhafte Löschung, Body-Lesen, OAuth-Token-Beschaffung,
-Telemetrie oder globales EXPUNGE hinzu.
+laufen; nutze `tests/fakeimap.py`. Füge keine dauerhafte Löschung, Body-Lesen, Google OAuth, Telemetrie
+oder globales EXPUNGE hinzu. Die Microsoft-Anmeldung ist auf den Device-Code-Flow in
+`tools/oauth_ms.py` beschränkt; füge nie ein Client Secret hinzu.
 
 ## Lizenz
 

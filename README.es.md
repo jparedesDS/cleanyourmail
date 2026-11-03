@@ -84,7 +84,8 @@ deshacerlo.
 
 - No lee cuerpos de mensajes ni adjuntos.
 - No envía correo normal, no responde, no reenvía ni cambia contraseñas/2FA.
-- No obtiene ni renueva tokens OAuth.
+- No obtiene tokens OAuth de Google; Gmail usa una contraseña de aplicación. Para Microsoft usa el
+  inicio de sesión integrado y guarda solo un refresh token en local.
 - No sube filtros al servidor; los exporta para que los revises.
 - No garantiza que una solicitud de baja detenga a un remitente.
 - No convierte las carpetas de Gmail en carpetas reales: las etiquetas de Gmail son etiquetas.
@@ -107,25 +108,24 @@ después envía las solicitudes de baja. No se saltará la revisión.
 
 ## Inicio rápido con la CLI
 
-**Requisitos:** Python 3.11+, IMAP activado en la cuenta, una contraseña de aplicación o un token
-OAuth2 y una terminal. Sin `pip install`.
+**Requisitos:** Python 3.11+, IMAP activado en la cuenta y una terminal. Sin `pip install`.
 
 ```bash
 git clone https://github.com/jparedesDS/cleanyourmail.git
 cd cleanyourmail
-python tools/mail.py init --email tu@ejemplo.com
+python tools/mail.py init --email tu@ejemplo.com --secret-file ~/.secrets/cleanyourmail.txt
 ```
 
-Pon el secreto en una variable de entorno, nunca en el TOML:
-
-```powershell
-# Windows PowerShell
-$env:CYM_PASSWORD = "tu-app-password"
-```
+Guarda la contraseña de aplicación sin mostrarla (añade `--clipboard` para leerla del portapapeles):
 
 ```bash
-# macOS / Linux
-export CYM_PASSWORD='tu-app-password'
+python tools/mail.py secret --provider gmail
+```
+
+Para Outlook, sáltate la contraseña de aplicación y usa el inicio de sesión de Microsoft:
+
+```bash
+python tools/mail.py connect outlook
 ```
 
 Valida, escanea, revisa y planifica:
@@ -166,7 +166,7 @@ salen con código **1**.
 | **Movimientos reversibles** | Un journal JSONL append-only registra COPYUID y Message-ID. Archivar en Gmail registra `X-GM-MSGID`. `undo` verifica el mensaje antes de restaurarlo. |
 | **Bajas seguras** | Solo cabeceras `List-Unsubscribe`, POST RFC 8058, sin redirecciones/cookies/proxies, límite de 32 KB, solo HTTPS público, destinos privados/locales rechazados. |
 | **Resistente a prompt injection** | Las cabeceras y los asuntos son datos. Las instrucciones dentro de un correo nunca se siguen; los enlaces manuales los abres tú. |
-| **Secretos fuera del repo** | `password_env` es el valor por defecto. Las contraseñas inline avisan. Los archivos de estado usan permisos privados cuando el sistema lo permite. |
+| **Secretos fuera del repo** | Las contraseñas de aplicación van a `password_env` o a un `password_file` privado; `secret` nunca las muestra. Microsoft guarda solo un refresh token, nunca la contraseña de la cuenta. Los archivos de estado usan permisos privados cuando el sistema lo permite. |
 
 Modelo de amenazas completo: [docs/SAFETY.md](docs/SAFETY.md).
 
@@ -175,7 +175,7 @@ Modelo de amenazas completo: [docs/SAFETY.md](docs/SAFETY.md).
 | Proveedor | Autenticación | Notas |
 |---|---|---|
 | Gmail / Google Workspace | App Password (2FA obligatoria) | Activa IMAP. Etiquetas; archivo; Junk; All Mail. |
-| Outlook.com / Microsoft 365 | OAuth2 (`auth = "xoauth2"`) | La autenticación básica está desactivada. La CLI no renueva tokens. El tenant puede bloquear SMTP AUTH. |
+| Outlook.com / Microsoft 365 | Inicio de sesión de Microsoft (`connect outlook`) | Guarda un refresh token y lo renueva solo. El tenant puede bloquear SMTP AUTH. |
 | Yahoo | Contraseña de aplicación | Account Security → Generate app password. |
 | iCloud | Contraseña específica de app | Apple exige 2FA. |
 | Fastmail | Contraseña de aplicación | Contraseña IMAP/SMTP con permisos; exportación Sieve. |
@@ -189,6 +189,8 @@ Más detalle: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 | Comando | Qué hace | ¿Cambia el correo? |
 |---|---|---|
 | `init` | Escribe un `cleanyourmail.toml` inicial. | No |
+| `connect` | Inicia sesión en Outlook con Microsoft (device code). | No |
+| `secret` | Guarda una contraseña de aplicación en local sin mostrarla. | No |
 | `validate` | Comprueba el TOML sin conectar. | No |
 | `doctor` | Inicia sesión, lista capacidades y carpetas especiales. | No |
 | `folders` | Lista o crea carpetas de correo. | No |
@@ -274,8 +276,9 @@ rechazos sin MOVE y sin UIDPLUS, flujos de CLI y el documento de la skill.
 ## Contribuir
 
 Lee [CONTRIBUTING.md](CONTRIBUTING.md) y [AGENTS.md](AGENTS.md). La suite debe pasar sin un buzón
-real; usa `tests/fakeimap.py`. No añadas borrado permanente, lectura de cuerpos, obtención de tokens
-OAuth, telemetría ni un EXPUNGE general.
+real; usa `tests/fakeimap.py`. No añadas borrado permanente, lectura de cuerpos, OAuth de Google,
+telemetría ni un EXPUNGE general. El inicio de sesión de Microsoft se limita al device code de
+`tools/oauth_ms.py`; nunca añadas un client secret.
 
 ## Licencia
 

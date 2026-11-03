@@ -4,9 +4,11 @@ import datetime as dt
 import json
 import os
 import unittest
+from unittest.mock import patch
 
 from helpers import TempDir, imap_date, raw_message, run_cli
 from fakeimap import FakeIMAPServer, FakeIMAPState
+import oauth_ms
 
 NOW = dt.datetime.now(dt.timezone.utc)
 OLD = NOW - dt.timedelta(days=100)
@@ -227,6 +229,69 @@ class CliTest(unittest.TestCase):
         code, out, err = self.cli("unsubscribe")
         self.assertEqual(code, 3)
         self.assertIn("Dry run", out)
+
+    def test_secret_saves_without_printing_it(self):
+        path = self.temp / "secret.txt"
+        with patch("getpass.getpass", return_value="abcd efgh ijkl mnop"):
+            code, out, err = run_cli("secret", "--file", str(path), "--provider", "gmail")
+        self.assertEqual(code, 0, err)
+        self.assertEqual(path.read_text(encoding="utf-8"), "abcdefghijklmnop")
+        self.assertNotIn("abcdefghijklmnop", out + err)
+
+    def test_secret_rejects_a_non_gmail_value(self):
+        path = self.temp / "secret.txt"
+        with patch("getpass.getpass", return_value="not-an-app-password"):
+            code, out, err = run_cli("secret", "--file", str(path), "--provider", "gmail")
+        self.assertEqual(code, 2)
+        self.assertIn("App Password", err)
+        self.assertFalse(path.exists())
+
+    def test_connect_outlook_requires_client_id(self):
+        path = self.temp / "outlook.toml"
+        path.write_text("""
+[account]
+email = "me@outlook.com"
+auth = "xoauth2"
+oauth = "microsoft"
+""", encoding="utf-8")
+        env = {key: value for key, value in os.environ.items() if key != "CYM_MS_CLIENT_ID"}
+        with patch.dict(os.environ, env, clear=True):
+            code, _out, err = run_cli("connect", "outlook", "--config", str(path))
+        self.assertEqual(code, 2)
+        self.assertIn("Microsoft application ID", err)
+
+    def test_connect_outlook_two_step(self):
+        path = self.temp / "outlook.toml"
+        path.write_text("""
+[account]
+email = "me@outlook.com"
+auth = "xoauth2"
+oauth = "microsoft"
+""", encoding="utf-8")
+        store = self.temp / "oauth.json"
+        env = dict(os.environ)
+        env["CYM_OAUTH_STORE"] = str(store)
+        env["CYM_MS_CLIENT_ID"] = "client-id"
+        device = oauth_ms.DeviceCode(
+            "device-code", "ABCD-EFGH", "https://microsoft.com/devicelogin", 900, 5, "")
+        with patch.dict(os.environ, env, clear=False), \
+                patch("oauth_ms.start_device_flow", return_value=device):
+            code, out, err = run_cli("connect", "outlook", "--no-wait", "--config", str(path))
+        self.assertEqual(code, 0, err)
+        self.assertIn("ABCD-EFGH", out)
+        self.assertIn("connect outlook --wait", out)
+        pending = self.temp / "cleanyourmail-device.json"
+        self.assertTrue(pending.exists())
+
+        token = oauth_ms.Token("access", "refresh", 3600)
+        with patch.dict(os.environ, env, clear=False), \
+                patch("oauth_ms.poll_for_token", return_value=token):
+            code, out, err = run_cli("connect", "outlook", "--wait", "--config", str(path))
+        self.assertEqual(code, 0, err)
+        self.assertIn("Signed in as me@outlook.com", out)
+        saved = json.loads(store.read_text(encoding="utf-8"))
+        self.assertEqual(saved["microsoft"]["refresh_token"], "refresh")
+        self.assertFalse(pending.exists())
 
     def test_bad_config_exit_code(self):
         self.config.write_text("[account]\nemail = \"bad\"\n", encoding="utf-8")

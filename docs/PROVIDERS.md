@@ -12,8 +12,8 @@ them in `[account]`.
 | Provider | IMAP | SMTP | Auth | Notes |
 |---|---|---|---|---|
 | Gmail / Google Workspace | `imap.gmail.com:993` TLS | `smtp.gmail.com:587` STARTTLS | App Password | 2FA required; IMAP must be enabled. Labels, All Mail, Junk. |
-| Outlook.com | `outlook.office365.com:993` TLS | `smtp.office365.com:587` STARTTLS | OAuth2 (`xoauth2`) | Basic auth is disabled. Tenant may disable SMTP AUTH. |
-| Microsoft 365 (work/school) | `outlook.office365.com:993` TLS | `smtp.office365.com:587` STARTTLS | OAuth2 (`xoauth2`) | Admin must allow IMAP; conditional access may block it. |
+| Outlook.com | `outlook.office365.com:993` TLS | `smtp.office365.com:587` STARTTLS | OAuth2 (`xoauth2`) | `connect outlook`; tenant may disable SMTP AUTH. |
+| Microsoft 365 (work/school) | `outlook.office365.com:993` TLS | `smtp.office365.com:587` STARTTLS | OAuth2 (`xoauth2`) | `connect outlook`; admin must consent and allow IMAP. |
 | Yahoo | `imap.mail.yahoo.com:993` TLS | `smtp.mail.yahoo.com:465` TLS | App Password | Generate in Account Security. |
 | iCloud | `imap.mail.me.com:993` TLS | `smtp.mail.me.com:587` STARTTLS | App-specific password | Apple 2FA required. |
 | Fastmail | `imap.fastmail.com:993` TLS | `smtp.fastmail.com:465` TLS | App Password | Scope the password to IMAP/SMTP. Sieve export. |
@@ -45,7 +45,15 @@ authentication or "IMAP disabled", stop; do not try to bypass the administrator.
 
 ## Outlook.com / Microsoft 365
 
-Microsoft has retired basic authentication for IMAP/POP/SMTP. Use OAuth2:
+Microsoft has retired basic authentication for IMAP/POP/SMTP. Use the built-in Microsoft sign-in:
+
+```bash
+python tools/mail.py init --email you@outlook.com --secret-file ~/.secrets/cleanyourmail.txt
+python tools/mail.py connect outlook
+python tools/mail.py doctor
+```
+
+`init` writes:
 
 ```toml
 [account]
@@ -55,19 +63,23 @@ imap_port = 993
 imap_ssl = true
 imap_starttls = false
 auth = "xoauth2"
-password_env = "CYM_PASSWORD"   # put the access token here
+oauth = "microsoft"
+# oauth_client_id = "..."   # or set CYM_MS_CLIENT_ID
 ```
 
-- The token is an **access token**, not an app password. It usually expires in about an hour.
-- The CLI does **not** acquire or refresh tokens. Get a token from your organization's OAuth flow or
-  a trusted local tool, put it in `CYM_PASSWORD`, and run the command before it expires.
-- A work/school tenant may require conditional access, MFA, or block IMAP entirely. If `doctor`
-  fails, stop and ask the administrator; do not attempt a bypass.
+`connect` prints a Microsoft URL and a short code. The person approves it in the browser; the CLI
+stores only a refresh token in `~/.secrets/cleanyourmail-oauth.json` (override with `CYM_OAUTH_STORE`)
+and refreshes the access token when a command runs. See
+[MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md) for the one-time application registration.
+
+- A work/school tenant may require administrator consent, conditional access, MFA, or block IMAP
+  entirely. If `doctor` fails, stop and ask the administrator; do not attempt a bypass.
 - SMTP AUTH is often disabled for Microsoft 365 tenants. A `mailto:` unsubscribe may fail; use the
   sender's manual preference page instead.
 - One-click HTTPS unsubscribe still works because it does not use SMTP.
 
-Do not put a client secret or refresh token in this repository. The CLI does not store either.
+Do not put a client secret or a token in this repository. The CLI does not accept or store a client
+secret; the refresh token stays on the person's machine.
 
 ## Yahoo
 

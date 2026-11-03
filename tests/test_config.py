@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import sys
 import unittest
+from unittest.mock import patch
 
 from helpers import TempDir
 
@@ -167,6 +168,73 @@ class ConfigTest(unittest.TestCase):
         content = init_template(email="me@outlook.com", auth="xoauth2")
         self.assertIn('auth = "xoauth2"', content)
         self.assertIn("outlook.office365.com", content)
+
+    def test_init_template_outlook_enables_microsoft_oauth(self):
+        content = init_template(email="me@outlook.com")
+        self.assertIn('auth = "xoauth2"', content)
+        self.assertIn('oauth = "microsoft"', content)
+        self.assertIn("connect outlook", content)
+        self.assertNotIn('password_env = "CYM_PASSWORD"', content)
+
+    def test_init_template_secret_file(self):
+        content = init_template(email="me@gmail.com", secret_file="~/.secrets/cym.txt")
+        self.assertIn('password_file = "~/.secrets/cym.txt"', content)
+        self.assertNotIn('\npassword_env = "CYM_PASSWORD"', content)
+
+    def test_oauth_requires_xoauth2(self):
+        body = """
+[account]
+email = "me@outlook.com"
+oauth = "microsoft"
+"""
+        with TempDir() as temp:
+            path = write_config(temp, body)
+            with self.assertRaises(ConfigError):
+                load_config(str(path))
+
+    def test_oauth_config_and_status(self):
+        body = """
+[account]
+email = "me@outlook.com"
+auth = "xoauth2"
+oauth = "microsoft"
+oauth_client_id = "client-id"
+"""
+        with TempDir() as temp:
+            config = load_config(str(write_config(temp, body)))
+        self.assertEqual(config.account.oauth, "microsoft")
+        self.assertEqual(config.account.oauth_client_id, "client-id")
+        self.assertIn("oauth:microsoft", config.account.secret_status())
+
+    def test_unknown_oauth_provider_is_rejected(self):
+        body = """
+[account]
+email = "me@outlook.com"
+auth = "xoauth2"
+oauth = "google"
+"""
+        with TempDir() as temp:
+            path = write_config(temp, body)
+            with self.assertRaises(ConfigError):
+                load_config(str(path))
+
+    def test_resolve_secret_uses_microsoft_oauth(self):
+        from config import Account
+
+        account = Account(email="me@outlook.com", auth="xoauth2", oauth="microsoft")
+        with patch("oauth_ms.access_token", return_value="fresh-token") as access:
+            self.assertEqual(resolve_secret(account), "fresh-token")
+        access.assert_called_once()
+
+    def test_resolve_secret_wraps_oauth_errors(self):
+        import oauth_ms
+        from config import Account
+
+        account = Account(email="me@outlook.com", auth="xoauth2", oauth="microsoft")
+        with patch("oauth_ms.access_token", side_effect=oauth_ms.OAuthError("sign in again")):
+            with self.assertRaises(ConfigError) as caught:
+                resolve_secret(account)
+        self.assertIn("sign in again", str(caught.exception))
 
     def test_find_config(self):
         with TempDir() as temp:

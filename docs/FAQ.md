@@ -20,10 +20,10 @@ Verification and IMAP enabled.
 
 ## Does it work with Outlook or Microsoft 365?
 
-Use an OAuth2 access token with `auth = "xoauth2"`. Basic authentication is disabled. The CLI does
-not acquire or refresh tokens; put a valid token in `CYM_PASSWORD` and run the command before it
-expires. Some tenants disable SMTP AUTH, so a `mailto:` unsubscribe may need to be done manually.
-See [PROVIDERS.md](PROVIDERS.md).
+Yes. Basic authentication is disabled, so run `python tools/mail.py connect outlook`. The CLI opens
+a Microsoft sign-in page with a short code, stores only a refresh token on your machine, and renews
+the access token automatically. Some tenants disable SMTP AUTH, so a `mailto:` unsubscribe may need to
+be done manually. See [PROVIDERS.md](PROVIDERS.md) and [MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md).
 
 ## Will unsubscribing stop spam?
 
