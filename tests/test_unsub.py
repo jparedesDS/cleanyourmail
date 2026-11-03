@@ -218,6 +218,40 @@ class UnsubTest(unittest.TestCase):
         self.assertEqual(sent["login"], ("me@example.com", "secret"))
         self.assertEqual(sent["message"]["To"], "u@example.com")
 
+    def test_mailto_with_smtp_xoauth2(self):
+        sent = {}
+
+        class FakeSMTP:
+            def __init__(self, host, port, timeout):
+                sent["host"] = host
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                return False
+
+            def starttls(self, context):
+                sent["tls"] = True
+
+            def auth(self, mechanism, authobject, **kwargs):
+                sent["mechanism"] = mechanism
+                sent["payload"] = authobject(None)
+
+            def send_message(self, message):
+                sent["message"] = message
+
+        account = Account(email="me@outlook.com", smtp_host="smtp.office365.com",
+                          smtp_port=587, smtp_ssl=False, smtp_starttls=True,
+                          auth="xoauth2")
+        with patch("unsub.smtplib.SMTP", FakeSMTP):
+            result = mailto_unsubscribe(account, "access-token", "u@example.com",
+                                        "unsubscribe", "please stop")
+        self.assertEqual(result.status, "sent")
+        self.assertEqual(sent["mechanism"], "XOAUTH2")
+        self.assertIn(b"user=me@outlook.com", sent["payload"])
+        self.assertIn(b"auth=Bearer access-token", sent["payload"])
+
     def test_polite_delay(self):
         slept = []
         polite_delay(0, sleeper=slept.append)

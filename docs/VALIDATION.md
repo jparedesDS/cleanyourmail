@@ -37,6 +37,20 @@ Expected result:
 - `unsubscribe` sends one request or produces a manual link; spam is never selected.
 - `rules` exports a reviewable file and does not upload it.
 
+For Outlook, complete the Microsoft sign-in before the sequence:
+
+```bash
+python tools/mail.py init --email you@outlook.com --secret-file ~/.secrets/cleanyourmail.txt
+python tools/mail.py connect outlook
+```
+
+For Gmail, save the App Password locally before the sequence:
+
+```bash
+python tools/mail.py init --email you@gmail.com --secret-file ~/.secrets/cleanyourmail.txt
+python tools/mail.py secret --provider gmail
+```
+
 ## Record
 
 Mark a provider as tested only after `undo` succeeds. Record the result here without personal data.
@@ -44,7 +58,7 @@ Mark a provider as tested only after `undo` succeeds. Record the result here wit
 | Provider | Auth | Version | Date | Result | Notes |
 |---|---|---|---|---|---|
 | Gmail / Google Workspace | App Password | | | pending | |
-| Outlook.com / Microsoft 365 | XOAUTH2 | | | pending | |
+| Outlook.com / Microsoft 365 | Microsoft sign-in (`connect outlook`) | | | pending | |
 | Yahoo | App Password | | | pending | |
 | iCloud | App-specific password | | | pending | |
 | Fastmail | App Password | | | pending | |

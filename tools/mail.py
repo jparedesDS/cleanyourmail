@@ -6,6 +6,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -14,7 +15,8 @@ from urllib.parse import urlsplit
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from config import (ACTIONABLE_CATEGORIES, CATEGORIES, DEFAULT_FILENAME, Config,
-                    ConfigError, init_template, load_config, resolve_secret)
+                    ConfigError, init_template, is_outlook, load_config, resolve_secret)
+import oauth_ms
 from imap import MailClient, MailError, SafetyError
 from journal import Journal
 from mailparse import parse_headers
@@ -170,25 +172,209 @@ def cmd_init(args) -> int:
         else Path.cwd() / DEFAULT_FILENAME
     if path.exists() and not args.force:
         raise ConfigError(f"{path} already exists. Use --force to overwrite.")
+    auth = args.auth or ("xoauth2" if is_outlook(args.email) else "login")
     content = init_template(email=args.email, host=args.host or "imap.example.com",
-                            name=args.name, auth=args.auth)
+                            name=args.name, auth=auth, secret_file=args.secret_file)
     atomic_write_text(path, content)
     if args.json:
-        emit_json({"path": str(path), "email": args.email, "auth": args.auth})
+        emit_json({"path": str(path), "email": args.email, "auth": auth})
         return EXIT_OK
     say(f"Wrote {path}")
     say("")
     say("Next:")
-    say("  1. Put an app password in an environment variable (never in the file):")
-    if os.name == "nt":
-        say('     PowerShell:  $env:CYM_PASSWORD = "your-app-password"')
+    if is_outlook(args.email) and auth == "xoauth2":
+        say("  1. Connect with Microsoft (opens a page, no password):")
+        say("     python tools/mail.py connect outlook")
+        say("  2. Check the connection:  python tools/mail.py doctor")
+        say("  3. Read the inbox:         python tools/mail.py scan")
     else:
-        say("     export CYM_PASSWORD='your-app-password'")
-    say("  2. Check the connection:  python tools/mail.py doctor")
-    say("  3. Read the inbox:         python tools/mail.py scan")
+        if args.secret_file:
+            say("  1. Save the app password without echoing it:")
+            say(f"     python tools/mail.py secret --file {args.secret_file}")
+            say("     Add --clipboard to read it from the clipboard instead.")
+        else:
+            say("  1. Put an app password in an environment variable (never in the file):")
+            if os.name == "nt":
+                say('     PowerShell:  $env:CYM_PASSWORD = "your-app-password"')
+            else:
+                say("     export CYM_PASSWORD='your-app-password'")
+        say("  2. Check the connection:  python tools/mail.py doctor")
+        say("  3. Read the inbox:         python tools/mail.py scan")
     if args.email == "you@example.com":
         say("")
         warn("The email is still a placeholder. Edit account.email in the config first.")
+    return EXIT_OK
+
+
+def _finish_connect(args, email: str, client_id: str, token) -> int:
+    signed_in = oauth_ms.account_from_id_token(token.id_token)
+    if signed_in and signed_in.lower() != email.lower():
+        oauth_ms.clear_device()
+        raise ConfigError(
+            f"Signed in as {signed_in}, but the config is for {email}. "
+            "Update account.email or run `connect outlook` again with the right account."
+        )
+    try:
+        path = oauth_ms.save_token(client_id, token, email=email)
+    except oauth_ms.OAuthError as exc:
+        raise ConfigError(str(exc)) from exc
+    oauth_ms.clear_device()
+    if args.json:
+        emit_json({"ok": True, "provider": "microsoft", "email": email, "store": str(path)})
+    else:
+        say("")
+        say(f"Signed in as {email}.")
+        say(f"Refresh token saved to {path}")
+        say("Next: python tools/mail.py doctor")
+    return EXIT_OK
+
+
+def cmd_connect(args) -> int:
+    if args.wait and args.no_wait:
+        raise ConfigError("Use either --wait or --no-wait, not both.")
+    config = load_config(args.config)
+    if args.provider != "outlook":
+        raise ConfigError("Only `connect outlook` is supported.")
+
+    if args.wait:
+        import time
+
+        pending = oauth_ms.load_device()
+        if not pending:
+            raise ConfigError("No pending Microsoft sign-in. Run `connect outlook` first.")
+        expires_at = int(pending.get("expires_at") or 0)
+        if expires_at <= int(time.time()):
+            oauth_ms.clear_device()
+            raise ConfigError("The pending Microsoft sign-in expired. Run `connect outlook` again.")
+        email = str(pending.get("email") or config.account.email)
+        client_id = str(pending["client_id"])
+        remaining = expires_at - int(time.time())
+        if not args.json:
+            say("Waiting for Microsoft... (Ctrl+C to cancel)")
+        try:
+            token = oauth_ms.poll_for_token(str(pending["device_code"]), client_id,
+                                            int(pending.get("interval") or 5), remaining)
+        except oauth_ms.OAuthError as exc:
+            raise ConfigError(str(exc)) from exc
+        return _finish_connect(args, email, client_id, token)
+
+    if config.account.oauth != "microsoft":
+        raise ConfigError(
+            'Set oauth = "microsoft" and auth = "xoauth2" in [account], '
+            "or run `python tools/mail.py init --email ...` again."
+        )
+    client_id = (args.client_id or config.account.oauth_client_id
+                 or oauth_ms.client_id_from_env()).strip()
+    if not client_id:
+        raise ConfigError(
+            "No Microsoft application ID configured. Set oauth_client_id or CYM_MS_CLIENT_ID. "
+            "See docs/MICROSOFT-OAUTH.md."
+        )
+    scope = (args.scope or oauth_ms.DEFAULT_SCOPE).strip()
+    try:
+        device = oauth_ms.start_device_flow(client_id, scope=scope,
+                                            login_hint=config.account.email)
+    except oauth_ms.OAuthError as exc:
+        raise ConfigError(str(exc)) from exc
+    if args.no_wait:
+        path = oauth_ms.save_device(device, client_id, email=config.account.email, scope=scope)
+        if args.json:
+            emit_json({
+                "provider": "microsoft",
+                "email": config.account.email,
+                "verification_uri": device.verification_uri,
+                "user_code": device.user_code,
+                "expires_in": device.expires_in,
+                "pending": str(path),
+                "next": "connect outlook --wait",
+            })
+        else:
+            say("")
+            say("Connect Outlook")
+            say("---------------")
+            say(f"1. Open {device.verification_uri}")
+            say(f"2. Enter code {device.user_code}")
+            say("3. Approve the request for CleanYourMail")
+            say("")
+            say("When you have approved it, run:")
+            say("  python tools/mail.py connect outlook --wait")
+        return EXIT_OK
+    if args.json:
+        emit_json({
+            "provider": "microsoft",
+            "email": config.account.email,
+            "verification_uri": device.verification_uri,
+            "user_code": device.user_code,
+            "expires_in": device.expires_in,
+        })
+    else:
+        say("")
+        say("Connect Outlook")
+        say("---------------")
+        say(f"1. Open {device.verification_uri}")
+        say(f"2. Enter code {device.user_code}")
+        say("3. Approve the request for CleanYourMail")
+        say("")
+        say("Waiting for Microsoft... (Ctrl+C to cancel)")
+    try:
+        token = oauth_ms.poll_for_token(device.device_code, client_id,
+                                        device.interval, device.expires_in)
+    except oauth_ms.OAuthError as exc:
+        raise ConfigError(str(exc)) from exc
+    return _finish_connect(args, config.account.email, client_id, token)
+
+
+def _read_clipboard() -> str:
+    try:
+        import tkinter
+    except Exception as exc:
+        raise ConfigError(
+            "Clipboard access is not available in this Python. Run the command in your own "
+            "terminal without --clipboard."
+        ) from exc
+    try:
+        root = tkinter.Tk()
+        root.withdraw()
+        try:
+            value = root.clipboard_get()
+            try:
+                root.clipboard_clear()
+                root.update()
+            except Exception:
+                pass
+            return str(value)
+        finally:
+            root.destroy()
+    except Exception as exc:
+        raise ConfigError(
+            "Cannot read the clipboard. Copy the app password again, or run the command "
+            "in your own terminal without --clipboard."
+        ) from exc
+
+
+def cmd_secret(args) -> int:
+    path = Path(os.path.expanduser(args.file))
+    if args.clipboard:
+        value = _read_clipboard()
+    else:
+        import getpass
+
+        value = getpass.getpass("Paste the app password (hidden): ")
+    value = "".join(str(value).split())
+    if not value:
+        raise ConfigError("The secret is empty.")
+    if len(value) > 512:
+        raise ConfigError("The secret is too long. Copy only the app password.")
+    if args.provider == "gmail" and not re.fullmatch(r"[a-z]{16}", value):
+        raise ConfigError(
+            "That does not look like a Gmail App Password (16 lowercase letters). "
+            "Copy it again from https://myaccount.google.com/apppasswords"
+        )
+    atomic_write_text(path, value)
+    if args.json:
+        emit_json({"ok": True, "path": str(path), "characters": len(value)})
+    else:
+        say(f"Saved a {len(value)}-character secret to {path}")
     return EXIT_OK
 
 
@@ -1598,10 +1784,33 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--email", default="you@example.com")
     p.add_argument("--host", default=None)
     p.add_argument("--name", default="personal")
-    p.add_argument("--auth", choices=["login", "xoauth2"], default="login")
+    p.add_argument("--auth", choices=["login", "xoauth2"], default=None)
+    p.add_argument("--secret-file", default=None,
+                   help="Store the app password in this file instead of an env var")
     p.add_argument("--path", default=None)
     p.add_argument("--force", action="store_true")
     p.set_defaults(func=cmd_init)
+
+    p = sub.add_parser("connect", parents=[common],
+                       help="Connect Outlook with Microsoft sign-in")
+    p.add_argument("provider", choices=["outlook"])
+    p.add_argument("--client-id", default=None,
+                   help="Microsoft application ID (or set CYM_MS_CLIENT_ID)")
+    p.add_argument("--scope", default=None, help="Override the OAuth scopes")
+    wait = p.add_mutually_exclusive_group()
+    wait.add_argument("--no-wait", action="store_true",
+                      help="Print the code and exit; use --wait after approval")
+    wait.add_argument("--wait", action="store_true",
+                      help="Finish a sign-in started with --no-wait")
+    p.set_defaults(func=cmd_connect)
+
+    p = sub.add_parser("secret", parents=[common],
+                       help="Save an app password without echoing it")
+    p.add_argument("--file", default="~/.secrets/cleanyourmail.txt")
+    p.add_argument("--clipboard", action="store_true",
+                   help="Read the secret from the clipboard and clear it")
+    p.add_argument("--provider", default="", help="Validate the format (gmail)")
+    p.set_defaults(func=cmd_secret)
 
     p = sub.add_parser("validate", parents=[common], help="Check the config without connecting")
     p.set_defaults(func=cmd_validate)

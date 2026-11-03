@@ -80,13 +80,46 @@ rotate the secret if the file was ever shared.
 - Use an **app password** for Gmail, Yahoo, iCloud, Fastmail, GMX and Zoho. Normal passwords fail
   when 2FA is on.
 - Gmail: enable IMAP in Gmail settings and create an App Password with 2FA.
-- Outlook/Microsoft 365: basic auth is disabled. Set `auth = "xoauth2"` and put an access token in
-  `CYM_PASSWORD`. The token expires; get a fresh one.
+- Outlook/Microsoft 365: basic auth is disabled. Run `python tools/mail.py connect outlook`; the
+  CLI signs in with Microsoft, stores a refresh token and refreshes it automatically.
 - Proton: use the Proton Bridge password, not the Proton login password, and make sure Bridge is
   running.
 - A work/school tenant may block IMAP. Stop and ask the administrator; do not bypass policy.
 - If the server says `AUTHENTICATIONFAILED` but the password is correct, check for trailing spaces,
   quotes, or a stale token.
+
+### `No Microsoft sign-in found` / `connect outlook`
+
+The refresh token is missing or was deleted. Run:
+
+```bash
+python tools/mail.py connect outlook
+```
+
+The command prints a Microsoft URL and a short code. Approve it in the browser. See
+[MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md).
+
+### `No Microsoft application ID configured`
+
+The device-code flow needs a public client ID. Set `oauth_client_id` in `[account]` or the
+`CYM_MS_CLIENT_ID` environment variable. The one-time registration is in
+[MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md).
+
+### Microsoft sign-in says `invalid_grant`
+
+The refresh token expired or was revoked. Run `connect outlook` again. Changing the account password,
+revoking the app in Microsoft, or an administrator policy can invalidate it.
+
+### Microsoft sign-in says `AADSTS65001` or asks for admin consent
+
+A work/school tenant has not granted consent for `IMAP.AccessAsUser.All`. Ask the administrator to
+grant consent for the CleanYourMail application. Do not try to bypass tenant policy.
+
+### Microsoft sign-in says `AADSTS50020`
+
+The tenant does not allow personal Microsoft accounts. Use an account in that tenant, or register
+the application with the supported account types described in
+[MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md).
 
 ### `Cannot connect` / timeout / SSL error
 

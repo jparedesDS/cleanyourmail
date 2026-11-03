@@ -77,7 +77,8 @@
 
 - 메시지 본문이나 첨부 파일을 읽지 않습니다.
 - 일반 메일 발송, 답장, 전달, 비밀번호/2FA 변경을 하지 않습니다.
-- OAuth 토큰을 가져오거나 갱신하지 않습니다.
+- Google OAuth를 사용하지 않습니다(Gmail은 앱 비밀번호 사용). Microsoft는 내장된 device code
+  로그인을 사용하며 refresh token만 로컬에 저장합니다.
 - 서버 측 필터를 업로드하지 않습니다. 검토용으로 내보내기만 합니다.
 - 수신 거부 요청이 발신자를 멈춘다고 보장하지 않습니다.
 - Gmail 라벨을 실제 폴더로 만들지 않습니다.
@@ -100,25 +101,24 @@ cd cleanyourmail
 
 ## CLI 빠른 시작
 
-**요구 사항:** Python 3.11+, 계정에서 IMAP 활성화, 앱 비밀번호 또는 OAuth2 액세스 토큰, 터미널.
-`pip install`은 필요 없습니다.
+**요구 사항:** Python 3.11+, 계정에서 IMAP 활성화, 터미널. `pip install`은 필요 없습니다.
 
 ```bash
 git clone https://github.com/jparedesDS/cleanyourmail.git
 cd cleanyourmail
-python tools/mail.py init --email you@example.com
+python tools/mail.py init --email you@example.com --secret-file ~/.secrets/cleanyourmail.txt
 ```
 
-비밀 값은 환경 변수에 넣고 TOML에는 쓰지 마세요:
-
-```powershell
-# Windows PowerShell
-$env:CYM_PASSWORD = "your-app-password"
-```
+앱 비밀번호를 표시하지 않고 저장합니다(`--clipboard`를 추가하면 클립보드에서 읽습니다):
 
 ```bash
-# macOS / Linux
-export CYM_PASSWORD='your-app-password'
+python tools/mail.py secret --provider gmail
+```
+
+Outlook은 앱 비밀번호 대신 Microsoft 로그인을 사용하세요:
+
+```bash
+python tools/mail.py connect outlook
 ```
 
 검증, 스캔, 검토, 계획:
@@ -158,7 +158,7 @@ python tools/mail.py undo --run <run> --yes
 | **되돌릴 수 있는 이동** | 추가 전용 JSONL 저널에 COPYUID와 Message-ID를 기록합니다. Gmail 보관은 `X-GM-MSGID`를 기록합니다. `undo`는 복원 전에 메시지를 검증합니다. |
 | **안전한 수신 거부** | `List-Unsubscribe` 헤더만, RFC 8058 POST, 리디렉션/쿠키/프록시 없음, 32 KB 제한, 공개 HTTPS만, 사설/로컬 대상 거부. |
 | **프롬프트 인젝션 방어** | 헤더와 제목은 데이터입니다. 메일 안의 지시를 따르지 않으며, 수동 링크는 사용자가 직접 엽니다. |
-| **비밀 값은 저장소 밖에** | 기본은 `password_env`입니다. 인라인 비밀번호는 경고합니다. OS가 지원하면 상태 파일에 비공개 권한을 사용합니다. |
+| **비밀 값은 저장소 밖에** | 앱 비밀번호는 `password_env` 또는 비공개 `password_file`에 저장되며 `secret`은 이를 표시하지 않습니다. Microsoft는 refresh token만 저장하고 계정 비밀번호는 저장하지 않습니다. OS가 지원하면 상태 파일에 비공개 권한을 사용합니다. |
 
 전체 위협 모델: [docs/SAFETY.md](docs/SAFETY.md).
 
@@ -167,7 +167,7 @@ python tools/mail.py undo --run <run> --yes
 | 제공업체 | 인증 | 참고 |
 |---|---|---|
 | Gmail / Google Workspace | 앱 비밀번호(2FA 필요) | IMAP 활성화. 라벨, 보관, Junk, All Mail. |
-| Outlook.com / Microsoft 365 | OAuth2 (`auth = "xoauth2"`) | 기본 인증이 비활성화되어 있습니다. CLI는 토큰을 갱신하지 않습니다. 테넌트가 SMTP AUTH를 막을 수 있습니다. |
+| Outlook.com / Microsoft 365 | Microsoft 로그인(`connect outlook`) | refresh token을 저장하고 자동으로 갱신합니다. 테넌트가 SMTP AUTH를 막을 수 있습니다. |
 | Yahoo | 앱 비밀번호 | Account Security → Generate app password. |
 | iCloud | 앱 전용 비밀번호 | Apple 2FA 필요. |
 | Fastmail | 앱 비밀번호 | 범위가 제한된 IMAP/SMTP 비밀번호, Sieve 내보내기. |
@@ -181,6 +181,8 @@ python tools/mail.py undo --run <run> --yes
 | 명령 | 하는 일 | 메일 변경? |
 |---|---|---|
 | `init` | 초기 `cleanyourmail.toml`을 작성합니다. | 아니요 |
+| `connect` | Microsoft device code로 Outlook에 로그인합니다. | 아니요 |
+| `secret` | 앱 비밀번호를 표시하지 않고 로컬에 저장합니다. | 아니요 |
 | `validate` | 연결 없이 TOML을 검사합니다. | 아니요 |
 | `doctor` | 로그인하고 기능과 특수 폴더를 나열합니다. | 아니요 |
 | `folders` | 메일 폴더를 나열하거나 만듭니다. | 아니요 |
@@ -263,8 +265,9 @@ CLI 흐름, 스킬 문서를 다룹니다.
 ## 기여
 
 [CONTRIBUTING.md](CONTRIBUTING.md)와 [AGENTS.md](AGENTS.md)를 읽어 주세요. 테스트는 실제 메일함
-없이 통과해야 하며 `tests/fakeimap.py`를 사용합니다. 영구 삭제, 본문 읽기, OAuth 토큰 가져오기,
-텔레메트리, 전체 메일함 EXPUNGE를 추가하지 마세요.
+없이 통과해야 하며 `tests/fakeimap.py`를 사용합니다. 영구 삭제, 본문 읽기, Google OAuth, 텔레메트리,
+전체 메일함 EXPUNGE를 추가하지 마세요. Microsoft 로그인은 `tools/oauth_ms.py`의 device code
+흐름으로 제한되며 client secret을 추가해서는 안 됩니다.
 
 ## 라이선스
 

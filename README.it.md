@@ -83,7 +83,8 @@ annullarlo.
 
 - Non legge il corpo dei messaggi né gli allegati.
 - Non invia email normali, non risponde, non inoltra e non cambia password/2FA.
-- Non ottiene né rinnova token OAuth.
+- Non usa OAuth di Google (Gmail usa una password per app); Microsoft usa l’accesso con device code
+  integrato e salva solo un refresh token in locale.
 - Non carica filtri sul server; li esporta per la revisione.
 - Non garantisce che una richiesta di disiscrizione fermi un mittente.
 - Non trasforma le etichette Gmail in cartelle reali.
@@ -106,25 +107,24 @@ invia le richieste di disiscrizione. Non salta la revisione.
 
 ## Avvio rapido con la CLI
 
-**Requisiti:** Python 3.11+, IMAP attivo sull’account, una password per app o un token OAuth2 e un
-terminale. Nessun `pip install`.
+**Requisiti:** Python 3.11+, IMAP attivo sull’account e un terminale. Nessun `pip install`.
 
 ```bash
 git clone https://github.com/jparedesDS/cleanyourmail.git
 cd cleanyourmail
-python tools/mail.py init --email tu@esempio.com
+python tools/mail.py init --email tu@esempio.com --secret-file ~/.secrets/cleanyourmail.txt
 ```
 
-Metti il segreto in una variabile d’ambiente, mai nel TOML:
-
-```powershell
-# Windows PowerShell
-$env:CYM_PASSWORD = "la-tua-app-password"
-```
+Salva la password per app senza mostrarla (aggiungi `--clipboard` per leggerla dagli appunti):
 
 ```bash
-# macOS / Linux
-export CYM_PASSWORD='la-tua-app-password'
+python tools/mail.py secret --provider gmail
+```
+
+Per Outlook, salta la password per app e usa l’accesso Microsoft:
+
+```bash
+python tools/mail.py connect outlook
 ```
 
 Valida, scansiona, rivedi e pianifica:
@@ -165,7 +165,7 @@ fallimenti parziali escono con codice **1**.
 | **Spostamenti reversibili** | Un journal JSONL append-only registra COPYUID e Message-ID. L’archivio Gmail registra `X-GM-MSGID`. `undo` verifica il messaggio prima del ripristino. |
 | **Disiscrizione sicura** | Solo intestazioni `List-Unsubscribe`, POST RFC 8058, nessun redirect/cookie/proxy, limite 32 KB, solo HTTPS pubblico, destinazioni private/locali rifiutate. |
 | **Resistente al prompt injection** | Intestazioni e oggetti sono dati. Le istruzioni nelle email non vengono mai seguite; i link manuali li apri tu. |
-| **Segreti fuori dal repository** | `password_env` è il default. Le password inline avvisano. I file di stato usano permessi privati dove l’OS lo consente. |
+| **Segreti fuori dal repository** | Le password per app vanno in `password_env` o in un `password_file` privato; `secret` non le mostra mai. Microsoft salva solo un refresh token, mai la password dell’account. I file di stato usano permessi privati dove l’OS lo consente. |
 
 Modello di minaccia completo: [docs/SAFETY.md](docs/SAFETY.md).
 
@@ -174,7 +174,7 @@ Modello di minaccia completo: [docs/SAFETY.md](docs/SAFETY.md).
 | Provider | Autenticazione | Note |
 |---|---|---|
 | Gmail / Google Workspace | App Password (2FA richiesta) | Attiva IMAP. Etichette; archivio; Junk; All Mail. |
-| Outlook.com / Microsoft 365 | OAuth2 (`auth = "xoauth2"`) | L’autenticazione basic è disabilitata. La CLI non rinnova i token. Il tenant può bloccare SMTP AUTH. |
+| Outlook.com / Microsoft 365 | Accesso Microsoft (`connect outlook`) | Salva un refresh token e lo rinnova automaticamente. Il tenant può disabilitare SMTP AUTH. |
 | Yahoo | Password per app | Account Security → Generate app password. |
 | iCloud | Password specifica per app | Apple richiede 2FA. |
 | Fastmail | Password per app | Password IMAP/SMTP con permessi; export Sieve. |
@@ -188,6 +188,8 @@ Più dettagli: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 | Comando | Cosa fa | Modifica la posta? |
 |---|---|---|
 | `init` | Scrive un `cleanyourmail.toml` iniziale. | No |
+| `connect` | Accede a Outlook con Microsoft (device code). | No |
+| `secret` | Salva una password per app in locale senza mostrarla. | No |
 | `validate` | Controlla il TOML senza connettersi. | No |
 | `doctor` | Accede, elenca capacità e cartelle speciali. | No |
 | `folders` | Elenca o crea cartelle di posta. | No |
@@ -272,7 +274,8 @@ Gmail, rifiuti senza MOVE e senza UIDPLUS, flussi CLI e il documento della skill
 
 Leggi [CONTRIBUTING.md](CONTRIBUTING.md) e [AGENTS.md](AGENTS.md). La suite deve passare senza una
 casella reale; usa `tests/fakeimap.py`. Non aggiungere eliminazione permanente, lettura dei corpi,
-acquisizione di token OAuth, telemetria o EXPUNGE globale.
+OAuth di Google, telemetria o EXPUNGE globale. L’accesso Microsoft è limitato al flusso device code in
+`tools/oauth_ms.py`; non aggiungere mai un client secret.
 
 ## Licenza
 

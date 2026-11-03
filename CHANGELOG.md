@@ -4,6 +4,27 @@ All notable changes to CleanYourMail are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- One-click Microsoft sign-in for Outlook.com and Microsoft 365: `python tools/mail.py connect
+  outlook` uses the OAuth 2.0 device-code flow, stores only a refresh token and renews the access
+  token automatically.
+- `python tools/mail.py secret` saves an app password to a private local file without echoing it;
+  `--clipboard` reads it from the clipboard and clears it.
+- `init` detects Outlook addresses, writes `auth = "xoauth2"` and `oauth = "microsoft"`, and accepts
+  `--secret-file` for the other providers.
+- A guided Phase 0 in `SKILL.md`: provider choice, 2FA, app passwords, Microsoft sign-in and
+  `doctor`, with one confirmation per step.
+- `docs/MICROSOFT-OAUTH.md` with the one-time application registration and troubleshooting.
+
+### Changed
+
+- Outlook no longer asks for a manual access token. The refresh token lives in
+  `~/.secrets/cleanyourmail-oauth.json` (override with `CYM_OAUTH_STORE`).
+- SMTP now supports XOAUTH2 for Outlook `mailto:` unsubscribe requests.
+
 ## [1.1.5] - 2026-10-30
 
 ### Added

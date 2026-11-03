@@ -31,8 +31,9 @@ longer without making it safer or clearer is probably a bad change.
 | `https://github.com/jparedesDS/cleanyourmail-app` | Local app UI; wraps the CLI and uses the same plan, journal and safety rules. |
 | `https://github.com/jparedesDS/cleanyourmail-web` | Static English/Spanish landing page (separate repo). |
 | `.github/` | CI, issue templates and PR template. |
-| `tools/mail.py` | CLI: `init`, `validate`, `doctor`, `folders`, `scan`, `report`, `plan`, `apply`, `unsubscribe`, `unsubs`, `journal`, `undo`, `rules`. Stdlib only. |
+| `tools/mail.py` | CLI: `init`, `connect`, `secret`, `validate`, `doctor`, `folders`, `scan`, `report`, `plan`, `apply`, `unsubscribe`, `unsubs`, `journal`, `undo`, `rules`. Stdlib only. |
 | `tools/config.py` | TOML loading, provider presets, secrets, validation. |
+| `tools/oauth_ms.py` | Microsoft device-code sign-in and local refresh-token store. |
 | `tools/imap.py` | Minimal IMAP client, special folders, moves, Gmail archive, UIDPLUS guards. |
 | `tools/mailparse.py` | Header parsing and `List-Unsubscribe` selection. |
 | `tools/safety.py` | Classification and protected-mail rules. |
@@ -68,8 +69,10 @@ Never do these in a PR, a test, a doc or a command:
 - **No telemetry, analytics, ads or third-party services.** The only network calls are IMAP, SMTP for
   a mailto unsubscribe, and the validated one-click HTTPS request. The separate website repo is
   static HTML/CSS/JS with no analytics, no external fonts and no API calls.
-- **No OAuth acquisition or refresh.** The person supplies a token. Do not add a browser flow, a
-  client secret, a token store or a refresh loop.
+- **OAuth is limited to Microsoft device-code sign-in.** `tools/oauth_ms.py` may acquire and refresh a
+  Microsoft token with a public client ID. Do not add a client secret, a browser callback, a local
+  web server, Google OAuth or a general-purpose token broker. Gmail keeps App Passwords. Store only
+  the refresh token, under the user's profile, with owner-only permissions, and never log it.
 - **No server-side filter upload.** Export Gmail XML or Sieve; the person reviews and imports it.
 - **No bypass of tenant policy, IMAP restrictions, 2FA or Proton Bridge.** Those are stop conditions.
 - **No automatic unsubscribe from spam.** Spam is moved to Junk; an unsubscribe target in spam is
@@ -104,6 +107,11 @@ Never do these in a PR, a test, a doc or a command:
 - Unsubscribe URLs must stay public HTTPS (or HTTP only when explicitly allowed), no credentials, no
   local/private/link-local targets, no redirects, no cookies, no proxies, bounded response.
 - Manual unsubscribe links are printed, never fetched by the tool.
+- Microsoft OAuth uses the device-code grant with a public client. The refresh token lives at
+  `~/.secrets/cleanyourmail-oauth.json` (override with `CYM_OAUTH_STORE`); access tokens are
+  memory-only. The token endpoint is `https://login.microsoftonline.com/common/oauth2/v2.0`.
+  `oauth_ms.py` must never print or log a token, and tests must patch `_post` instead of using the
+  network.
 
 ## Tests
 

@@ -41,11 +41,13 @@ PROVIDERS = {
     "googlemail.com": ("smtp.gmail.com", 587, False,
                        "Gmail needs an App Password (2-Step Verification) and IMAP enabled."),
     "outlook.com": ("smtp.office365.com", 587, False,
-                    "Microsoft disabled basic auth for personal IMAP. Use auth = \"xoauth2\" with a token."),
+                    "Outlook needs Microsoft sign-in. Run `python tools/mail.py connect outlook`."),
     "hotmail.com": ("smtp.office365.com", 587, False,
-                    "Microsoft disabled basic auth for personal IMAP. Use auth = \"xoauth2\" with a token."),
+                    "Outlook needs Microsoft sign-in. Run `python tools/mail.py connect outlook`."),
     "live.com": ("smtp.office365.com", 587, False,
-                 "Microsoft disabled basic auth for personal IMAP. Use auth = \"xoauth2\" with a token."),
+                 "Outlook needs Microsoft sign-in. Run `python tools/mail.py connect outlook`."),
+    "msn.com": ("smtp.office365.com", 587, False,
+                "Outlook needs Microsoft sign-in. Run `python tools/mail.py connect outlook`."),
     "yahoo.com": ("smtp.mail.yahoo.com", 465, True,
                   "Yahoo needs an App Password."),
     "icloud.com": ("smtp.mail.me.com", 587, False,
@@ -69,6 +71,7 @@ IMAP_PRESETS = {
     "outlook.com": ("outlook.office365.com", 993, True),
     "hotmail.com": ("outlook.office365.com", 993, True),
     "live.com": ("outlook.office365.com", 993, True),
+    "msn.com": ("outlook.office365.com", 993, True),
     "yahoo.com": ("imap.mail.yahoo.com", 993, True),
     "icloud.com": ("imap.mail.me.com", 993, True),
     "me.com": ("imap.mail.me.com", 993, True),
@@ -79,6 +82,13 @@ IMAP_PRESETS = {
     "proton.me": ("127.0.0.1", 1143, False),
     "protonmail.com": ("127.0.0.1", 1143, False),
 }
+
+OUTLOOK_DOMAINS = {"outlook.com", "hotmail.com", "live.com", "msn.com"}
+
+
+def is_outlook(email: str) -> bool:
+    domain = (email or "").rsplit("@", 1)[-1].lower()
+    return domain in OUTLOOK_DOMAINS
 
 
 class ConfigError(Exception):
@@ -98,6 +108,8 @@ class Account:
     smtp_ssl: bool = False
     smtp_starttls: bool = True
     auth: str = "login"  # login | xoauth2
+    oauth: str = ""  # "" | "microsoft"
+    oauth_client_id: str = ""
     password_env: str | None = None
     password_command: list[str] | str | None = None
     password_file: str | None = None
@@ -105,6 +117,8 @@ class Account:
     timeout: int = 30
 
     def secret_status(self) -> str:
+        if self.oauth:
+            return f"oauth:{self.oauth} (managed locally)"
         if self.password_env:
             return f"env:{self.password_env}"
         if self.password_command:
@@ -287,6 +301,19 @@ def load_config(explicit: str | None = None) -> Config:
     if account.password:
         warnings.append("The password is stored inline in the config. Prefer password_env, "
                         "password_command or password_file.")
+    if account.oauth:
+        if account.password or account.password_env or account.password_command or account.password_file:
+            warnings.append("oauth is set; the password_* settings are ignored.")
+        if not account.oauth_client_id.strip():
+            try:
+                import oauth_ms
+                configured = bool(oauth_ms.client_id_from_env())
+                connected = bool(oauth_ms.stored_token())
+            except Exception:
+                configured = connected = False
+            if not configured and not connected:
+                warnings.append("No Microsoft application ID configured. Set oauth_client_id or "
+                                "CYM_MS_CLIENT_ID (see docs/MICROSOFT-OAUTH.md).")
     if account.password_file:
         file_path = Path(os.path.expanduser(account.password_file))
         if not file_path.exists():
@@ -392,6 +419,11 @@ def _validate(account: Account, scan: ScanOptions, policy: Policy,
         raise ConfigError(f"{path}: account.smtp_port must be between 1 and 65535")
     if account.auth not in {"login", "xoauth2"}:
         raise ConfigError(f"{path}: account.auth must be 'login' or 'xoauth2'")
+    if account.oauth:
+        if account.oauth not in {"microsoft"}:
+            raise ConfigError(f"{path}: account.oauth must be 'microsoft'")
+        if account.auth != "xoauth2":
+            raise ConfigError(f"{path}: account.oauth requires auth = \"xoauth2\"")
     if account.imap_ssl and account.imap_starttls:
         raise ConfigError(f"{path}: account.imap_ssl and account.imap_starttls cannot both be true")
     if int(account.timeout) < 5:
@@ -471,6 +503,12 @@ def provider_note(email: str, host: str = "") -> str | None:
 def resolve_secret(account: Account, environ: dict | None = None) -> str:
     """Resolve the IMAP/SMTP secret without ever writing it anywhere."""
     environ = environ if environ is not None else os.environ
+    if account.oauth:
+        import oauth_ms
+        try:
+            return oauth_ms.access_token(client_id=account.oauth_client_id.strip())
+        except oauth_ms.OAuthError as exc:
+            raise ConfigError(str(exc)) from exc
     if account.password_env:
         value = environ.get(account.password_env, "")
         if not value:
@@ -509,8 +547,10 @@ def resolve_secret(account: Account, environ: dict | None = None) -> str:
 
 
 def init_template(email: str = "you@example.com", host: str = "imap.example.com",
-                  name: str = "personal", auth: str = "login") -> str:
+                  name: str = "personal", auth: str | None = None,
+                  secret_file: str | None = None) -> str:
     domain = email.rsplit("@", 1)[-1].lower() if "@" in email else ""
+    auth = auth or ("xoauth2" if is_outlook(email) else "login")
     preset = IMAP_PRESETS.get(domain)
     if preset and host == "imap.example.com":
         host, port, ssl = preset
@@ -519,8 +559,30 @@ def init_template(email: str = "you@example.com", host: str = "imap.example.com"
     note = provider_note(email, host)
     note_line = f"# {note}\n" if note else ""
     starttls = "true" if domain in {"proton.me", "protonmail.com"} else "false"
+    microsoft = is_outlook(email) and auth == "xoauth2"
+    if microsoft:
+        intro = "# Microsoft sign-in is stored outside this file, never in it."
+        secret_block = """oauth = "microsoft"
+# Optional: the Microsoft application ID. CYM_MS_CLIENT_ID also works.
+# oauth_client_id = "00000000-0000-0000-0000-000000000000"
+"""
+    else:
+        if secret_file:
+            intro = "# The password is NOT stored here; it stays in a local secret file."
+            secret_block = f"""password_file = {_toml_string(secret_file)}
+# Or use an environment variable instead:
+# password_env = "CYM_PASSWORD"
+"""
+        else:
+            intro = "# The password is NOT stored here: put it in an environment variable."
+            secret_block = """password_env = "CYM_PASSWORD"
+# Alternatives to password_env (use one):
+# password_command = ["pass", "show", {slug}]
+# password_file = "~/.secrets/cleanyourmail.txt"
+# password = "never-commit-this"
+""".format(slug=_toml_string('mail/' + slugify(name)))
     return f"""# CleanYourMail configuration -- keep this file out of git.
-# The password is NOT stored here: put it in an environment variable.
+{intro}
 {note_line}[account]
 name = {_toml_string(name)}
 email = {_toml_string(email)}
@@ -529,12 +591,7 @@ imap_port = {port}
 imap_ssl = {str(ssl).lower()}
 imap_starttls = {starttls}
 auth = {_toml_string(auth)}
-password_env = "CYM_PASSWORD"
-# Alternatives to password_env (use one):
-# password_command = ["pass", "show", {_toml_string('mail/' + slugify(name))}]
-# password_file = "~/.secrets/cleanyourmail.txt"
-# password = "never-commit-this"
-
+{secret_block}
 [scan]
 mailboxes = ["INBOX"]
 days = 365

@@ -26,6 +26,11 @@ imap_ssl = true
 imap_starttls = false
 auth = "login"                 # login | xoauth2
 
+# Microsoft: set auth = "xoauth2" and oauth = "microsoft", then run
+# `python tools/mail.py connect outlook`. Only a refresh token is stored locally.
+# oauth = "microsoft"
+# oauth_client_id = "00000000-0000-0000-0000-000000000000"   # or CYM_MS_CLIENT_ID
+
 # Recommended: read the secret from the environment.
 password_env = "CYM_PASSWORD"
 
@@ -114,7 +119,8 @@ spam = "Spam"
 #
 # Outlook / Microsoft 365:
 #   imap_host = "outlook.office365.com"; imap_port = 993; imap_ssl = true
-#   auth = "xoauth2"; password_env = "CYM_PASSWORD"  (access token, expires)
+#   auth = "xoauth2"; oauth = "microsoft"; oauth_client_id = "..." (or CYM_MS_CLIENT_ID)
+#   then run: python tools/mail.py connect outlook
 #
 # Proton Bridge:
 #   imap_host = "127.0.0.1"; imap_port = 1143; imap_ssl = false; imap_starttls = true

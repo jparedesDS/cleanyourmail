@@ -79,7 +79,8 @@
 
 - メッセージ本文や添付ファイルは読みません。
 - 通常のメール送信、返信、転送、パスワード/2FA の変更はしません。
-- OAuth トークンの取得や更新はしません。
+- Google OAuth は使いません（Gmail はアプリパスワードを使用）。Microsoft は組み込みの device code
+  サインインを使い、refresh token のみをローカルに保存します。
 - サーバー側フィルターのアップロードはしません。レビュー用にエクスポートするだけです。
 - 配信停止リクエストが送信者を止めることを保証しません。
 - Gmail のラベルを実際のフォルダにはしません。
@@ -102,25 +103,24 @@ cd cleanyourmail
 
 ## CLI でのクイックスタート
 
-**要件：** Python 3.11+、アカウントで IMAP 有効、アプリパスワードまたは OAuth2 アクセストークン、
-ターミナル。`pip install` は不要です。
+**要件：** Python 3.11+、アカウントで IMAP 有効、ターミナル。`pip install` は不要です。
 
 ```bash
 git clone https://github.com/jparedesDS/cleanyourmail.git
 cd cleanyourmail
-python tools/mail.py init --email you@example.com
+python tools/mail.py init --email you@example.com --secret-file ~/.secrets/cleanyourmail.txt
 ```
 
-秘密情報は環境変数に入れ、TOML には書きません：
-
-```powershell
-# Windows PowerShell
-$env:CYM_PASSWORD = "your-app-password"
-```
+アプリパスワードを表示せずに保存します（`--clipboard` を付けるとクリップボードから読み取れます）：
 
 ```bash
-# macOS / Linux
-export CYM_PASSWORD='your-app-password'
+python tools/mail.py secret --provider gmail
+```
+
+Outlook の場合はアプリパスワードを省略し、Microsoft サインインを使います：
+
+```bash
+python tools/mail.py connect outlook
 ```
 
 検証、スキャン、レビュー、計画：
@@ -161,7 +161,7 @@ python tools/mail.py undo --run <run> --yes
 | **元に戻せる移動** | 追記専用の JSONL ジャーナルに COPYUID と Message-ID を記録します。Gmail アーカイブは `X-GM-MSGID` を記録します。`undo` は復元前にメッセージを検証します。 |
 | **安全な配信停止** | `List-Unsubscribe` ヘッダーのみ、RFC 8058 POST、リダイレクト/Cookie/プロキシなし、32 KB 上限、公開 HTTPS のみ、プライベート/ローカル宛先は拒否。 |
 | **プロンプトインジェクション耐性** | ヘッダーと件名はデータです。メール内の指示には従いません。手動リンクはあなたが開くものです。 |
-| **秘密情報をリポジトリに入れない** | 既定は `password_env`。インラインのパスワードは警告を出します。状態ファイルは OS が対応する場合にプライベート権限を使います。 |
+| **秘密情報をリポジトリに入れない** | アプリパスワードは `password_env` または非公開の `password_file` に保存され、`secret` が表示することはありません。Microsoft が保存するのは refresh token のみで、アカウントのパスワードは保存しません。状態ファイルは OS が対応する場合にプライベート権限を使います。 |
 
 完全な脅威モデル：[docs/SAFETY.md](docs/SAFETY.md)。
 
@@ -170,7 +170,7 @@ python tools/mail.py undo --run <run> --yes
 | プロバイダー | 認証 | メモ |
 |---|---|---|
 | Gmail / Google Workspace | アプリパスワード（2FA 必須） | IMAP を有効化。ラベル、アーカイブ、Junk、All Mail。 |
-| Outlook.com / Microsoft 365 | OAuth2（`auth = "xoauth2"`） | Basic 認証は無効。CLI はトークンを更新しません。テナントが SMTP AUTH を無効化する場合があります。 |
+| Outlook.com / Microsoft 365 | Microsoft サインイン（`connect outlook`） | refresh token を保存し、自動で更新します。テナントが SMTP AUTH を無効化する場合があります。 |
 | Yahoo | アプリパスワード | Account Security → Generate app password。 |
 | iCloud | アプリ専用パスワード | Apple の 2FA が必要。 |
 | Fastmail | アプリパスワード | スコープ付き IMAP/SMTP パスワード。Sieve エクスポート。 |
@@ -184,6 +184,8 @@ python tools/mail.py undo --run <run> --yes
 | コマンド | 内容 | メールを変更？ |
 |---|---|---|
 | `init` | 初期 `cleanyourmail.toml` を書き出します。 | いいえ |
+| `connect` | Microsoft の device code で Outlook にサインインします。 | いいえ |
+| `secret` | アプリパスワードを表示せずにローカルへ保存します。 | いいえ |
 | `validate` | 接続せずに TOML を検証します。 | いいえ |
 | `doctor` | ログインし、機能と特別フォルダを一覧表示します。 | いいえ |
 | `folders` | メールフォルダーを一覧表示または作成します。 | いいえ |
@@ -269,7 +271,9 @@ python -m unittest discover -s tests -v
 
 [CONTRIBUTING.md](CONTRIBUTING.md) と [AGENTS.md](AGENTS.md) を読んでください。テストスイートは
 実際のメールボックスなしで通る必要があります。`tests/fakeimap.py` を使ってください。完全削除、
-本文読み取り、OAuth トークン取得、テレメトリ、メールボックス全体の EXPUNGE を追加しないでください。
+本文読み取り、Google OAuth、テレメトリ、メールボックス全体の EXPUNGE を追加しないでください。
+Microsoft サインインは `tools/oauth_ms.py` の device code フローに限定され、client secret を
+追加してはいけません。
 
 ## ライセンス
 

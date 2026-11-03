@@ -85,7 +85,8 @@ déplacement, que vous pouvez annuler.
 - Il ne lit ni le corps des messages ni les pièces jointes.
 - Il n’envoie pas d’e-mail normal, ne répond pas, ne transfère pas et ne change pas les mots de
   passe/2FA.
-- Il n’obtient ni ne renouvelle de tokens OAuth.
+- Il n’utilise pas OAuth de Google (Gmail utilise un mot de passe d’application) ; Microsoft utilise la
+  connexion par device code intégrée et ne stocke qu’un refresh token en local.
 - Il n’envoie pas de filtres au serveur ; il les exporte pour relecture.
 - Il ne garantit pas qu’une demande de désabonnement arrête un expéditeur.
 - Il ne transforme pas les libellés Gmail en dossiers réels.
@@ -108,25 +109,25 @@ envoie les demandes de désabonnement. Il ne saute pas la relecture.
 
 ## Démarrage rapide avec la CLI
 
-**Prérequis :** Python 3.11+, IMAP activé, un mot de passe d’application ou un token OAuth2, et un
-terminal. Pas de `pip install`.
+**Prérequis :** Python 3.11+, IMAP activé sur le compte et un terminal. Pas de `pip install`.
 
 ```bash
 git clone https://github.com/jparedesDS/cleanyourmail.git
 cd cleanyourmail
-python tools/mail.py init --email vous@exemple.com
+python tools/mail.py init --email vous@exemple.com --secret-file ~/.secrets/cleanyourmail.txt
 ```
 
-Placez le secret dans une variable d’environnement, jamais dans le TOML :
-
-```powershell
-# Windows PowerShell
-$env:CYM_PASSWORD = "votre-app-password"
-```
+Enregistrez le mot de passe d’application sans l’afficher (ajoutez `--clipboard` pour le lire depuis
+le presse-papiers) :
 
 ```bash
-# macOS / Linux
-export CYM_PASSWORD='votre-app-password'
+python tools/mail.py secret --provider gmail
+```
+
+Pour Outlook, ignorez le mot de passe d’application et utilisez la connexion Microsoft :
+
+```bash
+python tools/mail.py connect outlook
 ```
 
 Validez, scannez, relisez et planifiez :
@@ -167,7 +168,7 @@ le code **2**. Les échecs partiels sortent avec le code **1**.
 | **Déplacements réversibles** | Un journal JSONL append-only enregistre COPYUID et Message-ID. L’archivage Gmail enregistre `X-GM-MSGID`. `undo` vérifie le message avant restauration. |
 | **Désabonnement sûr** | Uniquement les en-têtes `List-Unsubscribe`, POST RFC 8058, sans redirections/cookies/proxies, limite de 32 Ko, HTTPS public uniquement, cibles privées/locales refusées. |
 | **Résistant au prompt injection** | Les en-têtes et objets sont des données. Les instructions dans un e-mail ne sont jamais suivies ; les liens manuels sont à ouvrir par vous. |
-| **Secrets hors du dépôt** | `password_env` par défaut. Les mots de passe inline avertissent. Les fichiers d’état utilisent des permissions privées quand l’OS le permet. |
+| **Secrets hors du dépôt** | Les mots de passe d’application vont dans `password_env` ou dans un `password_file` privé ; `secret` ne les affiche jamais. Microsoft ne stocke qu’un refresh token, jamais le mot de passe du compte. Les fichiers d’état utilisent des permissions privées quand l’OS le permet. |
 
 Modèle de menace complet : [docs/SAFETY.md](docs/SAFETY.md).
 
@@ -176,7 +177,7 @@ Modèle de menace complet : [docs/SAFETY.md](docs/SAFETY.md).
 | Fournisseur | Authentification | Notes |
 |---|---|---|
 | Gmail / Google Workspace | App Password (2FA requise) | Activez IMAP. Libellés ; archive ; Junk ; All Mail. |
-| Outlook.com / Microsoft 365 | OAuth2 (`auth = "xoauth2"`) | L’authentification basique est désactivée. La CLI ne renouvelle pas les tokens. Le tenant peut bloquer SMTP AUTH. |
+| Outlook.com / Microsoft 365 | Connexion Microsoft (`connect outlook`) | Stocke un refresh token et le renouvelle automatiquement. Le tenant peut désactiver SMTP AUTH. |
 | Yahoo | Mot de passe d’application | Account Security → Generate app password. |
 | iCloud | Mot de passe spécifique | Apple exige la 2FA. |
 | Fastmail | Mot de passe d’application | Mot de passe IMAP/SMTP limité ; export Sieve. |
@@ -190,6 +191,8 @@ Plus de détails : [docs/PROVIDERS.md](docs/PROVIDERS.md).
 | Commande | Rôle | Modifie le courrier ? |
 |---|---|---|
 | `init` | Écrit un `cleanyourmail.toml` de départ. | Non |
+| `connect` | Se connecte à Outlook avec Microsoft (device code). | Non |
+| `secret` | Enregistre un mot de passe d’application en local sans l’afficher. | Non |
 | `validate` | Valide le TOML sans connexion. | Non |
 | `doctor` | Se connecte, liste les capacités et dossiers spéciaux. | Non |
 | `folders` | Liste ou crée des dossiers de messagerie. | Non |
@@ -277,7 +280,8 @@ flux CLI et le document de la skill.
 
 Lisez [CONTRIBUTING.md](CONTRIBUTING.md) et [AGENTS.md](AGENTS.md). La suite doit passer sans vraie
 boîte ; utilisez `tests/fakeimap.py`. N’ajoutez pas de suppression définitive, de lecture de corps,
-d’obtention de tokens OAuth, de télémétrie ni d’EXPUNGE global.
+d’OAuth Google, de télémétrie ni d’EXPUNGE global. La connexion Microsoft se limite au flux
+device code dans `tools/oauth_ms.py` ; n’ajoutez jamais de client secret.
 
 ## Licence
 

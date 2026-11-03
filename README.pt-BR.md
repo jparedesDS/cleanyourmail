@@ -83,7 +83,8 @@ desfazer.
 
 - Não lê corpos de mensagens nem anexos.
 - Não envia e-mail normal, não responde, não encaminha nem altera senhas/2FA.
-- Não obtém nem renova tokens OAuth.
+- Não usa OAuth do Google (o Gmail usa uma senha de app); o Microsoft usa o início de sessão
+  integrado por device code e guarda apenas um refresh token localmente.
 - Não envia filtros para o servidor; exporta para revisão.
 - Não garante que um pedido de descadastro pare um remetente.
 - Não transforma marcadores do Gmail em pastas reais: marcadores do Gmail são marcadores.
@@ -106,25 +107,24 @@ envia os pedidos de descadastro. Ele não pula a revisão.
 
 ## Início rápido com a CLI
 
-**Requisitos:** Python 3.11+, IMAP ativado na conta, uma senha de app ou token OAuth2 e um terminal.
-Sem `pip install`.
+**Requisitos:** Python 3.11+, IMAP ativado na conta e um terminal. Sem `pip install`.
 
 ```bash
 git clone https://github.com/jparedesDS/cleanyourmail.git
 cd cleanyourmail
-python tools/mail.py init --email voce@exemplo.com
+python tools/mail.py init --email voce@exemplo.com --secret-file ~/.secrets/cleanyourmail.txt
 ```
 
-Coloque o segredo em uma variável de ambiente, nunca no TOML:
-
-```powershell
-# Windows PowerShell
-$env:CYM_PASSWORD = "sua-app-password"
-```
+Guarde a senha de app sem exibi-la (adicione `--clipboard` para lê-la da área de transferência):
 
 ```bash
-# macOS / Linux
-export CYM_PASSWORD='sua-app-password'
+python tools/mail.py secret --provider gmail
+```
+
+Para o Outlook, dispense a senha de app e use o início de sessão da Microsoft:
+
+```bash
+python tools/mail.py connect outlook
 ```
 
 Valide, escaneie, revise e planeje:
@@ -165,7 +165,7 @@ saem com código **1**.
 | **Movimentos reversíveis** | Um journal JSONL append-only registra COPYUID e Message-ID. Arquivar no Gmail registra `X-GM-MSGID`. `undo` verifica a mensagem antes de restaurar. |
 | **Descadastro seguro** | Apenas cabeçalhos `List-Unsubscribe`, POST RFC 8058, sem redirecionamentos/cookies/proxies, limite de 32 KB, apenas HTTPS público, destinos privados/locais recusados. |
 | **Resistente a prompt injection** | Cabeçalhos e assuntos são dados. Instruções dentro de e-mails nunca são seguidas; links manuais são para você abrir. |
-| **Segredos fora do repositório** | `password_env` é o padrão. Senhas inline avisam. Arquivos de estado usam permissões privadas quando o sistema permite. |
+| **Segredos fora do repositório** | As senhas de app vão para `password_env` ou para um `password_file` privado; `secret` nunca as exibe. A Microsoft guarda apenas um refresh token, nunca a senha da conta. Arquivos de estado usam permissões privadas quando o sistema permite. |
 
 Modelo de ameaças completo: [docs/SAFETY.md](docs/SAFETY.md).
 
@@ -174,7 +174,7 @@ Modelo de ameaças completo: [docs/SAFETY.md](docs/SAFETY.md).
 | Provedor | Autenticação | Notas |
 |---|---|---|
 | Gmail / Google Workspace | App Password (2FA obrigatória) | Ative IMAP. Marcadores; arquivo; Junk; All Mail. |
-| Outlook.com / Microsoft 365 | OAuth2 (`auth = "xoauth2"`) | A autenticação básica está desativada. A CLI não renova tokens. O tenant pode bloquear SMTP AUTH. |
+| Outlook.com / Microsoft 365 | Login da Microsoft (`connect outlook`) | Guarda um refresh token e o renova automaticamente. O tenant pode desativar SMTP AUTH. |
 | Yahoo | Senha de app | Account Security → Generate app password. |
 | iCloud | Senha específica de app | Apple exige 2FA. |
 | Fastmail | Senha de app | Senha IMAP/SMTP com escopo; exportação Sieve. |
@@ -188,6 +188,8 @@ Mais detalhes: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 | Comando | O que faz | Muda o e-mail? |
 |---|---|---|
 | `init` | Escreve um `cleanyourmail.toml` inicial. | Não |
+| `connect` | Entra no Outlook com a Microsoft (device code). | Não |
+| `secret` | Guarda uma senha de app localmente sem exibi-la. | Não |
 | `validate` | Valida o TOML sem conectar. | Não |
 | `doctor` | Entra na conta, lista recursos e pastas especiais. | Não |
 | `folders` | Lista ou cria pastas de correio. | Não |
@@ -272,8 +274,9 @@ Gmail, recusas sem MOVE e sem UIDPLUS, fluxos de CLI e o documento da skill.
 ## Contribuindo
 
 Leia [CONTRIBUTING.md](CONTRIBUTING.md) e [AGENTS.md](AGENTS.md). A suíte precisa passar sem uma
-caixa real; use `tests/fakeimap.py`. Não adicione exclusão permanente, leitura de corpos, obtenção de
-tokens OAuth, telemetria ou EXPUNGE geral.
+caixa real; use `tests/fakeimap.py`. Não adicione exclusão permanente, leitura de corpos, OAuth do
+Google, telemetria ou EXPUNGE geral. O login da Microsoft se limita ao fluxo device code em
+`tools/oauth_ms.py`; nunca adicione um client secret.
 
 ## Licença
 

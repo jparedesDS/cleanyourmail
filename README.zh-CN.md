@@ -74,7 +74,8 @@
 
 - 不读取邮件正文或附件。
 - 不发送普通邮件、不回复、不转发，也不修改密码/2FA。
-- 不获取或刷新 OAuth 令牌。
+- 不使用 Google OAuth（Gmail 使用应用专用密码）；Microsoft 使用内置的 device code 登录，并且只在
+  本地保存 refresh token。
 - 不上传服务器端过滤器；只导出供你审阅。
 - 不保证退订请求一定能阻止发件人。
 - 不会把 Gmail 标签变成真正的文件夹。
@@ -97,25 +98,24 @@ cd cleanyourmail
 
 ## CLI 快速开始
 
-**要求：** Python 3.11+、账户已启用 IMAP、应用专用密码或 OAuth2 访问令牌，以及终端。无需
-`pip install`。
+**要求：** Python 3.11+、账户已启用 IMAP，以及终端。无需 `pip install`。
 
 ```bash
 git clone https://github.com/jparedesDS/cleanyourmail.git
 cd cleanyourmail
-python tools/mail.py init --email you@example.com
+python tools/mail.py init --email you@example.com --secret-file ~/.secrets/cleanyourmail.txt
 ```
 
-把密钥放在环境变量里，不要写进 TOML：
-
-```powershell
-# Windows PowerShell
-$env:CYM_PASSWORD = "your-app-password"
-```
+保存应用专用密码而不回显（加上 `--clipboard` 可从剪贴板读取）：
 
 ```bash
-# macOS / Linux
-export CYM_PASSWORD='your-app-password'
+python tools/mail.py secret --provider gmail
+```
+
+使用 Outlook 时，跳过应用专用密码，改用 Microsoft 登录：
+
+```bash
+python tools/mail.py connect outlook
 ```
 
 验证、扫描、审阅并生成计划：
@@ -155,7 +155,7 @@ python tools/mail.py undo --run <run> --yes
 | **可逆移动** | 追加式 JSONL 日志记录 COPYUID 和 Message-ID。Gmail 归档记录 `X-GM-MSGID`。`undo` 在恢复前验证邮件。 |
 | **安全退订** | 仅使用 `List-Unsubscribe` 头，RFC 8058 POST，无重定向/Cookie/代理，32 KB 上限，仅公网 HTTPS，拒绝私有/本地目标。 |
 | **抵御提示注入** | 邮件头和主题都是数据。邮件里的指令永远不会被执行；手动链接由你自己打开。 |
-| **密钥不进入仓库** | 默认使用 `password_env`。内联密码会警告。操作系统支持时，状态文件使用私有权限。 |
+| **密钥不进入仓库** | 应用密码保存到 `password_env` 或私有的 `password_file`；`secret` 绝不会回显它们。Microsoft 只保存 refresh token，绝不保存账户密码。操作系统支持时，状态文件使用私有权限。 |
 
 完整威胁模型：[docs/SAFETY.md](docs/SAFETY.md)。
 
@@ -164,7 +164,7 @@ python tools/mail.py undo --run <run> --yes
 | 服务商 | 认证 | 说明 |
 |---|---|---|
 | Gmail / Google Workspace | 应用专用密码（需 2FA） | 启用 IMAP。标签、归档、Junk、All Mail。 |
-| Outlook.com / Microsoft 365 | OAuth2（`auth = "xoauth2"`） | 基本认证已禁用。CLI 不刷新令牌。租户可能禁用 SMTP AUTH。 |
+| Outlook.com / Microsoft 365 | Microsoft 登录（`connect outlook`） | 保存 refresh token 并自动续期。租户可能禁用 SMTP AUTH。 |
 | Yahoo | 应用密码 | Account Security → Generate app password。 |
 | iCloud | App 专用密码 | 需要 Apple 2FA。 |
 | Fastmail | 应用密码 | 有范围的 IMAP/SMTP 密码；Sieve 导出。 |
@@ -178,6 +178,8 @@ python tools/mail.py undo --run <run> --yes
 | 命令 | 作用 | 会修改邮件吗？ |
 |---|---|---|
 | `init` | 生成初始 `cleanyourmail.toml`。 | 否 |
+| `connect` | 使用 Microsoft device code 登录 Outlook。 | 否 |
+| `secret` | 在本地保存应用密码而不回显。 | 否 |
 | `validate` | 不连接即可检查 TOML。 | 否 |
 | `doctor` | 登录，列出能力和特殊文件夹。 | 否 |
 | `folders` | 列出或创建邮件文件夹。 | 否 |
@@ -258,8 +260,8 @@ python -m unittest discover -s tests -v
 ## 贡献
 
 请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [AGENTS.md](AGENTS.md)。测试必须在没有真实邮箱的
-情况下通过；使用 `tests/fakeimap.py`。不要添加永久删除、正文读取、OAuth 令牌获取、遥测或全邮箱
-EXPUNGE。
+情况下通过；使用 `tests/fakeimap.py`。不要添加永久删除、正文读取、Google OAuth、遥测或全邮箱
+EXPUNGE。Microsoft 登录仅限于 `tools/oauth_ms.py` 中的 device code 流程；不得添加 client secret。
 
 ## 许可证
 

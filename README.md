@@ -81,7 +81,8 @@ runs locally, reads headers only and journals every move, so you can undo it.
 
 - It does not read message bodies or attachments.
 - It does not send normal email, reply, forward, or change passwords/2FA.
-- It does not acquire or refresh OAuth tokens.
+- It does not acquire Google OAuth tokens; Gmail uses an App Password. Microsoft uses a built-in
+  device-code sign-in and stores only a refresh token locally.
 - It does not upload server-side filters; it exports them for review.
 - It does not guarantee that an unsubscribe request stops a sender.
 - It does not make Gmail folders into real folders: Gmail labels are labels.
@@ -104,25 +105,24 @@ then sends unsubscribe requests. It will not skip the review.
 
 ## CLI quick start
 
-**Requirements:** Python 3.11+, IMAP enabled on the account, an app password or OAuth2 access token,
-and a terminal. No `pip install`.
+**Requirements:** Python 3.11+, IMAP enabled on the account, and a terminal. No `pip install`.
 
 ```bash
 git clone https://github.com/jparedesDS/cleanyourmail.git
 cd cleanyourmail
-python tools/mail.py init --email you@example.com
+python tools/mail.py init --email you@example.com --secret-file ~/.secrets/cleanyourmail.txt
 ```
 
-Put the secret in an environment variable, never in the TOML:
-
-```powershell
-# Windows PowerShell
-$env:CYM_PASSWORD = "your-app-password"
-```
+Save the app password without echoing it (add `--clipboard` to read it from the clipboard):
 
 ```bash
-# macOS / Linux
-export CYM_PASSWORD='your-app-password'
+python tools/mail.py secret --provider gmail
+```
+
+For Outlook, skip the app password and use the Microsoft sign-in:
+
+```bash
+python tools/mail.py connect outlook
 ```
 
 Validate, scan, review and plan:
@@ -163,7 +163,7 @@ exit with code **1**.
 | **Reversible moves** | An append-only JSONL journal records COPYUID and Message-ID. Gmail archive records `X-GM-MSGID`. `undo` verifies the message before restoring. |
 | **Safe unsubscribe** | `List-Unsubscribe` headers only, RFC 8058 POST, no redirects/cookies/proxies, 32 KB cap, public HTTPS only, private/local targets rejected. |
 | **Prompt-injection resistant** | Headers and subjects are data. Instructions inside email are never followed; manual links are for you to open. |
-| **Secrets stay out** | `password_env` is the default. Inline passwords warn. State files use private permissions where the OS supports it. |
+| **Secrets stay out** | App passwords go to `password_env` or a private `password_file`; `secret` never echoes them. Microsoft stores only a refresh token, never the account password. State files use private permissions where the OS supports it. |
 
 Full threat model: [docs/SAFETY.md](docs/SAFETY.md).
 
@@ -172,7 +172,7 @@ Full threat model: [docs/SAFETY.md](docs/SAFETY.md).
 | Provider | Authentication | Notes |
 |---|---|---|
 | Gmail / Google Workspace | App Password (2FA required) | Enable IMAP. Labels; archive; Junk; All Mail. |
-| Outlook.com / Microsoft 365 | OAuth2 (`auth = "xoauth2"`) | Basic auth is disabled. The CLI does not refresh tokens. SMTP AUTH may be disabled by the tenant. |
+| Outlook.com / Microsoft 365 | Microsoft sign-in (`connect outlook`) | Stores a refresh token and renews it automatically. SMTP AUTH may be disabled by the tenant. |
 | Yahoo | App password | Account Security → Generate app password. |
 | iCloud | App-specific password | Apple 2FA required. |
 | Fastmail | App password | Scoped IMAP/SMTP password; Sieve export. |
@@ -186,6 +186,8 @@ More detail: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 | Command | What it does | Changes mail? |
 |---|---|---|
 | `init` | Write a starter `cleanyourmail.toml`. | No |
+| `connect` | Sign in to Outlook with Microsoft (device code). | No |
+| `secret` | Save an app password locally without echoing it. | No |
 | `validate` | Check the TOML without connecting. | No |
 | `doctor` | Log in, list capabilities and special folders. | No |
 | `folders` | List or create mail folders. | No |
@@ -270,8 +272,9 @@ no-UIDPLUS refusals, CLI flows and the skill document.
 ## Contributing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md). The suite must pass without a
-real mailbox; use `tests/fakeimap.py`. Do not add permanent deletion, body reading, OAuth token
-acquisition, telemetry or a mailbox-wide EXPUNGE.
+real mailbox; use `tests/fakeimap.py`. Do not add permanent deletion, body reading, Google OAuth,
+telemetry or a mailbox-wide EXPUNGE. Microsoft sign-in is limited to the device-code flow in
+`tools/oauth_ms.py`; never add a client secret.
 
 ## License
 

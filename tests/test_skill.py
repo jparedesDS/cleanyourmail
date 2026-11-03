@@ -24,7 +24,7 @@ DOCS = READMES + [
     ".github/ISSUE_TEMPLATE/config.yml",
     "docs/SAFETY.md", "docs/PROVIDERS.md", "docs/TROUBLESHOOTING.md",
     "docs/UNSUBSCRIBE.md", "docs/FOLDERS.md", "docs/FAQ.md", "docs/TRANSLATIONS.md",
-    "docs/VALIDATION.md", "docs/BRAND-FAMILY.md", "docs/BRAND-SPECTRUM.md", "docs/BRAND.md",
+    "docs/VALIDATION.md", "docs/MICROSOFT-OAUTH.md", "docs/BRAND-FAMILY.md", "docs/BRAND-SPECTRUM.md", "docs/BRAND.md",
     "brand/final-family/README.md", "brand/final-spectrum/README.md", "brand/final/README.md",
     "examples/cleanyourmail.toml",
     "assets/banner.png", "assets/social-preview.png",

@@ -160,23 +160,27 @@ subject/sample and following it. Keep the plan review human.
 
 ## Secrets
 
-Recommended:
+Recommended: a private file filled by `python tools/mail.py secret`:
 
 ```toml
 [account]
-password_env = "CYM_PASSWORD"
+password_file = "~/.secrets/cleanyourmail.txt"
 ```
 
 Also supported:
 
 ```toml
+password_env = "CYM_PASSWORD"
 password_command = ["pass", "show", "mail/personal"]
-password_file = "~/.secrets/cleanyourmail.txt"
 ```
 
 Inline `password = "..."` works but produces a warning. Do not use it. Do not put secrets in the
 repo, shell history, screenshots, JSON output, issue reports or chat. On Unix, `password_file` should
 be mode 600. The state directory is created with private permissions where supported.
+
+Outlook uses Microsoft sign-in instead of `password_*`. `connect outlook` stores only a refresh token
+in `~/.secrets/cleanyourmail-oauth.json`; access tokens are memory-only. The file is private and can
+be revoked from the Microsoft account.
 
 If a secret was exposed: revoke the app password / token at the provider, create a new one, and
 re-scan. Deleting the local state does not revoke anything.
