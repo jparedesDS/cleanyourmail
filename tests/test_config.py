@@ -184,6 +184,20 @@ class ConfigTest(unittest.TestCase):
         self.assertIn("connect outlook", content)
         self.assertNotIn('\npassword_env = "CYM_PASSWORD"', content)
 
+    def test_init_template_outlook_es(self):
+        content = init_template(email="me@outlook.es")
+        self.assertIn('imap_host = "outlook.office365.com"', content)
+        self.assertIn('auth = "xoauth2"', content)
+        self.assertIn('oauth = "microsoft"', content)
+        self.assertNotIn('\npassword_env = "CYM_PASSWORD"', content)
+
+    def test_outlook_es_provider_defaults(self):
+        with TempDir() as temp:
+            config = load_config(str(write_config(
+                temp, '[account]\nemail = "me@outlook.es"\n')))
+        self.assertEqual(config.account.imap_host, "outlook.office365.com")
+        self.assertEqual(config.account.smtp_host, "smtp.office365.com")
+
     def test_init_template_secret_file(self):
         content = init_template(email="me@gmail.com", secret_file="~/.secrets/cym.txt")
         self.assertIn('password_file = "~/.secrets/cym.txt"', content)

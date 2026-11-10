@@ -88,7 +88,7 @@ OUTLOOK_DOMAINS = {"outlook.com", "hotmail.com", "live.com", "msn.com"}
 
 def is_outlook(email: str) -> bool:
     domain = (email or "").rsplit("@", 1)[-1].lower()
-    return domain in OUTLOOK_DOMAINS
+    return domain in OUTLOOK_DOMAINS or domain.startswith("outlook.")
 
 
 def is_microsoft(email: str, host: str = "") -> bool:
@@ -489,10 +489,18 @@ def _fill_provider_defaults(account: Account) -> None:
         account.imap_host, account.imap_port, account.imap_ssl = imap
         if domain in {"proton.me", "protonmail.com"}:
             account.imap_starttls = True
+    elif domain.startswith("outlook.") and (
+            not account.imap_host or account.imap_host == "imap.example.com"):
+        account.imap_host, account.imap_port, account.imap_ssl = (
+            "outlook.office365.com", 993, True)
     smtp = PROVIDERS.get(domain)
     if smtp and not account.smtp_host:
         account.smtp_host, account.smtp_port, account.smtp_ssl, _ = smtp
         account.smtp_starttls = not account.smtp_ssl
+    elif domain.startswith("outlook.") and not account.smtp_host:
+        account.smtp_host, account.smtp_port, account.smtp_ssl = (
+            "smtp.office365.com", 587, False)
+        account.smtp_starttls = True
 
 
 def provider_note(email: str, host: str = "") -> str | None:
@@ -500,6 +508,8 @@ def provider_note(email: str, host: str = "") -> str | None:
     note = PROVIDERS.get(domain, (None, None, None, None))[3]
     if note:
         return note
+    if domain.startswith("outlook."):
+        return PROVIDERS["outlook.com"][3]
     text = (host or "").lower()
     if "office365" in text or "outlook" in text:
         return PROVIDERS["outlook.com"][3]
@@ -562,6 +572,8 @@ def init_template(email: str = "you@example.com", host: str = "imap.example.com"
     preset = IMAP_PRESETS.get(domain)
     if preset and host == "imap.example.com":
         host, port, ssl = preset
+    elif domain.startswith("outlook.") and host == "imap.example.com":
+        host, port, ssl = ("outlook.office365.com", 993, True)
     else:
         port, ssl = 993, True
     note = provider_note(email, host)
