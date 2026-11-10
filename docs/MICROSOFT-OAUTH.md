@@ -16,8 +16,9 @@ Signing in to Entra does not create one.
 1. Open <https://azure.microsoft.com/free/> and sign in with the same Microsoft account. Complete the
    free-account signup; this creates a tenant and a subscription. App registrations are free.
 2. Or join the Microsoft 365 Developer Program at
-   <https://developer.microsoft.com/microsoft-365/dev-program>. It creates a development tenant
-   without a credit card, but it is time-limited and must be renewed.
+   <https://developer.microsoft.com/microsoft-365/dev-program>. It can create a development tenant
+   without a credit card, but eligibility is not guaranteed and the tenant is time-limited. If the
+   program says you do not qualify, use the free Azure account or an existing tenant instead.
 3. Return to <https://entra.microsoft.com> and check the directory name in the top-right menu. If it
    shows your new `*.onmicrosoft.com` tenant, you are in the right place.
 
