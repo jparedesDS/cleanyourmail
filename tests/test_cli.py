@@ -264,7 +264,8 @@ auth = "xoauth2"
 oauth = "microsoft"
 """, encoding="utf-8")
         env = {key: value for key, value in os.environ.items() if key != "CYM_MS_CLIENT_ID"}
-        with patch.dict(os.environ, env, clear=True):
+        with patch.dict(os.environ, env, clear=True), \
+                patch("oauth_ms.client_id_from_env", return_value=""):
             code, _out, err = run_cli("connect", "outlook", "--config", str(path))
         self.assertEqual(code, 2)
         self.assertIn("Microsoft application ID", err)

@@ -313,16 +313,19 @@ def load_config(explicit: str | None = None) -> Config:
     if account.oauth:
         if account.password or account.password_env or account.password_command or account.password_file:
             warnings.append("oauth is set; the password_* settings are ignored.")
-        if not account.oauth_client_id.strip():
-            try:
-                import oauth_ms
-                configured = bool(oauth_ms.client_id_from_env())
-                connected = bool(oauth_ms.stored_token())
-            except Exception:
-                configured = connected = False
-            if not configured and not connected:
-                warnings.append("This copy has no Microsoft application ID. Set oauth_client_id or "
-                                "CYM_MS_CLIENT_ID (maintainer setup, see docs/MICROSOFT-OAUTH.md).")
+        try:
+            import oauth_ms
+            configured = bool(oauth_ms.client_id_from_env())
+            connected = bool(oauth_ms.stored_token())
+            store_warning = oauth_ms.store_permission_warning()
+        except Exception:
+            configured = connected = False
+            store_warning = None
+        if not account.oauth_client_id.strip() and not configured and not connected:
+            warnings.append("This copy has no Microsoft application ID. Set oauth_client_id or "
+                            "CYM_MS_CLIENT_ID (maintainer setup, see docs/MICROSOFT-OAUTH.md).")
+        if store_warning:
+            warnings.append(store_warning)
     if account.password_file:
         file_path = Path(os.path.expanduser(account.password_file))
         if not file_path.exists():

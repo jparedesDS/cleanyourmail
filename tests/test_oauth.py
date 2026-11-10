@@ -98,6 +98,27 @@ class OAuthTest(unittest.TestCase):
             if os.name != "nt":
                 self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o600)
 
+    def test_save_token_recovers_from_corrupt_store(self):
+        with TempDir() as temp:
+            path = temp / "oauth.json"
+            path.write_text("{not json", encoding="utf-8")
+            oauth_ms.save_token("client", oauth_ms.Token("a", "r", 3600),
+                                email="me@outlook.com", path=path)
+            entry = oauth_ms.stored_token(path)
+            self.assertEqual(entry["refresh_token"], "r")
+            self.assertTrue((temp / "oauth.json.corrupt").exists())
+
+    @unittest.skipIf(os.name == "nt", "POSIX permissions only")
+    def test_store_permission_warning(self):
+        with TempDir() as temp:
+            path = temp / "oauth.json"
+            oauth_ms.save_token("client", oauth_ms.Token("a", "r", 3600),
+                                email="me@outlook.com", path=path)
+            os.chmod(path, 0o644)
+            self.assertIsNotNone(oauth_ms.store_permission_warning(path))
+            os.chmod(path, 0o600)
+            self.assertIsNone(oauth_ms.store_permission_warning(path))
+
     def test_access_token_requires_sign_in(self):
         with TempDir() as temp:
             path = temp / "missing.json"

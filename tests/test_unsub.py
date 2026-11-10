@@ -233,13 +233,16 @@ class UnsubTest(unittest.TestCase):
 
             def starttls(self, context):
                 sent["tls"] = True
+                sent.setdefault("events", []).append("starttls")
 
             def auth(self, mechanism, authobject, **kwargs):
                 sent["mechanism"] = mechanism
                 sent["payload"] = authobject(None)
+                sent.setdefault("events", []).append("auth")
 
             def send_message(self, message):
                 sent["message"] = message
+                sent.setdefault("events", []).append("send")
 
         account = Account(email="me@outlook.com", smtp_host="smtp.office365.com",
                           smtp_port=587, smtp_ssl=False, smtp_starttls=True,
@@ -252,6 +255,7 @@ class UnsubTest(unittest.TestCase):
         self.assertIsInstance(sent["payload"], str)
         self.assertIn("user=me@outlook.com", sent["payload"])
         self.assertIn("auth=Bearer access-token", sent["payload"])
+        self.assertEqual(sent["events"], ["starttls", "auth", "send"])
 
     def test_polite_delay(self):
         slept = []
