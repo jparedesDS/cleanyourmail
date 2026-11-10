@@ -15,7 +15,8 @@ from urllib.parse import urlsplit
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from config import (ACTIONABLE_CATEGORIES, CATEGORIES, DEFAULT_FILENAME, Config,
-                    ConfigError, init_template, is_outlook, load_config, resolve_secret)
+                    ConfigError, init_template, is_microsoft, is_outlook, load_config,
+                    resolve_secret)
 import oauth_ms
 from imap import MailClient, MailError, SafetyError
 from journal import Journal
@@ -173,7 +174,9 @@ def cmd_init(args) -> int:
     if path.exists() and not args.force:
         raise ConfigError(f"{path} already exists. Use --force to overwrite.")
     auth = args.auth or ("xoauth2" if is_outlook(args.email) else "login")
-    content = init_template(email=args.email, host=args.host or "imap.example.com",
+    host = args.host or "imap.example.com"
+    microsoft = auth == "xoauth2" and is_microsoft(args.email, host)
+    content = init_template(email=args.email, host=host,
                             name=args.name, auth=auth, secret_file=args.secret_file)
     atomic_write_text(path, content)
     if args.json:
@@ -182,7 +185,7 @@ def cmd_init(args) -> int:
     say(f"Wrote {path}")
     say("")
     say("Next:")
-    if is_outlook(args.email) and auth == "xoauth2":
+    if microsoft:
         say("  1. Connect with Microsoft (opens a page, no password):")
         say("     python tools/mail.py connect outlook")
         say("  2. Check the connection:  python tools/mail.py doctor")

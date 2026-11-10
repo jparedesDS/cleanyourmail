@@ -176,6 +176,14 @@ class ConfigTest(unittest.TestCase):
         self.assertIn("connect outlook", content)
         self.assertNotIn('password_env = "CYM_PASSWORD"', content)
 
+    def test_init_template_custom_microsoft_domain(self):
+        content = init_template(email="me@corp.example", host="outlook.office365.com",
+                                auth="xoauth2")
+        self.assertIn('auth = "xoauth2"', content)
+        self.assertIn('oauth = "microsoft"', content)
+        self.assertIn("connect outlook", content)
+        self.assertNotIn('\npassword_env = "CYM_PASSWORD"', content)
+
     def test_init_template_secret_file(self):
         content = init_template(email="me@gmail.com", secret_file="~/.secrets/cym.txt")
         self.assertIn('password_file = "~/.secrets/cym.txt"', content)

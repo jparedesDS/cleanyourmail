@@ -115,6 +115,13 @@ python tools/mail.py init --email you@example.com --secret-file ~/.secrets/clean
 `password_file`. Keep the secret out of the TOML. For Outlook, `--secret-file` is ignored because the
 refresh token is stored by `connect`.
 
+A work/school Microsoft 365 address with a custom domain is not detected from the address alone. Pass
+the host and auth explicitly:
+
+```bash
+python tools/mail.py init --email you@company.com --host outlook.office365.com --auth xoauth2
+```
+
 ### 0.3 Connect
 
 #### Outlook / Microsoft 365

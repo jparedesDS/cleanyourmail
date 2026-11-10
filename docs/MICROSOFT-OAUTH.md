@@ -61,6 +61,12 @@ python tools/mail.py doctor
 ```
 
 `init` writes `auth = "xoauth2"` and `oauth = "microsoft"` automatically for Outlook domains.
+For a work/school Microsoft 365 account with a custom domain, pass the host and auth explicitly:
+
+```bash
+python tools/mail.py init --email you@company.com --host outlook.office365.com --auth xoauth2
+```
+
 `connect` prints a URL and a code; the person approves it in the browser. The refresh token is saved
 locally and `doctor` uses it.
 
