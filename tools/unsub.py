@@ -239,7 +239,7 @@ def mailto_unsubscribe(account: Account, secret: str, address: str, subject: str
             if not account.smtp_ssl and account.smtp_starttls:
                 smtp.starttls(context=ssl.create_default_context())
             if account.auth == "xoauth2":
-                payload = (f"user={account.email}\x01auth=Bearer {secret}\x01\x01").encode()
+                payload = f"user={account.email}\x01auth=Bearer {secret}\x01\x01"
                 smtp.auth("XOAUTH2", lambda _challenge=None: payload)
             elif secret:
                 smtp.login(account.email, secret)
