@@ -152,6 +152,11 @@ public client ID. Only a maintainer or self-hoster follows
 [`docs/MICROSOFT-OAUTH.md`](docs/MICROSOFT-OAUTH.md); otherwise ask the person who installed
 CleanYourMail. Do not ask for the code, the token or the password.
 
+If `doctor` returns `User is authenticated but not connected`, stop. For a work/school account, a
+tenant administrator must grant consent for the app. For a personal Outlook.com account, the app needs
+a verified publisher; without it Microsoft blocks end-user consent. Explain the limitation; do not
+switch to application permissions and do not ask the person to register another app.
+
 #### Gmail
 
 1. Ask: "Is 2-Step Verification already on?" Offer **1** yes, **2** no, **3** not sure.
@@ -197,7 +202,7 @@ the INBOX count. If it fails, read `docs/TROUBLESHOOTING.md`; do not guess.
 | Provider | What works | What to tell the person |
 |---|---|---|
 | Gmail / Google Workspace | IMAP with an App Password (2-Step Verification must be on). Labels, archive, Junk, All Mail. | "Folders" are labels. Archive removes the Inbox label. Gmail may rate-limit large runs. |
-| Outlook.com / Microsoft 365 | IMAP with OAuth2 (`auth = "xoauth2"`); basic auth is disabled. | `connect outlook` signs in once and refreshes the token automatically. SMTP AUTH may be disabled by the tenant, so a mailto unsubscribe may fail; use the sender's manual page in that case. |
+| Outlook.com / Microsoft 365 | IMAP with OAuth2 (`auth = "xoauth2"`); basic auth is disabled. | `connect outlook` signs in once and refreshes the token automatically. Microsoft 365 requires tenant admin consent; Outlook.com personal requires a verified publisher. SMTP AUTH may be disabled by the tenant, so a mailto unsubscribe may fail; use the sender's manual page in that case. |
 | Yahoo | IMAP with an app password. | Create the app password in Account Security. |
 | iCloud | IMAP with an app-specific password. | Apple requires 2FA and an app-specific password. |
 | Fastmail | IMAP with an app password; Sieve export. | Use a scoped app password with IMAP/SMTP access. |

@@ -177,7 +177,7 @@ Vollständiges Bedrohungsmodell: [docs/SAFETY.md](docs/SAFETY.md).
 | Anbieter | Authentifizierung | Hinweise |
 |---|---|---|
 | Gmail / Google Workspace | App-Passwort (2FA nötig) | IMAP aktivieren. Labels; Archiv; Junk; All Mail. |
-| Outlook.com / Microsoft 365 | Microsoft-Anmeldung (`connect outlook`) | Speichert ein Refresh-Token und erneuert es automatisch. Der Tenant kann SMTP AUTH deaktivieren. |
+| Outlook.com / Microsoft 365 | Microsoft-Anmeldung (`connect outlook`) | Speichert ein Refresh-Token und erneuert es automatisch. Microsoft 365 erfordert die Zustimmung des Tenant-Administrators; Outlook.com (privat) erfordert einen verifizierten Publisher. Der Tenant kann SMTP AUTH deaktivieren. |
 | Yahoo | App-Passwort | Account Security → Generate app password. |
 | iCloud | App-spezifisches Passwort | Apple 2FA nötig. |
 | Fastmail | App-Passwort | Begrenztes IMAP/SMTP-Passwort; Sieve-Export. |

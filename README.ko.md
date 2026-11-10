@@ -167,7 +167,7 @@ python tools/mail.py undo --run <run> --yes
 | 제공업체 | 인증 | 참고 |
 |---|---|---|
 | Gmail / Google Workspace | 앱 비밀번호(2FA 필요) | IMAP 활성화. 라벨, 보관, Junk, All Mail. |
-| Outlook.com / Microsoft 365 | Microsoft 로그인(`connect outlook`) | refresh token을 저장하고 자동으로 갱신합니다. 테넌트가 SMTP AUTH를 막을 수 있습니다. |
+| Outlook.com / Microsoft 365 | Microsoft 로그인(`connect outlook`) | refresh token을 저장하고 자동으로 갱신합니다. Microsoft 365는 테넌트 관리자 동의가 필요하고, Outlook.com 개인 계정은 확인된 게시자가 필요합니다. 테넌트가 SMTP AUTH를 막을 수 있습니다. |
 | Yahoo | 앱 비밀번호 | Account Security → Generate app password. |
 | iCloud | 앱 전용 비밀번호 | Apple 2FA 필요. |
 | Fastmail | 앱 비밀번호 | 범위가 제한된 IMAP/SMTP 비밀번호, Sieve 내보내기. |

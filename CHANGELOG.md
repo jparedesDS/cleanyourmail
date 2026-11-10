@@ -4,7 +4,7 @@ All notable changes to CleanYourMail are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.2.0] - 2026-11-10
 
 ### Added
 
@@ -24,6 +24,20 @@ All notable changes to CleanYourMail are documented here. The format is based on
 - Outlook no longer asks for a manual access token. The refresh token lives in
   `~/.secrets/cleanyourmail-oauth.json` (override with `CYM_OAUTH_STORE`).
 - SMTP now supports XOAUTH2 for Outlook `mailto:` unsubscribe requests.
+
+### Fixed
+
+- `init` detects custom-domain Microsoft 365 accounts and international `outlook.*` domains instead
+  of falling back to `imap.example.com`.
+- SMTP XOAUTH2 returns the string `smtplib` expects instead of bytes.
+
+### Validated
+
+- **Gmail / Google Workspace: pass.** Folders, archive, undo, rules and a synthetic one-click request
+  were exercised on 2026-11-10.
+- **Outlook.com / Microsoft 365: partial.** The device-code flow, token refresh and offline suite
+  pass, but real IMAP is blocked by Microsoft's consent model. Microsoft 365 needs tenant
+  administrator consent; Outlook.com personal needs a verified publisher. See `docs/VALIDATION.md`.
 
 ## [1.1.5] - 2026-10-30
 
@@ -115,6 +129,7 @@ All notable changes to CleanYourMail are documented here. The format is based on
 - `report`, `plan`, `apply`, `unsubscribe`, `journal` and `unsubs` support redacted output.
 - Prompt-injection rules and hard stops for "skip the plan / delete everything" requests.
 
+[1.2.0]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.2.0
 [1.1.5]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.5
 [1.1.4]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.4
 [1.1.3]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.3

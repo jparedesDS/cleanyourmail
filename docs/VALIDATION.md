@@ -58,12 +58,17 @@ Mark a provider as tested only after `undo` succeeds. Record the result here wit
 | Provider | Auth | Version | Date | Result | Notes |
 |---|---|---|---|---|---|
 | Gmail / Google Workspace | App Password | 1.2.0 | 2026-11-10 | pass | Folders and archive verified; undo restored both. One-click tested against a synthetic target; no real sender was unsubscribed. |
-| Outlook.com / Microsoft 365 | Microsoft sign-in (`connect outlook`) | | | pending | |
+| Outlook.com / Microsoft 365 | Microsoft sign-in (`connect outlook`) | 1.2.0 | 2026-11-10 | partial | Implementation and offline tests pass. Real IMAP is blocked by Microsoft's consent/publisher policy: Microsoft 365 needs tenant admin consent; Outlook.com personal needs a verified publisher. |
 | Yahoo | App Password | | | pending | |
 | iCloud | App-specific password | | | pending | |
 | Fastmail | App Password | | | pending | |
 | Proton Bridge | Bridge password | | | pending | |
 | Custom IMAP | Login / XOAUTH2 | | | pending | |
+
+`partial` for Outlook means the device-code flow, token refresh and IMAP XOAUTH2 code pass the offline
+suite, but no real mailbox completed the sequence. The test tenant requires administrator consent; the
+personal test accounts hit Microsoft's unverified-publisher consent policy. Re-test after the project
+has a verified publisher or an admin-consented Microsoft 365 mailbox.
 
 Use `pending`, `pass`, `fail` or `partial` in **Result**. A failure is useful: open an issue with the
 redacted command and error, then add the regression test before changing the safety rules.
