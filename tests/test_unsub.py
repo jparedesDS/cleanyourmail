@@ -249,8 +249,9 @@ class UnsubTest(unittest.TestCase):
                                         "unsubscribe", "please stop")
         self.assertEqual(result.status, "sent")
         self.assertEqual(sent["mechanism"], "XOAUTH2")
-        self.assertIn(b"user=me@outlook.com", sent["payload"])
-        self.assertIn(b"auth=Bearer access-token", sent["payload"])
+        self.assertIsInstance(sent["payload"], str)
+        self.assertIn("user=me@outlook.com", sent["payload"])
+        self.assertIn("auth=Bearer access-token", sent["payload"])
 
     def test_polite_delay(self):
         slept = []
