@@ -57,7 +57,7 @@ Mark a provider as tested only after `undo` succeeds. Record the result here wit
 
 | Provider | Auth | Version | Date | Result | Notes |
 |---|---|---|---|---|---|
-| Gmail / Google Workspace | App Password | | | pending | |
+| Gmail / Google Workspace | App Password | 1.2.0 | 2026-11-10 | pass | Folders and archive verified; undo restored both. One-click tested against a synthetic target; no real sender was unsubscribed. |
 | Outlook.com / Microsoft 365 | Microsoft sign-in (`connect outlook`) | | | pending | |
 | Yahoo | App Password | | | pending | |
 | iCloud | App-specific password | | | pending | |
