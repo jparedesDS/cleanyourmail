@@ -121,6 +121,7 @@ Revoke access at any time:
 | `AADSTS65001` / consent required | The work/school tenant has not granted consent | Ask the administrator to grant consent for `IMAP.AccessAsUser.All` |
 | `AADSTS50020` | The Microsoft account has no tenant, or the tenant does not allow it | Create a tenant at <https://azure.microsoft.com/free/> or with the Microsoft 365 Developer Program, or use an account from an existing tenant |
 | `AADSTS50020` when opening the Azure portal | A personal Microsoft account has no tenant yet | Sign up for Azure first; `entra.microsoft.com` alone does not create one |
+| `AADSTS70002` / "client application must be marked as 'mobile'" | Public client flows are disabled | **Authentication** -> **Allow public client flows** -> **Yes**, or set `"allowPublicClient": true` in the manifest |
 | `invalid_grant` | The refresh token expired or was revoked | Run `connect outlook` again |
 | `SMTP AUTH is disabled` | The tenant blocks outgoing SMTP | Use the sender's manual unsubscribe page; IMAP still works |
 
