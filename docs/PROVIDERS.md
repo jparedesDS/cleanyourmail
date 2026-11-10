@@ -75,8 +75,9 @@ python tools/mail.py init --email you@company.com --host outlook.office365.com -
 
 `connect` prints a Microsoft URL and a short code. The person approves it in the browser; the CLI
 stores only a refresh token in `~/.secrets/cleanyourmail-oauth.json` (override with `CYM_OAUTH_STORE`)
-and refreshes the access token when a command runs. The project ships a public client ID, so end users
-only sign in; they do not register an app. See [MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md) only if you
+and refreshes the access token when a command runs. The project's public client ID is pending
+publisher verification; until it ships, end users cannot complete the Outlook sign-in. A self-hoster
+sets `oauth_client_id` or `CYM_MS_CLIENT_ID`. See [MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md) only if you
 are the maintainer or a self-hoster.
 
 - A work/school tenant may require administrator consent, conditional access, MFA, or block IMAP

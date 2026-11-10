@@ -246,6 +246,15 @@ class CliTest(unittest.TestCase):
         self.assertIn("App Password", err)
         self.assertFalse(path.exists())
 
+    def test_secret_rejects_a_directory_target(self):
+        target = self.temp / "secret-dir"
+        target.mkdir()
+        with patch("getpass.getpass", return_value="abcdefghijklmnop"):
+            code, out, err = run_cli("secret", "--file", str(target), "--provider", "gmail")
+        self.assertEqual(code, 2)
+        self.assertIn("directory", err)
+        self.assertFalse((self.temp / "secret-dir.tmp").exists())
+
     def test_connect_outlook_requires_client_id(self):
         path = self.temp / "outlook.toml"
         path.write_text("""
@@ -292,6 +301,30 @@ oauth = "microsoft"
         saved = json.loads(store.read_text(encoding="utf-8"))
         self.assertEqual(saved["microsoft"]["refresh_token"], "refresh")
         self.assertFalse(pending.exists())
+
+    def test_connect_wait_rejects_pending_account_mismatch(self):
+        path = self.temp / "outlook.toml"
+        path.write_text("""
+[account]
+email = "b@outlook.com"
+auth = "xoauth2"
+oauth = "microsoft"
+imap_host = "outlook.office365.com"
+""", encoding="utf-8")
+        store = self.temp / "oauth.json"
+        env = dict(os.environ)
+        env["CYM_OAUTH_STORE"] = str(store)
+        device = oauth_ms.DeviceCode(
+            "device-code", "ABCD-EFGH", "https://microsoft.com/devicelogin", 900, 5, "")
+        token = oauth_ms.Token("access", "refresh", 3600)
+        with patch.dict(os.environ, env, clear=False):
+            oauth_ms.save_device(device, "client-id", email="a@outlook.com")
+            with patch("oauth_ms.poll_for_token", return_value=token):
+                code, out, err = run_cli(
+                    "connect", "outlook", "--wait", "--config", str(path))
+        self.assertEqual(code, 2)
+        self.assertIn("started for a@outlook.com", err)
+        self.assertIn("config is for b@outlook.com", err)
 
     def test_bad_config_exit_code(self):
         self.config.write_text("[account]\nemail = \"bad\"\n", encoding="utf-8")

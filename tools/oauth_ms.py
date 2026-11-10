@@ -13,6 +13,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import tempfile
 import time
 import urllib.error
 import urllib.parse
@@ -267,22 +268,28 @@ def load_store(path: str | Path | None = None) -> dict:
 
 def save_store(data: dict, path: str | Path | None = None) -> Path:
     file = store_path(path)
-    file.parent.mkdir(parents=True, exist_ok=True)
+    temp: Path | None = None
     try:
-        os.chmod(file.parent, 0o700)
-    except OSError:
-        pass
-    temp = file.with_name(file.name + f".{os.getpid()}.tmp")
-    text = json.dumps(data, indent=2, sort_keys=True) + "\n"
-    try:
-        temp.write_text(text, encoding="utf-8", newline="\n")
+        created = not file.parent.exists()
+        file.parent.mkdir(parents=True, exist_ok=True)
+        if created:
+            try:
+                os.chmod(file.parent, 0o700)
+            except OSError:
+                pass
+        descriptor, temp_name = tempfile.mkstemp(prefix=file.name + ".", dir=str(file.parent))
+        temp = Path(temp_name)
+        text = json.dumps(data, indent=2, sort_keys=True) + "\n"
+        with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(text)
         os.chmod(temp, 0o600)
         os.replace(temp, file)
     except OSError as exc:
-        try:
-            temp.unlink(missing_ok=True)
-        except OSError:
-            pass
+        if temp is not None:
+            try:
+                temp.unlink(missing_ok=True)
+            except OSError:
+                pass
         raise OAuthError(f"Cannot save the Microsoft sign-in locally: {_clean(exc)}") from exc
     return file
 
@@ -345,19 +352,33 @@ def clear_device(path: str | Path | None = None) -> None:
         pass
 
 
-def access_token(client_id: str = "", path: str | Path | None = None, opener=None) -> str:
+def access_token(client_id: str = "", path: str | Path | None = None, opener=None,
+                 email: str = "") -> str:
     """Return a fresh access token, refreshing the stored refresh token."""
     entry = stored_token(path)
     if not entry or not entry.get("refresh_token"):
         raise OAuthError(
             "No Microsoft sign-in found. Run `python tools/mail.py connect outlook` first."
         )
-    stored_client = str(entry.get("client_id") or client_id or "").strip()
-    if not stored_client:
+    stored_email = str(entry.get("email") or "").strip()
+    if email and stored_email and stored_email.lower() != email.lower():
+        raise OAuthError(
+            f"The saved Microsoft sign-in belongs to a different account ({stored_email}). "
+            f"Run `python tools/mail.py connect outlook` again for {email}."
+        )
+    stored_client = str(entry.get("client_id") or "").strip()
+    configured_client = str(client_id or "").strip()
+    if configured_client and stored_client and configured_client != stored_client:
+        raise OAuthError(
+            "The saved Microsoft sign-in belongs to a different Microsoft application. "
+            "Run `python tools/mail.py connect outlook` again."
+        )
+    resolved_client = stored_client or configured_client
+    if not resolved_client:
         raise OAuthError("No Microsoft application ID configured.")
     token = refresh_access_token(
         str(entry["refresh_token"]),
-        stored_client,
+        resolved_client,
         scope=str(entry.get("scope") or DEFAULT_SCOPE),
         opener=opener,
     )

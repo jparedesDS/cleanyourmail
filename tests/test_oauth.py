@@ -105,6 +105,24 @@ class OAuthTest(unittest.TestCase):
                 oauth_ms.access_token("client-id", path=path)
         self.assertIn("connect outlook", str(caught.exception))
 
+    def test_access_token_rejects_other_account(self):
+        with TempDir() as temp:
+            path = temp / "oauth.json"
+            oauth_ms.save_token("client", oauth_ms.Token("a", "r", 3600),
+                                email="me@outlook.com", path=path)
+            with self.assertRaises(oauth_ms.OAuthError) as caught:
+                oauth_ms.access_token("client", email="other@outlook.com", path=path)
+        self.assertIn("different account", str(caught.exception))
+
+    def test_access_token_rejects_different_client(self):
+        with TempDir() as temp:
+            path = temp / "oauth.json"
+            oauth_ms.save_token("old-client", oauth_ms.Token("a", "r", 3600),
+                                email="me@outlook.com", path=path)
+            with self.assertRaises(oauth_ms.OAuthError) as caught:
+                oauth_ms.access_token("new-client", email="me@outlook.com", path=path)
+        self.assertIn("different Microsoft application", str(caught.exception))
+
     def test_access_token_uses_stored_client_and_saves_rotation(self):
         with TempDir() as temp:
             path = temp / "oauth.json"
@@ -112,7 +130,7 @@ class OAuthTest(unittest.TestCase):
                                 email="me@outlook.com", path=path)
             rotated = oauth_ms.Token("fresh", "new-refresh", 3600)
             with patch("oauth_ms.refresh_access_token", return_value=rotated) as refresh:
-                value = oauth_ms.access_token("ignored", path=path)
+                value = oauth_ms.access_token("stored-client", email="me@outlook.com", path=path)
             self.assertEqual(value, "fresh")
             self.assertEqual(refresh.call_args.args[0], "old-refresh")
             self.assertEqual(refresh.call_args.args[1], "stored-client")

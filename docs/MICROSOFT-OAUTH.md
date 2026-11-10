@@ -67,9 +67,9 @@ oauth_client_id = "00000000-0000-0000-0000-000000000000"
 
 `python tools/mail.py connect outlook --client-id ...` also accepts it for one run.
 
-The project ships this public client ID in `PROJECT_CLIENT_ID`. End users only run `connect outlook`;
-they never open Entra. If you self-host a fork without the ID, set `CYM_MS_CLIENT_ID` or
-`oauth_client_id`.
+The project's public client ID is pending because the app is not publisher-verified. End users do
+not register an app; a self-hoster sets `CYM_MS_CLIENT_ID` or `oauth_client_id` until the project
+publishes one.
 
 ## Consent and publisher verification
 

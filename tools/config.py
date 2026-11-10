@@ -88,7 +88,8 @@ OUTLOOK_DOMAINS = {"outlook.com", "hotmail.com", "live.com", "msn.com"}
 
 def is_outlook(email: str) -> bool:
     domain = (email or "").rsplit("@", 1)[-1].lower()
-    return domain in OUTLOOK_DOMAINS or domain.startswith("outlook.")
+    return domain in OUTLOOK_DOMAINS or domain.startswith(
+        ("outlook.", "hotmail.", "live.", "msn."))
 
 
 def is_microsoft(email: str, host: str = "") -> bool:
@@ -432,6 +433,22 @@ def _validate(account: Account, scan: ScanOptions, policy: Policy,
             raise ConfigError(f"{path}: account.oauth must be 'microsoft'")
         if account.auth != "xoauth2":
             raise ConfigError(f"{path}: account.oauth requires auth = \"xoauth2\"")
+    if account.auth == "xoauth2":
+        if not (account.imap_ssl or account.imap_starttls):
+            raise ConfigError(
+                f"{path}: account.auth = \"xoauth2\" requires TLS (imap_ssl or imap_starttls)")
+        if account.smtp_host and not (account.smtp_ssl or account.smtp_starttls):
+            raise ConfigError(
+                f"{path}: account.auth = \"xoauth2\" requires TLS for SMTP")
+    if account.oauth == "microsoft":
+        if account.imap_host.lower() != "outlook.office365.com":
+            raise ConfigError(
+                f"{path}: account.oauth = \"microsoft\" requires "
+                "imap_host = \"outlook.office365.com\"")
+        if account.smtp_host and account.smtp_host.lower() != "smtp.office365.com":
+            raise ConfigError(
+                f"{path}: account.oauth = \"microsoft\" requires "
+                "smtp_host = \"smtp.office365.com\"")
     if account.imap_ssl and account.imap_starttls:
         raise ConfigError(f"{path}: account.imap_ssl and account.imap_starttls cannot both be true")
     if int(account.timeout) < 5:
@@ -489,7 +506,7 @@ def _fill_provider_defaults(account: Account) -> None:
         account.imap_host, account.imap_port, account.imap_ssl = imap
         if domain in {"proton.me", "protonmail.com"}:
             account.imap_starttls = True
-    elif domain.startswith("outlook.") and (
+    elif is_microsoft(account.email, account.imap_host) and (
             not account.imap_host or account.imap_host == "imap.example.com"):
         account.imap_host, account.imap_port, account.imap_ssl = (
             "outlook.office365.com", 993, True)
@@ -497,7 +514,7 @@ def _fill_provider_defaults(account: Account) -> None:
     if smtp and not account.smtp_host:
         account.smtp_host, account.smtp_port, account.smtp_ssl, _ = smtp
         account.smtp_starttls = not account.smtp_ssl
-    elif domain.startswith("outlook.") and not account.smtp_host:
+    elif is_microsoft(account.email, account.imap_host) and not account.smtp_host:
         account.smtp_host, account.smtp_port, account.smtp_ssl = (
             "smtp.office365.com", 587, False)
         account.smtp_starttls = True
@@ -508,7 +525,7 @@ def provider_note(email: str, host: str = "") -> str | None:
     note = PROVIDERS.get(domain, (None, None, None, None))[3]
     if note:
         return note
-    if domain.startswith("outlook."):
+    if is_outlook(email):
         return PROVIDERS["outlook.com"][3]
     text = (host or "").lower()
     if "office365" in text or "outlook" in text:
@@ -524,7 +541,8 @@ def resolve_secret(account: Account, environ: dict | None = None) -> str:
     if account.oauth:
         import oauth_ms
         try:
-            return oauth_ms.access_token(client_id=account.oauth_client_id.strip())
+            return oauth_ms.access_token(client_id=account.oauth_client_id.strip(),
+                                         email=account.email)
         except oauth_ms.OAuthError as exc:
             raise ConfigError(str(exc)) from exc
     if account.password_env:
@@ -568,11 +586,11 @@ def init_template(email: str = "you@example.com", host: str = "imap.example.com"
                   name: str = "personal", auth: str | None = None,
                   secret_file: str | None = None) -> str:
     domain = email.rsplit("@", 1)[-1].lower() if "@" in email else ""
-    auth = auth or ("xoauth2" if is_outlook(email) else "login")
+    auth = auth or ("xoauth2" if is_microsoft(email, host) else "login")
     preset = IMAP_PRESETS.get(domain)
     if preset and host == "imap.example.com":
         host, port, ssl = preset
-    elif domain.startswith("outlook.") and host == "imap.example.com":
+    elif is_outlook(email) and host == "imap.example.com":
         host, port, ssl = ("outlook.office365.com", 993, True)
     else:
         port, ssl = 993, True

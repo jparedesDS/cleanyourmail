@@ -101,9 +101,9 @@ The command prints a Microsoft URL and a short code. Approve it in the browser. 
 
 ### `No Microsoft application ID configured`
 
-The device-code flow needs a public client ID. Set `oauth_client_id` in `[account]` or the
-`CYM_MS_CLIENT_ID` environment variable. The one-time registration is in
-[MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md).
+The device-code flow needs a public client ID. The project's ID is pending publisher verification. A
+self-hoster sets `oauth_client_id` in `[account]` or the `CYM_MS_CLIENT_ID` environment variable. The
+one-time registration is in [MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md).
 
 ### Microsoft sign-in says `invalid_grant`
 
