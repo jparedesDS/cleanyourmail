@@ -37,17 +37,20 @@ anything: they only sign in and consent. This page is for the maintainer or a se
 6. Create the registration and copy the **Application (client) ID**.
 7. Open **Authentication** -> **Advanced settings** -> **Allow public client flows** and set it to
    **Yes**. Save.
-8. Open **API permissions** -> **Add a permission** -> **APIs my organization uses** and search for
-   **Office 365 Exchange Online**.
-9. Add these **Delegated permissions**:
+8. Open **API permissions** -> **Add a permission** -> **Microsoft Graph** -> **Delegated
+   permissions** and add:
    - `IMAP.AccessAsUser.All`
    - `SMTP.Send` (only needed for `mailto:` unsubscribe requests)
-10. If the account is a work/school account, an administrator may need to grant consent. Personal
-    accounts can consent during the first sign-in.
 
-If **Office 365 Exchange Online** does not appear in the portal, the sign-in can still request the
-IMAP scope directly; a work/school administrator may need to approve it the first time. The scope is
-`https://outlook.office.com/IMAP.AccessAsUser.All`.
+   In some tenants these appear under **Office 365 Exchange Online** instead. Either location exposes
+   the delegated permission; use the one your tenant shows. Do **not** add the application
+   permissions `IMAP.AccessAsApp` or `SMTP.SendAsApp`: those require a client secret and are not used
+   by the device-code flow.
+9. If the account is a work/school account, an administrator may need to grant consent. Personal
+   accounts can consent during the first sign-in.
+
+If neither API shows the delegated permission, stop and report it; do not create a client secret or
+switch to application permissions. The device-code flow only needs delegated access.
 
 Then make the client ID available in one of two ways:
 
