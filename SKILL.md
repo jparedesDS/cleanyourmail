@@ -146,9 +146,11 @@ python tools/mail.py doctor
 
 Give `--wait` a timeout of at least 15 minutes (the code lifetime), or run it in the background and
 read its output when it finishes. If you are a person working in your own terminal,
-`python tools/mail.py connect outlook` does both steps and waits in one go. If the command says no
-application ID is configured, follow [`docs/MICROSOFT-OAUTH.md`](docs/MICROSOFT-OAUTH.md) once. Do not
-ask for the code, the token or the password.
+`python tools/mail.py connect outlook` does both steps and waits in one go. If the command says this
+copy has no application ID, stop: the person should **not** register an app. The project ships a
+public client ID. Only a maintainer or self-hoster follows
+[`docs/MICROSOFT-OAUTH.md`](docs/MICROSOFT-OAUTH.md); otherwise ask the person who installed
+CleanYourMail. Do not ask for the code, the token or the password.
 
 #### Gmail
 
