@@ -81,6 +81,9 @@ are the maintainer or a self-hoster.
 
 - A work/school tenant may require administrator consent, conditional access, MFA, or block IMAP
   entirely. If `doctor` fails, stop and ask the administrator; do not attempt a bypass.
+- **Outlook.com personal:** the app must have a **verified publisher**. Without it, Microsoft blocks
+  end-user consent for a newly registered multi-tenant app. The project app is not verified yet; see
+  [MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md).
 - SMTP AUTH is often disabled for Microsoft 365 tenants. A `mailto:` unsubscribe may fail; use the
   sender's manual preference page instead.
 - One-click HTTPS unsubscribe still works because it does not use SMTP.

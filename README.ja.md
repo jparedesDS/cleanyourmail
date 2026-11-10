@@ -170,7 +170,7 @@ python tools/mail.py undo --run <run> --yes
 | プロバイダー | 認証 | メモ |
 |---|---|---|
 | Gmail / Google Workspace | アプリパスワード（2FA 必須） | IMAP を有効化。ラベル、アーカイブ、Junk、All Mail。 |
-| Outlook.com / Microsoft 365 | Microsoft サインイン（`connect outlook`） | refresh token を保存し、自動で更新します。テナントが SMTP AUTH を無効化する場合があります。 |
+| Outlook.com / Microsoft 365 | Microsoft サインイン（`connect outlook`） | refresh token を保存し、自動で更新します。Microsoft 365 はテナント管理者の同意が必要で、Outlook.com の個人用は確認済みの発行元が必要です。テナントが SMTP AUTH を無効化する場合があります。 |
 | Yahoo | アプリパスワード | Account Security → Generate app password。 |
 | iCloud | アプリ専用パスワード | Apple の 2FA が必要。 |
 | Fastmail | アプリパスワード | スコープ付き IMAP/SMTP パスワード。Sieve エクスポート。 |

@@ -71,6 +71,21 @@ The project ships this public client ID in `PROJECT_CLIENT_ID`. End users only r
 they never open Entra. If you self-host a fork without the ID, set `CYM_MS_CLIENT_ID` or
 `oauth_client_id`.
 
+## Consent and publisher verification
+
+- **Microsoft 365 work/school:** a tenant administrator must grant admin consent for the application
+  once. After that, users in that tenant can sign in.
+- **Outlook.com personal:** Microsoft blocks end-user consent for newly registered multi-tenant apps
+  that do not have a **verified publisher**. The CleanYourMail app is not verified yet. Until it is,
+  a personal Outlook.com user cannot reliably connect, even though the sign-in page accepts the
+  account.
+- **Fix for personal accounts:** associate a verified Microsoft AI Cloud Partner Program (MPN) ID with
+  the app's tenant. The app gets the verified-publisher badge and the same client ID and code work for
+  personal accounts.
+- **Do not switch to application permissions** (`IMAP.AccessAsApp` / `SMTP.SendAsApp`) as a workaround.
+  They require a client secret, the app-only client-credentials flow and Exchange service-principal
+  registration; they do not support consumer Outlook.com.
+
 ## Connect
 
 ```bash
@@ -122,6 +137,7 @@ Revoke access at any time:
 | `AADSTS50020` | The Microsoft account has no tenant, or the tenant does not allow it | Create a tenant at <https://azure.microsoft.com/free/> or with the Microsoft 365 Developer Program, or use an account from an existing tenant |
 | `AADSTS50020` when opening the Azure portal | A personal Microsoft account has no tenant yet | Sign up for Azure first; `entra.microsoft.com` alone does not create one |
 | `AADSTS70002` / "client application must be marked as 'mobile'" | Public client flows are disabled | **Authentication** -> **Allow public client flows** -> **Yes**, or set `"allowPublicClient": true` in the manifest |
+| `User is authenticated but not connected` | Consent/service principal is incomplete, or IMAP is off | Check the Outlook.com IMAP toggle; for personal accounts verify the publisher; for M365 grant admin consent |
 | `invalid_grant` | The refresh token expired or was revoked | Run `connect outlook` again |
 | `SMTP AUTH is disabled` | The tenant blocks outgoing SMTP | Use the sender's manual unsubscribe page; IMAP still works |
 

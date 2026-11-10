@@ -165,7 +165,7 @@ python tools/mail.py undo --run <run> --yes
 | 服務商 | 驗證 | 說明 |
 |---|---|---|
 | Gmail / Google Workspace | 應用程式密碼（需 2FA） | 啟用 IMAP。標籤、封存、Junk、All Mail。 |
-| Outlook.com / Microsoft 365 | Microsoft 登入（`connect outlook`） | 儲存 refresh token 並自動更新。租用戶可能停用 SMTP AUTH。 |
+| Outlook.com / Microsoft 365 | Microsoft 登入（`connect outlook`） | 儲存 refresh token 並自動更新。Microsoft 365 需要租用戶管理員同意；Outlook.com 個人版需要已驗證的發行者。租用戶可能停用 SMTP AUTH。 |
 | Yahoo | 應用程式密碼 | Account Security → Generate app password。 |
 | iCloud | App 專用密碼 | 需要 Apple 2FA。 |
 | Fastmail | 應用程式密碼 | 有範圍的 IMAP/SMTP 密碼；Sieve 匯出。 |

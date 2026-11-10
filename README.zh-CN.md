@@ -164,7 +164,7 @@ python tools/mail.py undo --run <run> --yes
 | 服务商 | 认证 | 说明 |
 |---|---|---|
 | Gmail / Google Workspace | 应用专用密码（需 2FA） | 启用 IMAP。标签、归档、Junk、All Mail。 |
-| Outlook.com / Microsoft 365 | Microsoft 登录（`connect outlook`） | 保存 refresh token 并自动续期。租户可能禁用 SMTP AUTH。 |
+| Outlook.com / Microsoft 365 | Microsoft 登录（`connect outlook`） | 保存 refresh token 并自动续期。Microsoft 365 需要租户管理员同意；Outlook.com 个人版需要已验证的发布者。租户可能禁用 SMTP AUTH。 |
 | Yahoo | 应用密码 | Account Security → Generate app password。 |
 | iCloud | App 专用密码 | 需要 Apple 2FA。 |
 | Fastmail | 应用密码 | 有范围的 IMAP/SMTP 密码；Sieve 导出。 |

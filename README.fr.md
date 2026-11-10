@@ -177,7 +177,7 @@ Modèle de menace complet : [docs/SAFETY.md](docs/SAFETY.md).
 | Fournisseur | Authentification | Notes |
 |---|---|---|
 | Gmail / Google Workspace | App Password (2FA requise) | Activez IMAP. Libellés ; archive ; Junk ; All Mail. |
-| Outlook.com / Microsoft 365 | Connexion Microsoft (`connect outlook`) | Stocke un refresh token et le renouvelle automatiquement. Le tenant peut désactiver SMTP AUTH. |
+| Outlook.com / Microsoft 365 | Connexion Microsoft (`connect outlook`) | Stocke un refresh token et le renouvelle automatiquement. Microsoft 365 exige le consentement de l’administrateur du tenant ; Outlook.com personnel exige un éditeur vérifié. Le tenant peut désactiver SMTP AUTH. |
 | Yahoo | Mot de passe d’application | Account Security → Generate app password. |
 | iCloud | Mot de passe spécifique | Apple exige la 2FA. |
 | Fastmail | Mot de passe d’application | Mot de passe IMAP/SMTP limité ; export Sieve. |

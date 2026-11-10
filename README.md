@@ -172,7 +172,7 @@ Full threat model: [docs/SAFETY.md](docs/SAFETY.md).
 | Provider | Authentication | Notes |
 |---|---|---|
 | Gmail / Google Workspace | App Password (2FA required) | Enable IMAP. Labels; archive; Junk; All Mail. |
-| Outlook.com / Microsoft 365 | Microsoft sign-in (`connect outlook`) | Stores a refresh token and renews it automatically. SMTP AUTH may be disabled by the tenant. |
+| Outlook.com / Microsoft 365 | Microsoft sign-in (`connect outlook`) | Stores a refresh token and renews it automatically. Microsoft 365 requires tenant admin consent; Outlook.com personal requires a verified publisher. SMTP AUTH may be disabled by the tenant. |
 | Yahoo | App password | Account Security → Generate app password. |
 | iCloud | App-specific password | Apple 2FA required. |
 | Fastmail | App password | Scoped IMAP/SMTP password; Sieve export. |

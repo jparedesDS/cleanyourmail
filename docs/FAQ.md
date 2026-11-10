@@ -22,8 +22,11 @@ Verification and IMAP enabled.
 
 Yes. Basic authentication is disabled, so run `python tools/mail.py connect outlook`. The CLI opens
 a Microsoft sign-in page with a short code, stores only a refresh token on your machine, and renews
-the access token automatically. Some tenants disable SMTP AUTH, so a `mailto:` unsubscribe may need to
-be done manually. See [PROVIDERS.md](PROVIDERS.md) and [MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md).
+the access token automatically. Microsoft 365 requires tenant administrator consent; Outlook.com
+personal requires the app to have a verified publisher. The public CleanYourMail app is not verified
+yet, so a personal Outlook.com account may be blocked by Microsoft's consent policy. Some tenants
+disable SMTP AUTH, so a `mailto:` unsubscribe may need to be done manually. See
+[PROVIDERS.md](PROVIDERS.md) and [MICROSOFT-OAUTH.md](MICROSOFT-OAUTH.md).
 
 ## Will unsubscribing stop spam?
 
