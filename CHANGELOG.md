@@ -4,6 +4,25 @@ All notable changes to CleanYourMail are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.1] - 2026-11-10
+
+### Security
+
+- `secret` writes through a private temp file, rejects directory targets and removes the temp file on
+  failure. A failed save no longer leaves the app password behind.
+- The Microsoft token store refuses a refresh token whose saved account or client ID does not match
+  the configured account or application.
+- OAuth configurations require TLS for IMAP and SMTP; Microsoft OAuth requires
+  `outlook.office365.com` / `smtp.office365.com`, so the bearer token is not sent to another host.
+
+### Fixed
+
+- `init` detects legacy Microsoft consumer domains (`hotmail.*`, `live.*`, `msn.*`) and infers
+  `xoauth2` / `oauth = "microsoft"` for a Microsoft 365 host.
+- Custom-domain Microsoft 365 configs get the `smtp.office365.com` default.
+- `connect` reports corrupt pending/device files and unwritable token stores as configuration errors
+  instead of tracebacks.
+
 ## [1.2.0] - 2026-11-10
 
 ### Added
@@ -129,6 +148,7 @@ All notable changes to CleanYourMail are documented here. The format is based on
 - `report`, `plan`, `apply`, `unsubscribe`, `journal` and `unsubs` support redacted output.
 - Prompt-injection rules and hard stops for "skip the plan / delete everything" requests.
 
+[1.2.1]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.2.1
 [1.2.0]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.2.0
 [1.1.5]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.5
 [1.1.4]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.4

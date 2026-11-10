@@ -15,7 +15,7 @@ from urllib.parse import urlsplit
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from config import (ACTIONABLE_CATEGORIES, CATEGORIES, DEFAULT_FILENAME, Config,
-                    ConfigError, init_template, is_microsoft, is_outlook, load_config,
+                    ConfigError, init_template, is_microsoft, load_config,
                     resolve_secret)
 import oauth_ms
 from imap import MailClient, MailError, SafetyError
@@ -27,10 +27,10 @@ from rules import filter_candidates, gmail_filters, sieve
 from safety import classify, flags_protected, sender_protected
 from store import Store, StoredMessage
 from unsub import UnsubResult, perform, polite_delay
-from util import (FileLock, LockedError, atomic_write_json, atomic_write_text,
-                  days_between, domain_of, ensure_private_file, from_iso, human_bytes,
-                  human_count, parse_imap_date, to_iso, truncate,
-                  utcnow)
+from util import (FileLock, LockedError, atomic_write_json, atomic_write_private,
+                   atomic_write_text, days_between, domain_of, ensure_private_file,
+                   from_iso, human_bytes, human_count, parse_imap_date, to_iso, truncate,
+                   utcnow)
 
 EXIT_OK = 0
 EXIT_FAIL = 1
@@ -173,8 +173,8 @@ def cmd_init(args) -> int:
         else Path.cwd() / DEFAULT_FILENAME
     if path.exists() and not args.force:
         raise ConfigError(f"{path} already exists. Use --force to overwrite.")
-    auth = args.auth or ("xoauth2" if is_outlook(args.email) else "login")
     host = args.host or "imap.example.com"
+    auth = args.auth or ("xoauth2" if is_microsoft(args.email, host) else "login")
     microsoft = auth == "xoauth2" and is_microsoft(args.email, host)
     content = init_template(email=args.email, host=host,
                             name=args.name, auth=auth, secret_file=args.secret_file)
@@ -238,11 +238,19 @@ def cmd_connect(args) -> int:
     config = load_config(args.config)
     if args.provider != "outlook":
         raise ConfigError("Only `connect outlook` is supported.")
+    if config.account.oauth != "microsoft":
+        raise ConfigError(
+            'Set oauth = "microsoft" and auth = "xoauth2" in [account], '
+            "or run `python tools/mail.py init --email ...` again."
+        )
 
     if args.wait:
         import time
 
-        pending = oauth_ms.load_device()
+        try:
+            pending = oauth_ms.load_device()
+        except oauth_ms.OAuthError as exc:
+            raise ConfigError(str(exc)) from exc
         if not pending:
             raise ConfigError("No pending Microsoft sign-in. Run `connect outlook` first.")
         expires_at = int(pending.get("expires_at") or 0)
@@ -250,6 +258,11 @@ def cmd_connect(args) -> int:
             oauth_ms.clear_device()
             raise ConfigError("The pending Microsoft sign-in expired. Run `connect outlook` again.")
         email = str(pending.get("email") or config.account.email)
+        if email.lower() != config.account.email.lower():
+            raise ConfigError(
+                f"The pending Microsoft sign-in was started for {email}, but the config is for "
+                f"{config.account.email}. Run `connect outlook` again with the right account."
+            )
         client_id = str(pending["client_id"])
         remaining = expires_at - int(time.time())
         if not args.json:
@@ -260,12 +273,6 @@ def cmd_connect(args) -> int:
         except oauth_ms.OAuthError as exc:
             raise ConfigError(str(exc)) from exc
         return _finish_connect(args, email, client_id, token)
-
-    if config.account.oauth != "microsoft":
-        raise ConfigError(
-            'Set oauth = "microsoft" and auth = "xoauth2" in [account], '
-            "or run `python tools/mail.py init --email ...` again."
-        )
     client_id = (args.client_id or config.account.oauth_client_id
                  or oauth_ms.client_id_from_env()).strip()
     if not client_id:
@@ -281,7 +288,10 @@ def cmd_connect(args) -> int:
     except oauth_ms.OAuthError as exc:
         raise ConfigError(str(exc)) from exc
     if args.no_wait:
-        path = oauth_ms.save_device(device, client_id, email=config.account.email, scope=scope)
+        try:
+            path = oauth_ms.save_device(device, client_id, email=config.account.email, scope=scope)
+        except oauth_ms.OAuthError as exc:
+            raise ConfigError(str(exc)) from exc
         if args.json:
             emit_json({
                 "provider": "microsoft",
@@ -374,7 +384,12 @@ def cmd_secret(args) -> int:
             "That does not look like a Gmail App Password (16 lowercase letters). "
             "Copy it again from https://myaccount.google.com/apppasswords"
         )
-    atomic_write_text(path, value)
+    if path.exists() and path.is_dir():
+        raise ConfigError(f"The secret path is a directory: {path}. Use a file path.")
+    try:
+        atomic_write_private(path, value)
+    except (OSError, ValueError) as exc:
+        raise ConfigError(f"Cannot save the secret to {path}: {exc}") from exc
     if args.json:
         emit_json({"ok": True, "path": str(path), "characters": len(value)})
     else:

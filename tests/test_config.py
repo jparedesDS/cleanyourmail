@@ -198,6 +198,56 @@ class ConfigTest(unittest.TestCase):
         self.assertEqual(config.account.imap_host, "outlook.office365.com")
         self.assertEqual(config.account.smtp_host, "smtp.office365.com")
 
+    def test_init_template_custom_m365_without_auth(self):
+        content = init_template(email="me@corp.example", host="outlook.office365.com")
+        self.assertIn('auth = "xoauth2"', content)
+        self.assertIn('oauth = "microsoft"', content)
+        self.assertIn("connect outlook", content)
+
+    def test_init_template_hotmail_uk(self):
+        content = init_template(email="me@hotmail.co.uk")
+        self.assertIn('imap_host = "outlook.office365.com"', content)
+        self.assertIn('oauth = "microsoft"', content)
+
+    def test_custom_m365_fills_smtp(self):
+        body = """
+[account]
+email = "me@corp.example"
+imap_host = "outlook.office365.com"
+auth = "xoauth2"
+oauth = "microsoft"
+"""
+        with TempDir() as temp:
+            config = load_config(str(write_config(temp, body)))
+        self.assertEqual(config.account.smtp_host, "smtp.office365.com")
+
+    def test_xoauth2_requires_tls(self):
+        body = """
+[account]
+email = "me@example.com"
+imap_host = "imap.example.com"
+imap_ssl = false
+imap_starttls = false
+auth = "xoauth2"
+"""
+        with TempDir() as temp:
+            with self.assertRaises(ConfigError) as caught:
+                load_config(str(write_config(temp, body)))
+        self.assertIn("TLS", str(caught.exception))
+
+    def test_microsoft_oauth_requires_microsoft_host(self):
+        body = """
+[account]
+email = "me@outlook.com"
+imap_host = "imap.fastmail.com"
+auth = "xoauth2"
+oauth = "microsoft"
+"""
+        with TempDir() as temp:
+            with self.assertRaises(ConfigError) as caught:
+                load_config(str(write_config(temp, body)))
+        self.assertIn("outlook.office365.com", str(caught.exception))
+
     def test_init_template_secret_file(self):
         content = init_template(email="me@gmail.com", secret_file="~/.secrets/cym.txt")
         self.assertIn('password_file = "~/.secrets/cym.txt"', content)

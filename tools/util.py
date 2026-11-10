@@ -6,6 +6,7 @@ import datetime as dt
 import hashlib
 import os
 import re
+import tempfile
 import time
 import unicodedata
 from pathlib import Path
@@ -115,6 +116,37 @@ def atomic_write_text(path: Path, text: str, private: bool = True) -> None:
     if private:
         ensure_private_file(temporary)
     os.replace(temporary, path)
+
+
+def atomic_write_private(path: Path, text: str) -> None:
+    """Write a secret atomically and never leave a temp copy behind.
+
+    Existing parent directories keep their permissions; only a directory this
+    call creates is tightened to 0700. The temp file is created with mkstemp and
+    removed on any failure.
+    """
+    if path.exists() and path.is_dir():
+        raise ValueError(f"{path} is a directory")
+    created = not path.parent.exists()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if created:
+        try:
+            os.chmod(path.parent, 0o700)
+        except OSError:
+            pass
+    descriptor, temp_name = tempfile.mkstemp(prefix=path.name + ".", dir=str(path.parent))
+    temporary = Path(temp_name)
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8", newline="") as handle:
+            handle.write(text)
+        ensure_private_file(temporary)
+        os.replace(temporary, path)
+    except OSError:
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError:
+            pass
+        raise
 
 
 def atomic_write_json(path: Path, payload, private: bool = True) -> None:
