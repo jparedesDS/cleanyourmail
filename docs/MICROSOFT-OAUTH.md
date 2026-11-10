@@ -8,6 +8,19 @@ The CLI stores only a refresh token, in `~/.secrets/cleanyourmail-oauth.json`, a
 access token when a command needs it. Gmail still uses an App Password; this page is only for
 Microsoft accounts.
 
+## Creating a tenant
+
+If <https://entra.microsoft.com> returns `AADSTS50020`, the Microsoft account has no tenant yet.
+Signing in to Entra does not create one.
+
+1. Open <https://azure.microsoft.com/free/> and sign in with the same Microsoft account. Complete the
+   free-account signup; this creates a tenant and a subscription. App registrations are free.
+2. Or join the Microsoft 365 Developer Program at
+   <https://developer.microsoft.com/microsoft-365/dev-program>. It creates a development tenant
+   without a credit card, but it is time-limited and must be renewed.
+3. Return to <https://entra.microsoft.com> and check the directory name in the top-right menu. If it
+   shows your new `*.onmicrosoft.com` tenant, you are in the right place.
+
 ## One-time application registration
 
 The device-code flow needs a **public client ID**. A client ID is not a secret. Register **one**
@@ -102,7 +115,8 @@ Revoke access at any time:
 | `No Microsoft application ID configured` | No client ID in the config or environment | Set `oauth_client_id` or `CYM_MS_CLIENT_ID` |
 | `AADSTS700016` | The client ID does not exist in that tenant | Copy the Application (client) ID again |
 | `AADSTS65001` / consent required | The work/school tenant has not granted consent | Ask the administrator to grant consent for `IMAP.AccessAsUser.All` |
-| `AADSTS50020` | A personal account is not allowed by that tenant | Use `common` (the default) or a personal account |
+| `AADSTS50020` | The Microsoft account has no tenant, or the tenant does not allow it | Create a tenant at <https://azure.microsoft.com/free/> or with the Microsoft 365 Developer Program, or use an account from an existing tenant |
+| `AADSTS50020` when opening the Azure portal | A personal Microsoft account has no tenant yet | Sign up for Azure first; `entra.microsoft.com` alone does not create one |
 | `invalid_grant` | The refresh token expired or was revoked | Run `connect outlook` again |
 | `SMTP AUTH is disabled` | The tenant blocks outgoing SMTP | Use the sender's manual unsubscribe page; IMAP still works |
 
