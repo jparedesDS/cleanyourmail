@@ -67,6 +67,12 @@ oauth = "microsoft"
 # oauth_client_id = "..."   # or set CYM_MS_CLIENT_ID
 ```
 
+For a work/school Microsoft 365 account with a custom domain, pass the host and auth explicitly:
+
+```bash
+python tools/mail.py init --email you@company.com --host outlook.office365.com --auth xoauth2
+```
+
 `connect` prints a Microsoft URL and a short code. The person approves it in the browser; the CLI
 stores only a refresh token in `~/.secrets/cleanyourmail-oauth.json` (override with `CYM_OAUTH_STORE`)
 and refreshes the access token when a command runs. See

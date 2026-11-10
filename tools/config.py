@@ -91,6 +91,14 @@ def is_outlook(email: str) -> bool:
     return domain in OUTLOOK_DOMAINS
 
 
+def is_microsoft(email: str, host: str = "") -> bool:
+    """True for consumer Outlook or a work/school Microsoft 365 host."""
+    if is_outlook(email):
+        return True
+    text = (host or "").lower()
+    return "office365" in text or "outlook." in text
+
+
 class ConfigError(Exception):
     """Configuration is missing or invalid."""
 
@@ -559,7 +567,7 @@ def init_template(email: str = "you@example.com", host: str = "imap.example.com"
     note = provider_note(email, host)
     note_line = f"# {note}\n" if note else ""
     starttls = "true" if domain in {"proton.me", "protonmail.com"} else "false"
-    microsoft = is_outlook(email) and auth == "xoauth2"
+    microsoft = is_microsoft(email, host) and auth == "xoauth2"
     if microsoft:
         intro = "# Microsoft sign-in is stored outside this file, never in it."
         secret_block = """oauth = "microsoft"
