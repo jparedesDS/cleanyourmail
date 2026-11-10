@@ -270,8 +270,9 @@ def cmd_connect(args) -> int:
                  or oauth_ms.client_id_from_env()).strip()
     if not client_id:
         raise ConfigError(
-            "No Microsoft application ID configured. Set oauth_client_id or CYM_MS_CLIENT_ID. "
-            "See docs/MICROSOFT-OAUTH.md."
+            "This copy of CleanYourMail has no Microsoft application ID. The project normally "
+            "ships one; if you self-host, set oauth_client_id or CYM_MS_CLIENT_ID "
+            "(see docs/MICROSOFT-OAUTH.md)."
         )
     scope = (args.scope or oauth_ms.DEFAULT_SCOPE).strip()
     try:

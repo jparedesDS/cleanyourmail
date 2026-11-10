@@ -10,8 +10,9 @@ Microsoft accounts.
 
 ## One-time application registration
 
-The device-code flow needs a **public client ID**. A client ID is not a secret. Register one
-application for the project, or let each person register their own.
+The device-code flow needs a **public client ID**. A client ID is not a secret. Register **one**
+application for the project and ship that client ID in `PROJECT_CLIENT_ID`. End users do not register
+anything: they only sign in and consent. This page is for the maintainer or a self-hoster.
 
 1. Open the Microsoft Entra admin center: <https://entra.microsoft.com/>.
 2. Go to **Applications** -> **App registrations** -> **New registration**.
@@ -49,8 +50,9 @@ oauth_client_id = "00000000-0000-0000-0000-000000000000"
 
 `python tools/mail.py connect outlook --client-id ...` also accepts it for one run.
 
-If you distribute CleanYourMail, publish the project's public client ID in the skill or the
-`init` instructions so each person does not need to register an application.
+The project ships this public client ID in `PROJECT_CLIENT_ID`. End users only run `connect outlook`;
+they never open Entra. If you self-host a fork without the ID, set `CYM_MS_CLIENT_ID` or
+`oauth_client_id`.
 
 ## Connect
 

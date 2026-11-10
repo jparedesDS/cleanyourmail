@@ -320,8 +320,8 @@ def load_config(explicit: str | None = None) -> Config:
             except Exception:
                 configured = connected = False
             if not configured and not connected:
-                warnings.append("No Microsoft application ID configured. Set oauth_client_id or "
-                                "CYM_MS_CLIENT_ID (see docs/MICROSOFT-OAUTH.md).")
+                warnings.append("This copy has no Microsoft application ID. Set oauth_client_id or "
+                                "CYM_MS_CLIENT_ID (maintainer setup, see docs/MICROSOFT-OAUTH.md).")
     if account.password_file:
         file_path = Path(os.path.expanduser(account.password_file))
         if not file_path.exists():
