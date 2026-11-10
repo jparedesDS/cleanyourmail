@@ -13,6 +13,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import subprocess
 import tempfile
 import time
 import urllib.error
@@ -284,6 +285,16 @@ def save_store(data: dict, path: str | Path | None = None) -> Path:
             handle.write(text)
         os.chmod(temp, 0o600)
         os.replace(temp, file)
+        if os.name == "nt":
+            user = os.environ.get("USERNAME", "")
+            if user:
+                try:
+                    subprocess.run(
+                        ["icacls", str(file), "/inheritance:r", "/grant:r", f"{user}:F"],
+                        capture_output=True, timeout=10, check=False,
+                    )
+                except (OSError, subprocess.SubprocessError):
+                    pass
     except OSError as exc:
         if temp is not None:
             try:
@@ -294,9 +305,41 @@ def save_store(data: dict, path: str | Path | None = None) -> Path:
     return file
 
 
+def store_permission_warning(path: str | Path | None = None) -> str | None:
+    file = store_path(path)
+    if not file.exists():
+        return None
+    if os.name == "nt":
+        override = os.environ.get(STORE_ENV, "").strip()
+        if override:
+            try:
+                file.resolve().relative_to(Path.home().resolve())
+            except ValueError:
+                return (f"The Microsoft sign-in store is outside your user profile: {file}. "
+                        "Protect it with icacls.")
+        return None
+    try:
+        mode = file.stat().st_mode & 0o077
+    except OSError:
+        return None
+    if mode:
+        return (f"The Microsoft sign-in store is readable by other users: {file} "
+                "(chmod 600 recommended).")
+    return None
+
+
 def save_token(client_id: str, token: Token, email: str = "",
                path: str | Path | None = None) -> Path:
-    data = load_store(path)
+    try:
+        data = load_store(path)
+    except OAuthError:
+        file = store_path(path)
+        try:
+            if file.exists():
+                file.replace(file.with_name(file.name + ".corrupt"))
+        except OSError:
+            pass
+        data = {"version": 1}
     data["version"] = 1
     data[PROVIDER] = {
         "client_id": client_id,

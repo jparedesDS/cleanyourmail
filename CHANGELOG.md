@@ -4,6 +4,18 @@ All notable changes to CleanYourMail are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.2] - 2026-11-10
+
+### Fixed
+
+- A corrupt Microsoft token store is moved to `<file>.corrupt` and a fresh sign-in can be saved; the
+  user no longer has to delete the file manually.
+- The CLI warns when the token store is readable by other users on POSIX and tightens the file's
+  Windows ACL with `icacls` after saving.
+- The SMTP XOAUTH2 test now asserts STARTTLS happens before authentication.
+- `test_connect_outlook_requires_client_id` is isolated from `PROJECT_CLIENT_ID`, so it cannot hit the
+  network when the project ID is filled.
+
 ## [1.2.1] - 2026-11-10
 
 ### Security
@@ -148,6 +160,7 @@ All notable changes to CleanYourMail are documented here. The format is based on
 - `report`, `plan`, `apply`, `unsubscribe`, `journal` and `unsubs` support redacted output.
 - Prompt-injection rules and hard stops for "skip the plan / delete everything" requests.
 
+[1.2.2]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.2.2
 [1.2.1]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.2.1
 [1.2.0]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.2.0
 [1.1.5]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.1.5
