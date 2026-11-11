@@ -69,10 +69,10 @@ Useful options:
 | `--app-version TEXT` | Override the default CLI version string |
 | `--yes` | Actually send; without it the script only previews |
 
-`--checklist` takes precedence over `--checklist-file` when both are supplied.
+A non-empty `--checklist` takes precedence over `--checklist-file` when both are supplied.
 
 The script redacts IPv4 addresses, MAC addresses, 15-digit IMEI numbers, `serial:`/`ro.serialno`
-values, email addresses in the message/checklist, Message-IDs and the value after
+values, email addresses in the message/checklist/app version, Message-IDs and the value after
 `password:`/`token:`/`secret:`/`authorization:`/`access_token`/`client_secret` before previewing.
 The contact field keeps an email address on purpose. Always read the preview: a model name or custom
 text can still contain something private.

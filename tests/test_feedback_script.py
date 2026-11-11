@@ -111,9 +111,13 @@ class PayloadTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self._payload(contact="x" * (feedback.MAX_CONTACT + 1))
 
-    def test_app_version_is_capped(self):
-        payload = self._payload(app_version="v" * 200)
+    def test_app_version_is_capped_and_redacted(self):
+        payload = self._payload(
+            app_version="v person@example.com " + "v" * 200
+        )
         self.assertEqual(len(payload["app_version"]), feedback.MAX_APP_VERSION)
+        self.assertNotIn("person@example.com", payload["app_version"])
+        self.assertIn("[redacted-email]", payload["app_version"])
 
 
 def _response(payload: bytes = b'{"ok":true}', status: int = 200):
@@ -234,7 +238,7 @@ class MainTests(unittest.TestCase):
                     "--kind",
                     "bug",
                     "--message",
-                    "review copy",
+                    "review person@example.com token: hunter two",
                     "--checklist",
                     "App: test",
                 ]
@@ -244,8 +248,11 @@ class MainTests(unittest.TestCase):
         send_mock.assert_called_once()
         payload = send_mock.call_args.args[0]
         self.assertEqual(payload["kind"], "bug")
-        self.assertEqual(payload["message"], "review copy")
+        self.assertEqual(payload["message"], "review [redacted-email] [redacted-secret]")
+        self.assertEqual(payload["checklist"], "App: test")
         self.assertIn("Sent", out.getvalue())
+        self.assertNotIn("person@example.com", out.getvalue())
+        self.assertNotIn("hunter two", out.getvalue())
 
     def test_send_failure_returns_one(self):
         err = io.StringIO()

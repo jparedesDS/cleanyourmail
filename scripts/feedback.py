@@ -38,14 +38,14 @@ _IP_RE = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
 _MAC_RE = re.compile(r"\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b")
 _IMEI_RE = re.compile(r"\b\d{15}\b")
 _SERIAL_RE = re.compile(
-    r"(?i)\b(?:serial|serialno|ro\.serialno)\s*[:=]\s*[^\r\n]+"
+    r"(?i)\b(?:serial|serialno|ro\.serialno)[ \t]*[:=][ \t]*[^\r\n]+"
 )
 _EMAIL_RE = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
-_MESSAGE_ID_RE = re.compile(r"(?i)\bmessage-id\s*[:=]\s*\S+")
+_MESSAGE_ID_RE = re.compile(r"(?i)\bmessage-id[ \t]*[:=][ \t]*\S+")
 _MESSAGE_ID_VALUE_RE = re.compile(r"<[^<>\s]+@[^<>\s]+>")
 _SECRET_RE = re.compile(
     r"(?i)\b(?:password|passwd|token|secret|client_secret|access_token|"
-    r"refresh_token|authorization|cookie)\s*[:=]\s*[^\r\n]+"
+    r"refresh_token|authorization|cookie)[ \t]*[:=][ \t]*[^\r\n]+"
 )
 
 
@@ -83,9 +83,7 @@ def build_payload(
     cleaned_message = redact(message).strip()
     cleaned_checklist = redact(checklist).strip()
     cleaned_contact = redact(contact, redact_email=False).strip()
-    cleaned_version = redact(str(app_version or ""), redact_email=False).strip()[
-        :MAX_APP_VERSION
-    ]
+    cleaned_version = redact(str(app_version or "")).strip()[:MAX_APP_VERSION]
     if not cleaned_message and not cleaned_checklist:
         raise ValueError("a message or a checklist is required")
     if len(cleaned_message) > MAX_MESSAGE:

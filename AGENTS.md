@@ -68,11 +68,11 @@ Never do these in a PR, a test, a doc or a command:
 - **No secrets in the repo or logs.** No passwords, OAuth tokens, app passwords, cookies, session
   IDs, real email addresses, Message-IDs from a real mailbox, or screenshots of a real inbox.
   `password_env` is the default; inline passwords only produce a warning.
-- **No telemetry, analytics, ads or third-party services.** The only network calls are IMAP, SMTP for
-  a mailto unsubscribe, and the validated one-click HTTPS request. The separate `scripts/feedback.py`
-  helper posts to the CleanYourMail Cloudflare Worker only when a person runs it with `--yes`. The
-  separate website repo is static HTML/CSS/JS with no analytics, no external fonts and no API calls
-  except that explicit feedback POST.
+- **No telemetry, analytics, ads or third-party services.** Apart from the separate
+  `scripts/feedback.py` helper, the only network calls are IMAP, SMTP for a mailto unsubscribe, and
+  the validated one-click HTTPS request. The helper posts to the CleanYourMail Cloudflare Worker only
+  when a person runs it with `--yes`. The separate website repo is static HTML/CSS/JS with no
+  analytics, no external fonts and no API calls except that explicit feedback POST.
 - **OAuth is limited to Microsoft device-code sign-in.** `tools/oauth_ms.py` may acquire and refresh a
   Microsoft token with a public client ID. Do not add a client secret, a browser callback, a local
   web server, Google OAuth or a general-purpose token broker. Gmail keeps App Passwords. Store only

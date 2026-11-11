@@ -51,10 +51,11 @@ command, but there is no multi-account dashboard.
 
 ## Is there a hosted service or telemetry?
 
-No. There is no account, server, analytics or third-party API. The only network calls are IMAP, SMTP
-for a `mailto:` unsubscribe, and a validated one-click HTTPS request. The separate
-`scripts/feedback.py` helper posts a reviewed payload to the CleanYourMail Cloudflare Worker only
-when the person runs it with `--yes`. Manual unsubscribe links are printed, never fetched.
+No. There is no account, server, analytics or third-party API. Apart from the separate
+`scripts/feedback.py` helper, the only network calls are IMAP, SMTP for a `mailto:` unsubscribe, and
+a validated one-click HTTPS request. The helper posts a reviewed payload to the CleanYourMail
+Cloudflare Worker only when the person runs it with `--yes`. Manual unsubscribe links are printed,
+never fetched.
 
 ## Can I use it without a coding agent?
 

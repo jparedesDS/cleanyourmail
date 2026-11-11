@@ -51,7 +51,8 @@ desfazer.
 ## Por que CleanYourMail
 
 - **Privado por construção.** A CLI roda localmente. Lê apenas cabeçalhos, guarda metadados e não tem
-  telemetria nem API de terceiros.
+  telemetria nem API de terceiros. A única exceção é o assistente de comentários opcional
+  `scripts/feedback.py`, que só envia um conteúdo revisado quando executado com `--yes`.
 - **Reversível por padrão.** Cada movimento é registrado com COPYUID e Message-ID. Um comando
   restaura.
 - **Nativo para agentes, não só para agentes.** A CLI é o produto. `SKILL.md` e `PROMPT.md` ensinam

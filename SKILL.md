@@ -539,9 +539,10 @@ python tools/mail.py undo --yes
 - No server-side filter upload. The tool exports XML/Sieve; the person reviews and imports it.
 - No promise that unsubscribe stops mail, that the inbox reaches zero, or that every provider behaves
   like Gmail.
-- No telemetry, analytics, ads or third-party services. The only network calls are Microsoft
-  sign-in, IMAP, SMTP for a mailto unsubscribe, and the validated one-click HTTPS request. The
-  separate opt-in `scripts/feedback.py` helper posts only when a person runs it with `--yes`.
+- No telemetry, analytics, ads or third-party services. Apart from the separate opt-in
+  `scripts/feedback.py` helper, the only network calls are Microsoft sign-in, IMAP, SMTP for a mailto
+  unsubscribe, and the validated one-click HTTPS request. The helper posts only when a person runs it
+  with `--yes`.
 
 ## Command cheat sheet
 

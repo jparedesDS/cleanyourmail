@@ -51,7 +51,9 @@ rückgängig machen kannst.
 ## Warum CleanYourMail
 
 - **Privat by design.** Die CLI läuft lokal. Sie liest nur Header, speichert Metadaten und hat keine
-  Telemetrie und keine Drittanbieter-API.
+  Telemetrie und keine Drittanbieter-API. Die einzige Ausnahme ist der separate, optionale Helfer für
+  Rückmeldungen `scripts/feedback.py`, der eine geprüfte Nutzlast nur dann sendet, wenn er mit `--yes`
+  ausgeführt wird.
 - **Standardmäßig umkehrbar.** Jede Verschiebung wird mit COPYUID und Message-ID protokolliert. Ein
   Befehl macht sie rückgängig.
 - **Agent-native, nicht nur für Agenten.** Die CLI ist das Produkt. `SKILL.md` und `PROMPT.md` bringen

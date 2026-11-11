@@ -51,7 +51,9 @@ déplacement, que vous pouvez annuler.
 ## Pourquoi CleanYourMail
 
 - **Privé par construction.** La CLI s’exécute en local. Elle lit uniquement les en-têtes, stocke des
-  métadonnées et n’a ni télémétrie ni API tierce.
+  métadonnées et n’a ni télémétrie ni API tierce. La seule exception est l’assistant de commentaires
+  facultatif `scripts/feedback.py`, qui n’envoie un contenu relu que lorsqu’il est exécuté avec
+  `--yes`.
 - **Réversible par défaut.** Chaque déplacement est journalisé avec COPYUID et Message-ID. Une commande
   le restaure.
 - **Natif pour agents, pas seulement pour agents.** La CLI est le produit. `SKILL.md` et `PROMPT.md`

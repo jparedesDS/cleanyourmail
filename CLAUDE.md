@@ -51,7 +51,8 @@ If a change weakens one of these rules, stop and open an issue before writing co
 ## Architecture
 
 - Python **3.11+**, standard library only. The install story is "copy the repo and run Python".
-- `tools/mail.py` is the only entry point. It adds `tools/` to `sys.path`.
+- `tools/mail.py` is the only mail entry point. It adds `tools/` to `sys.path`.
+  `scripts/feedback.py` is a separate opt-in helper and is never imported by `tools/mail.py`.
 - `tools/config.py` — TOML config, provider presets and secret lookup.
 - `tools/imap.py` — minimal IMAP client, special folders, moves, Gmail archive, UIDPLUS guards.
 - `tools/mailparse.py` — header parsing and `List-Unsubscribe` selection.
