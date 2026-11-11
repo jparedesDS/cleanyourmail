@@ -42,7 +42,8 @@ longer without making it safer or clearer is probably a bad change.
 | `tools/journal.py` | Append-only undo journal. |
 | `tools/unsub.py` | RFC 8058/mailto unsubscribe, SSRF guard. |
 | `tools/rules.py` | Gmail filter XML and Sieve export. |
-| `docs/` | `SAFETY.md`, `PROVIDERS.md`, `TROUBLESHOOTING.md`, `UNSUBSCRIBE.md`, `FOLDERS.md`, `FAQ.md`, `TRANSLATIONS.md`, `VALIDATION.md`, `BRAND-FAMILY.md`, `BRAND-SPECTRUM.md`, `BRAND.md`. |
+| `docs/` | `SAFETY.md`, `PROVIDERS.md`, `TROUBLESHOOTING.md`, `UNSUBSCRIBE.md`, `FOLDERS.md`, `FAQ.md`, `TRANSLATIONS.md`, `VALIDATION.md`, `FEEDBACK.md`, `BRAND-FAMILY.md`, `BRAND-SPECTRUM.md`, `BRAND.md`. |
+| `scripts/feedback.py` | Opt-in feedback/bug-report helper. Previews the payload, requires `--yes`, redacts identifiers. Never used by `tools/mail.py`. |
 | `tests/` | `unittest` suite with an in-process fake IMAP server. No real mail. |
 | `examples/cleanyourmail.toml` | Annotated example config. |
 

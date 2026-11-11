@@ -465,6 +465,32 @@ need CleanYourMail. For Outlook, revoke the application in Microsoft and delete
 Do not delete the journal until the person is comfortable with the result. The journal is the undo
 history. The cache can be deleted later; it will be rebuilt by the next scan.
 
+## Optional — feedback or a bug report
+
+Only if the person asks. Never send anything automatically.
+
+Build a short checklist from what they are willing to share: CleanYourMail CLI version, app/sidecar
+version if relevant, Windows version, provider label, mode, categories and what happened. Remove the
+account email, config/state paths, subjects, sender addresses, Message-IDs, passwords, tokens and
+logs.
+
+Show the checklist and ask for explicit permission. Then preview it:
+
+```bash
+python scripts/feedback.py --kind feedback --checklist-file feedback.txt
+```
+
+If the preview is correct and the person approves, send it:
+
+```bash
+python scripts/feedback.py --yes --kind feedback --checklist-file feedback.txt
+```
+
+Without `--yes`, the script prints the payload and sends nothing. It redacts common identifiers
+before the preview. The web form is at <https://cleanyourmail.org/#feedback>. The feedback helper is
+separate from `tools/mail.py`, which stays local except for IMAP/SMTP. See
+[docs/FEEDBACK.md](docs/FEEDBACK.md).
+
 ## Stop conditions
 
 Stop immediately, explain what happened, and do not improvise if:
