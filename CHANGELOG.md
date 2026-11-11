@@ -172,6 +172,7 @@ All notable changes to CleanYourMail are documented here. The format is based on
 - `report`, `plan`, `apply`, `unsubscribe`, `journal` and `unsubs` support redacted output.
 - Prompt-injection rules and hard stops for "skip the plan / delete everything" requests.
 
+[1.3.0]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.3.0
 [1.2.2]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.2.2
 [1.2.1]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.2.1
 [1.2.0]: https://github.com/jparedesDS/cleanyourmail/releases/tag/v1.2.0

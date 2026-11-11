@@ -148,6 +148,16 @@ class CliTest(unittest.TestCase):
         self.assertNotIn("example.com", out)
         self.assertNotIn("https://example.com/u", out)
 
+    def test_report_does_not_include_plan_message_previews(self):
+        self.assertEqual(self.cli("scan")[0], 0)
+        code, out, err = self.cli("report", "--json")
+        self.assertEqual(code, 0, err)
+        report = json.loads(out)
+        for key in ("groups", "stale", "manual_unsubscribe", "protected",
+                    "auto_unsubscribe"):
+            for group in report[key]:
+                self.assertNotIn("messages", group)
+
     def test_plan_apply_unsubscribe_redaction(self):
         self.assertEqual(self.cli("scan")[0], 0)
         code, out, err = self.cli("plan", "--json", "--redact")
@@ -164,7 +174,15 @@ class CliTest(unittest.TestCase):
         plan_file = next((self.temp / "state").glob("*/plan.json"))
         plan_text = plan_file.read_text(encoding="utf-8")
         self.assertIn("example.com", plan_text)
-        self.assertIn('"messages"', plan_text)
+        saved = json.loads(plan_text)
+        previews = [
+            message for group in saved["groups"] for message in group["messages"]
+        ]
+        self.assertTrue(previews)
+        self.assertEqual(
+            set(previews[0]),
+            {"uid", "mailbox", "sender", "name", "subject", "date"},
+        )
 
         code, out, err = self.cli("apply", str(plan_file), "--dry-run", "--json", "--redact")
         self.assertEqual(code, 0, err)

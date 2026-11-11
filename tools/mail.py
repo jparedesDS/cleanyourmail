@@ -724,7 +724,7 @@ def _redact_journal_entry(entry: dict) -> dict:
 
 
 def _report_group(group, redact: bool, no_subjects: bool) -> dict:
-    data = group.to_dict()
+    data = group.to_dict(include_messages=False)
     if no_subjects:
         data["samples"] = []
     if redact:

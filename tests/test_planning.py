@@ -144,6 +144,10 @@ class PlanningTest(unittest.TestCase):
         group = plan.groups[0]
         self.assertEqual(group.actionable, 3)
         self.assertEqual(group.skipped["group_limit"], 1)
+        preview_uids = {item["uid"] for item in group.messages}
+        self.assertEqual(preview_uids, {1, 2, 3})
+        self.assertEqual(set(group.uids["INBOX"]), preview_uids)
+        self.assertNotIn(4, preview_uids)
 
     def test_archive_mode_keeps_spam_in_junk(self):
         messages = [message(1, "newsletter"), message(2, "spam")]
@@ -206,6 +210,7 @@ class PlanningTest(unittest.TestCase):
         self.assertEqual(len(restored.actions), len(plan.actions))
         self.assertEqual(restored.uidvalidity, plan.uidvalidity)
         self.assertEqual(restored.groups[0].key, plan.groups[0].key)
+        self.assertEqual(restored.groups[0].messages, plan.groups[0].messages)
 
     def test_plan_rejects_invalid(self):
         for data in (

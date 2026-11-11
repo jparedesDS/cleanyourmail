@@ -382,6 +382,7 @@ def plan_from_dict(data: dict) -> Plan:
             reasons=raw.get("reasons", []), samples=raw.get("samples", []),
             unsub=raw.get("unsubscribe"), folder=raw.get("folder"),
             recommended=raw.get("recommended", "keep"), skipped=raw.get("skipped", {}),
+            messages=raw.get("messages", []) if isinstance(raw.get("messages"), list) else [],
         )
         plan.groups.append(group)
     return plan
