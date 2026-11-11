@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://jparedesds.github.io/cleanyourmail-web/">
+  <a href="https://cleanyourmail.org/">
     <img src="assets/banner.png" alt="CleanYourMail — 你的收件箱，少一点噪音" width="100%">
   </a>
 </p>
@@ -33,7 +33,7 @@
 大多数收件箱清理工具会索要密码、读取邮件并删除证据。CleanYourMail 在本地运行，只读邮件头，并
 记录每一次移动，所以你可以撤销。
 
-[网站](https://jparedesds.github.io/cleanyourmail-web/) · [SKILL.md](SKILL.md) ·
+[网站](https://cleanyourmail.org/) · [SKILL.md](SKILL.md) ·
 [PROMPT.md](PROMPT.md) · [安全](docs/SAFETY.md)
 
 ## 从这里开始
@@ -42,7 +42,7 @@
 |---|---|
 | 有邮箱和编程智能体 | 使用下面的智能体快速开始。 |
 | 只有终端，没有智能体 | 使用下面的 CLI 快速开始。 |
-| 想先看看效果 | [网站](https://jparedesds.github.io/cleanyourmail-web/)。 |
+| 想先看看效果 | [网站](https://cleanyourmail.org/)。 |
 | 需要安全规则 | [docs/SAFETY.md](docs/SAFETY.md)。 |
 
 ## 为什么选择 CleanYourMail
@@ -52,7 +52,7 @@
 - **为智能体而生，但不只属于智能体。** CLI 就是产品。`SKILL.md` 和 `PROMPT.md` 让任何编程智能体
   都能安全使用。
 
-[与托管式清理工具对比 →](https://jparedesds.github.io/cleanyourmail-web/#why)
+[与托管式清理工具对比 →](https://cleanyourmail.org/#why)
 
 ## 它能做什么
 

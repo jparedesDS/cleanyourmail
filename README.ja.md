@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://jparedesds.github.io/cleanyourmail-web/">
+  <a href="https://cleanyourmail.org/">
     <img src="assets/banner.png" alt="CleanYourMail — あなたの受信箱を、ノイズなしで" width="100%">
   </a>
 </p>
@@ -34,7 +34,7 @@
 ほとんどの受信箱クリーナーはパスワードを求め、メールを読み、証拠を消します。CleanYourMail は
 ローカルで動き、ヘッダーだけを読み、すべての移動を記録するので、元に戻せます。
 
-[ウェブサイト](https://jparedesds.github.io/cleanyourmail-web/) · [SKILL.md](SKILL.md) ·
+[ウェブサイト](https://cleanyourmail.org/) · [SKILL.md](SKILL.md) ·
 [PROMPT.md](PROMPT.md) · [安全性](docs/SAFETY.md)
 
 ## ここから始める
@@ -43,7 +43,7 @@
 |---|---|
 | メールボックスとコーディングエージェント | 下の「エージェントでのクイックスタート」へ。 |
 | ターミナルだけでエージェントなし | 下の「CLI でのクイックスタート」へ。 |
-| まず見てみたい | [ウェブサイト](https://jparedesds.github.io/cleanyourmail-web/)。 |
+| まず見てみたい | [ウェブサイト](https://cleanyourmail.org/)。 |
 | 安全ルールが必要 | [docs/SAFETY.md](docs/SAFETY.md)。 |
 
 ## CleanYourMail を選ぶ理由
@@ -55,7 +55,7 @@
 - **エージェント専用ではなく、エージェントネイティブ。** CLI が製品です。`SKILL.md` と
   `PROMPT.md` が、どのコーディングエージェントでも安全に使えるようにします。
 
-[ホスト型クリーナーとの比較 →](https://jparedesds.github.io/cleanyourmail-web/#why)
+[ホスト型クリーナーとの比較 →](https://cleanyourmail.org/#why)
 
 ## できること
 

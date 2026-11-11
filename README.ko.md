@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://jparedesds.github.io/cleanyourmail-web/">
+  <a href="https://cleanyourmail.org/">
     <img src="assets/banner.png" alt="CleanYourMail — 받은편지함, 소음 없이" width="100%">
   </a>
 </p>
@@ -34,7 +34,7 @@
 대부분의 받은편지함 정리 도구는 비밀번호를 요구하고, 메일을 읽고, 증거를 삭제합니다. CleanYourMail은
 로컬에서 실행되고 헤더만 읽으며 모든 이동을 기록하므로 되돌릴 수 있습니다.
 
-[웹사이트](https://jparedesds.github.io/cleanyourmail-web/) · [SKILL.md](SKILL.md) ·
+[웹사이트](https://cleanyourmail.org/) · [SKILL.md](SKILL.md) ·
 [PROMPT.md](PROMPT.md) · [보안](docs/SAFETY.md)
 
 ## 여기서 시작하세요
@@ -43,7 +43,7 @@
 |---|---|
 | 메일함과 코딩 에이전트가 있음 | 아래의 에이전트 빠른 시작을 사용하세요. |
 | 터미널만 있고 에이전트는 없음 | 아래의 CLI 빠른 시작을 사용하세요. |
-| 먼저 보고 싶음 | [웹사이트](https://jparedesds.github.io/cleanyourmail-web/). |
+| 먼저 보고 싶음 | [웹사이트](https://cleanyourmail.org/). |
 | 보안 규칙이 필요함 | [docs/SAFETY.md](docs/SAFETY.md). |
 
 ## CleanYourMail을 선택하는 이유
@@ -54,7 +54,7 @@
 - **에이전트 전용이 아닌 에이전트 네이티브.** CLI가 제품입니다. `SKILL.md`와 `PROMPT.md`는 어떤
   코딩 에이전트든 안전하게 사용하도록 가르칩니다.
 
-[호스팅형 정리 도구와 비교 →](https://jparedesds.github.io/cleanyourmail-web/#why)
+[호스팅형 정리 도구와 비교 →](https://cleanyourmail.org/#why)
 
 ## 하는 일
 

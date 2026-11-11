@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://jparedesds.github.io/cleanyourmail-web/">
+  <a href="https://cleanyourmail.org/">
     <img src="assets/banner.png" alt="CleanYourMail — dein Posteingang, ohne das Rauschen" width="100%">
   </a>
 </p>
@@ -36,7 +36,7 @@ Die meisten Inbox-Cleaner fragen nach deinem Passwort, lesen deine Mails und lö
 CleanYourMail läuft lokal, liest nur Header und protokolliert jede Verschiebung, sodass du sie
 rückgängig machen kannst.
 
-[Website](https://jparedesds.github.io/cleanyourmail-web/) · [SKILL.md](SKILL.md) ·
+[Website](https://cleanyourmail.org/) · [SKILL.md](SKILL.md) ·
 [PROMPT.md](PROMPT.md) · [Sicherheit](docs/SAFETY.md)
 
 ## Starte hier
@@ -45,7 +45,7 @@ rückgängig machen kannst.
 |---|---|
 | Ein Postfach und einen Agenten | Dem Agenten-Schnellstart unten. |
 | Ein Terminal und keinen Agenten | Dem CLI-Schnellstart unten. |
-| Willst es zuerst sehen | [Die Website](https://jparedesds.github.io/cleanyourmail-web/). |
+| Willst es zuerst sehen | [Die Website](https://cleanyourmail.org/). |
 | Brauchst die Sicherheitsregeln | [docs/SAFETY.md](docs/SAFETY.md). |
 
 ## Warum CleanYourMail
@@ -57,7 +57,7 @@ rückgängig machen kannst.
 - **Agent-native, nicht nur für Agenten.** Die CLI ist das Produkt. `SKILL.md` und `PROMPT.md` bringen
   jedem Coding-Agenten bei, sie sicher zu benutzen.
 
-[Vergleich mit gehosteten Inbox-Cleanern →](https://jparedesds.github.io/cleanyourmail-web/#why)
+[Vergleich mit gehosteten Inbox-Cleanern →](https://cleanyourmail.org/#why)
 
 ## Was es macht
 

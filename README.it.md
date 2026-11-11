@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://jparedesds.github.io/cleanyourmail-web/">
+  <a href="https://cleanyourmail.org/">
     <img src="assets/banner.png" alt="CleanYourMail — la tua casella, senza il rumore" width="100%">
   </a>
 </p>
@@ -36,7 +36,7 @@ La maggior parte dei pulitori di casella chiede la password, legge le email e ca
 CleanYourMail gira in locale, legge solo le intestazioni e registra ogni spostamento, così puoi
 annullarlo.
 
-[Sito](https://jparedesds.github.io/cleanyourmail-web/) · [SKILL.md](SKILL.md) ·
+[Sito](https://cleanyourmail.org/) · [SKILL.md](SKILL.md) ·
 [PROMPT.md](PROMPT.md) · [Sicurezza](docs/SAFETY.md)
 
 ## Inizia qui
@@ -45,7 +45,7 @@ annullarlo.
 |---|---|
 | Una casella e un agente | L’avvio rapido con agente, qui sotto. |
 | Un terminale e nessun agente | L’avvio rapido con la CLI, qui sotto. |
-| Vuoi vederlo prima | [Il sito](https://jparedesds.github.io/cleanyourmail-web/). |
+| Vuoi vederlo prima | [Il sito](https://cleanyourmail.org/). |
 | Ti servono le regole di sicurezza | [docs/SAFETY.md](docs/SAFETY.md). |
 
 ## Perché CleanYourMail
@@ -57,7 +57,7 @@ annullarlo.
 - **Agent-native, non solo per agenti.** La CLI è il prodotto. `SKILL.md` e `PROMPT.md` insegnano a
   qualsiasi agente a usarla in sicurezza.
 
-[Confronta con i pulitori ospitati →](https://jparedesds.github.io/cleanyourmail-web/#why)
+[Confronta con i pulitori ospitati →](https://cleanyourmail.org/#why)
 
 ## Cosa fa
 

@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://jparedesds.github.io/cleanyourmail-web/">
+  <a href="https://cleanyourmail.org/">
     <img src="assets/banner.png" alt="CleanYourMail — votre boîte de réception, sans le bruit" width="100%">
   </a>
 </p>
@@ -36,7 +36,7 @@ La plupart des nettoyeurs de boîte de réception demandent votre mot de passe, 
 effacent les preuves. CleanYourMail s’exécute en local, lit uniquement les en-têtes et journalise chaque
 déplacement, que vous pouvez annuler.
 
-[Site](https://jparedesds.github.io/cleanyourmail-web/) · [SKILL.md](SKILL.md) ·
+[Site](https://cleanyourmail.org/) · [SKILL.md](SKILL.md) ·
 [PROMPT.md](PROMPT.md) · [Sécurité](docs/SAFETY.md)
 
 ## Commencez ici
@@ -45,7 +45,7 @@ déplacement, que vous pouvez annuler.
 |---|---|
 | Une boîte et un agent | Le démarrage rapide avec agent, ci-dessous. |
 | Un terminal et aucun agent | Le démarrage rapide avec la CLI, ci-dessous. |
-| Envie de voir d’abord | [Le site](https://jparedesds.github.io/cleanyourmail-web/). |
+| Envie de voir d’abord | [Le site](https://cleanyourmail.org/). |
 | Besoin des règles de sécurité | [docs/SAFETY.md](docs/SAFETY.md). |
 
 ## Pourquoi CleanYourMail
@@ -57,7 +57,7 @@ déplacement, que vous pouvez annuler.
 - **Natif pour agents, pas seulement pour agents.** La CLI est le produit. `SKILL.md` et `PROMPT.md`
   apprennent à n’importe quel agent à l’utiliser en sécurité.
 
-[Comparer aux nettoyeurs hébergés →](https://jparedesds.github.io/cleanyourmail-web/#why)
+[Comparer aux nettoyeurs hébergés →](https://cleanyourmail.org/#why)
 
 ## Ce qu’il fait
 

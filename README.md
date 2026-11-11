@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://jparedesds.github.io/cleanyourmail-web/">
+  <a href="https://cleanyourmail.org/">
     <img src="assets/banner.png" alt="CleanYourMail — your inbox, minus the noise" width="100%">
   </a>
 </p>
@@ -35,7 +35,7 @@ deleting anything.
 Most inbox cleaners ask for your password, read your mail and delete the evidence. CleanYourMail
 runs locally, reads headers only and journals every move, so you can undo it.
 
-[Website](https://jparedesds.github.io/cleanyourmail-web/) · [SKILL.md](SKILL.md) ·
+[Website](https://cleanyourmail.org/) · [SKILL.md](SKILL.md) ·
 [PROMPT.md](PROMPT.md) · [Safety](docs/SAFETY.md)
 
 ## Start here
@@ -45,7 +45,7 @@ runs locally, reads headers only and journals every move, so you can undo it.
 | A mailbox and a coding agent | The agent quick start below. |
 | Prefer buttons over prompts | [Download the CleanYourMail app](https://github.com/jparedesDS/cleanyourmail-app). |
 | A terminal and no agent | The CLI quick start below. |
-| Want to see it first | [The website](https://jparedesds.github.io/cleanyourmail-web/). |
+| Want to see it first | [The website](https://cleanyourmail.org/). |
 | Need the safety rules | [docs/SAFETY.md](docs/SAFETY.md). |
 
 ## Why CleanYourMail
@@ -57,7 +57,7 @@ runs locally, reads headers only and journals every move, so you can undo it.
 - **Agent-native, not agent-only.** The CLI is the product. `SKILL.md` and `PROMPT.md` teach any
   coding agent to use it safely.
 
-[Compare with hosted inbox cleaners →](https://jparedesds.github.io/cleanyourmail-web/#why)
+[Compare with hosted inbox cleaners →](https://cleanyourmail.org/#why)
 
 ## What it does
 

@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://jparedesds.github.io/cleanyourmail-web/es.html">
+  <a href="https://cleanyourmail.org/es.html">
     <img src="assets/banner.png" alt="CleanYourMail — tu bandeja, sin el ruido" width="100%">
   </a>
 </p>
@@ -36,7 +36,7 @@ La mayoría de los limpiadores piden tu contraseña, leen tu correo y borran la 
 CleanYourMail se ejecuta en local, lee solo cabeceras y registra cada movimiento para que puedas
 deshacerlo.
 
-[Web](https://jparedesds.github.io/cleanyourmail-web/es.html) · [SKILL.md](SKILL.md) ·
+[Web](https://cleanyourmail.org/es.html) · [SKILL.md](SKILL.md) ·
 [PROMPT.es.md](PROMPT.es.md) · [Seguridad](docs/SAFETY.md)
 
 ## Empieza aquí
@@ -46,7 +46,7 @@ deshacerlo.
 | Un buzón y un agente | El inicio rápido con agente, abajo. |
 | Prefieres botones a comandos | [Descarga la app CleanYourMail](https://github.com/jparedesDS/cleanyourmail-app). |
 | Una terminal y ningún agente | El inicio rápido con la CLI, abajo. |
-| Quieres verlo primero | [La web](https://jparedesds.github.io/cleanyourmail-web/es.html). |
+| Quieres verlo primero | [La web](https://cleanyourmail.org/es.html). |
 | Necesitas las reglas de seguridad | [docs/SAFETY.md](docs/SAFETY.md). |
 
 ## Por qué CleanYourMail
@@ -58,7 +58,7 @@ deshacerlo.
 - **Nativo para agentes, no solo para agentes.** La CLI es el producto. `SKILL.md` y `PROMPT.es.md`
   enseñan a cualquier agente a usarla con seguridad.
 
-[Comparar con limpiadores alojados →](https://jparedesds.github.io/cleanyourmail-web/es.html#why)
+[Comparar con limpiadores alojados →](https://cleanyourmail.org/es.html#why)
 
 ## Qué hace
 

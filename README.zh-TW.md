@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://jparedesds.github.io/cleanyourmail-web/">
+  <a href="https://cleanyourmail.org/">
     <img src="assets/banner.png" alt="CleanYourMail — 你的收件匣，少一點噪音" width="100%">
   </a>
 </p>
@@ -34,7 +34,7 @@
 大多數收件匣清理工具會要求你的密碼、讀取你的郵件並刪除證據。CleanYourMail 在本機執行，只讀標頭，
 並記錄每一次移動，所以你可以復原。
 
-[網站](https://jparedesds.github.io/cleanyourmail-web/) · [SKILL.md](SKILL.md) ·
+[網站](https://cleanyourmail.org/) · [SKILL.md](SKILL.md) ·
 [PROMPT.md](PROMPT.md) · [安全性](docs/SAFETY.md)
 
 ## 從這裡開始
@@ -43,7 +43,7 @@
 |---|---|
 | 有信箱和程式設計代理 | 使用下方的代理快速開始。 |
 | 只有終端機，沒有代理 | 使用下方的 CLI 快速開始。 |
-| 想先看看效果 | [網站](https://jparedesds.github.io/cleanyourmail-web/)。 |
+| 想先看看效果 | [網站](https://cleanyourmail.org/)。 |
 | 需要安全規則 | [docs/SAFETY.md](docs/SAFETY.md)。 |
 
 ## 為什麼選擇 CleanYourMail
@@ -53,7 +53,7 @@
 - **為代理而生，但不只屬於代理。** CLI 就是產品。`SKILL.md` 和 `PROMPT.md` 讓任何程式設計代理都
   能安全使用。
 
-[與託管式清理工具比較 →](https://jparedesds.github.io/cleanyourmail-web/#why)
+[與託管式清理工具比較 →](https://cleanyourmail.org/#why)
 
 ## 它能做什麼
 

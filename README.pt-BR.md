@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://jparedesds.github.io/cleanyourmail-web/">
+  <a href="https://cleanyourmail.org/">
     <img src="assets/banner.png" alt="CleanYourMail — sua caixa de entrada, sem o ruído" width="100%">
   </a>
 </p>
@@ -36,7 +36,7 @@ A maioria dos limpadores de caixa de entrada pede sua senha, lê seus e-mails e 
 O CleanYourMail roda localmente, lê apenas cabeçalhos e registra cada movimento para que você possa
 desfazer.
 
-[Site](https://jparedesds.github.io/cleanyourmail-web/) · [SKILL.md](SKILL.md) ·
+[Site](https://cleanyourmail.org/) · [SKILL.md](SKILL.md) ·
 [PROMPT.md](PROMPT.md) · [Segurança](docs/SAFETY.md)
 
 ## Comece aqui
@@ -45,7 +45,7 @@ desfazer.
 |---|---|
 | Uma caixa de entrada e um agente | O início rápido com agente, abaixo. |
 | Um terminal e nenhum agente | O início rápido com a CLI, abaixo. |
-| Quer ver primeiro | [O site](https://jparedesds.github.io/cleanyourmail-web/). |
+| Quer ver primeiro | [O site](https://cleanyourmail.org/). |
 | Precisa das regras de segurança | [docs/SAFETY.md](docs/SAFETY.md). |
 
 ## Por que CleanYourMail
@@ -57,7 +57,7 @@ desfazer.
 - **Nativo para agentes, não só para agentes.** A CLI é o produto. `SKILL.md` e `PROMPT.md` ensinam
   qualquer agente a usá-la com segurança.
 
-[Comparar com limpadores hospedados →](https://jparedesds.github.io/cleanyourmail-web/#why)
+[Comparar com limpadores hospedados →](https://cleanyourmail.org/#why)
 
 ## O que ele faz
 

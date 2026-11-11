@@ -86,7 +86,7 @@ All notable changes to CleanYourMail are documented here. The format is based on
 
 - Renamed the repository from `clean-your-mail` to `cleanyourmail`. Existing GitHub URLs redirect
   to the new name.
-- Updated the website URL to `https://jparedesds.github.io/cleanyourmail-web/` and refreshed the
+- Updated the website URL to `https://cleanyourmail.org/` and refreshed the
   banner and social preview with the new addresses.
 
 ## [1.1.3] - 2026-10-30
