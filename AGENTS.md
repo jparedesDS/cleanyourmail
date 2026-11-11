@@ -9,7 +9,8 @@ changing the repo.
 CleanYourMail is a **skill**, not a hosted service. People give `SKILL.md` to their coding agent; the
 agent uses `tools/mail.py` over IMAP/SMTP to scan headers, classify mail, file it into folders or
 labels, archive it, and send unsubscribe requests. There is no server, no database service, no
-telemetry, no third-party API and no permanent deletion.
+telemetry and no third-party API. The separate opt-in feedback helper is the only exception: it
+posts a reviewed payload to a Cloudflare Worker only when a person runs it with `--yes`.
 
 The product is the text in `SKILL.md` plus the guardrails in `tools/`. A change that makes the skill
 longer without making it safer or clearer is probably a bad change.
@@ -68,8 +69,10 @@ Never do these in a PR, a test, a doc or a command:
   IDs, real email addresses, Message-IDs from a real mailbox, or screenshots of a real inbox.
   `password_env` is the default; inline passwords only produce a warning.
 - **No telemetry, analytics, ads or third-party services.** The only network calls are IMAP, SMTP for
-  a mailto unsubscribe, and the validated one-click HTTPS request. The separate website repo is
-  static HTML/CSS/JS with no analytics, no external fonts and no API calls.
+  a mailto unsubscribe, and the validated one-click HTTPS request. The separate `scripts/feedback.py`
+  helper posts to the CleanYourMail Cloudflare Worker only when a person runs it with `--yes`. The
+  separate website repo is static HTML/CSS/JS with no analytics, no external fonts and no API calls
+  except that explicit feedback POST.
 - **OAuth is limited to Microsoft device-code sign-in.** `tools/oauth_ms.py` may acquire and refresh a
   Microsoft token with a public client ID. Do not add a client secret, a browser callback, a local
   web server, Google OAuth or a general-purpose token broker. Gmail keeps App Passwords. Store only
@@ -91,8 +94,9 @@ Never do these in a PR, a test, a doc or a command:
 
 - Python **3.11+**, standard library only. Do not add a dependency without a very good reason; the
   install story is "copy the repo and run Python".
-- `tools/mail.py` is the only entry point. It adds `tools/` to `sys.path`; modules import each other
-  directly.
+- `tools/mail.py` is the only mail entry point. It adds `tools/` to `sys.path`; modules import each
+  other directly. `scripts/feedback.py` is a separate opt-in helper and is never imported by
+  `tools/mail.py`.
 - The cache is metadata only: mailbox, UID, UIDVALIDITY, sender, subject, date, size, flags,
   category, confidence, reasons, protected flag, List-Unsubscribe headers. No body column.
 - Plans are data, not code. `plan_from_dict` validates version, mode, action type, UIDs, mailbox and

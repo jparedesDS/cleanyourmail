@@ -53,8 +53,9 @@ The preview prints the exact JSON values that will be sent. If it is correct and
 python scripts/feedback.py --yes --kind bug --checklist-file feedback.txt
 ```
 
-Without `--yes`, the script prints the payload and sends nothing. It exits with `2` for a preview or
-validation error, `1` for a send failure, and `0` after a successful send.
+Without `--yes`, the script prints the payload and sends nothing. It exits with `0` after a successful
+send, `1` for a send failure, `2` for a validation/input error, and `3` after a successful preview
+that still needs `--yes`.
 
 Useful options:
 
@@ -66,21 +67,25 @@ Useful options:
 | `--checklist-file PATH` | Read the checklist from a UTF-8 file |
 | `--contact TEXT` | Optional contact, visible to the maintainer; an email here is kept |
 | `--app-version TEXT` | Override the default CLI version string |
-| `--endpoint URL` | Override the Worker URL (or set `CYM_FEEDBACK_URL`) |
 | `--yes` | Actually send; without it the script only previews |
 
+`--checklist` takes precedence over `--checklist-file` when both are supplied.
+
 The script redacts IPv4 addresses, MAC addresses, 15-digit IMEI numbers, `serial:`/`ro.serialno`
-values, email addresses in the message/checklist, Message-IDs and `password:`/`token:`/`secret:`
-lines before previewing. The contact field keeps an email address on purpose. Always read the
-preview: a model name or custom text can still contain something private.
+values, email addresses in the message/checklist, Message-IDs and the value after
+`password:`/`token:`/`secret:`/`authorization:`/`access_token`/`client_secret` before previewing.
+The contact field keeps an email address on purpose. Always read the preview: a model name or custom
+text can still contain something private.
 
 ## Limits
 
-- The clients send at most 2800 characters of message and 2500 of checklist. The Worker accepts a
-  wider input contract but truncates delivery under Discord's aggregate limit.
+- The clients send at most 2800 characters of message, 2500 of checklist, 200 of contact and 80 of
+  app version. The Worker accepts a wider input contract but truncates delivery under Discord's
+  aggregate limit.
 - One request per hashed IP per five minutes.
 - A honeypot field blocks simple bots.
-- The Worker returns `503` when the Discord webhook is not configured.
+- The Worker returns `503` when the Discord webhook, the KV rate limiter or the IP salt is not
+  configured; the CLI reports that as "feedback is not configured".
 
 ## Discord
 

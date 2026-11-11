@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import sys
 import urllib.error
@@ -39,13 +38,14 @@ _IP_RE = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
 _MAC_RE = re.compile(r"\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b")
 _IMEI_RE = re.compile(r"\b\d{15}\b")
 _SERIAL_RE = re.compile(
-    r"(?i)\b(?:serial|serialno|ro\.serialno)\s*[:=]\s*\S+"
+    r"(?i)\b(?:serial|serialno|ro\.serialno)\s*[:=]\s*[^\r\n]+"
 )
 _EMAIL_RE = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
 _MESSAGE_ID_RE = re.compile(r"(?i)\bmessage-id\s*[:=]\s*\S+")
 _MESSAGE_ID_VALUE_RE = re.compile(r"<[^<>\s]+@[^<>\s]+>")
 _SECRET_RE = re.compile(
-    r"(?i)\b(?:password|passwd|token|secret|authorization|cookie)\s*[:=]\s*\S+"
+    r"(?i)\b(?:password|passwd|token|secret|client_secret|access_token|"
+    r"refresh_token|authorization|cookie)\s*[:=]\s*[^\r\n]+"
 )
 
 
@@ -83,7 +83,9 @@ def build_payload(
     cleaned_message = redact(message).strip()
     cleaned_checklist = redact(checklist).strip()
     cleaned_contact = redact(contact, redact_email=False).strip()
-    cleaned_version = str(app_version or "").strip()[:MAX_APP_VERSION]
+    cleaned_version = redact(str(app_version or ""), redact_email=False).strip()[
+        :MAX_APP_VERSION
+    ]
     if not cleaned_message and not cleaned_checklist:
         raise ValueError("a message or a checklist is required")
     if len(cleaned_message) > MAX_MESSAGE:
@@ -113,16 +115,19 @@ def send(
     body = json.dumps(
         payload, ensure_ascii=False, separators=(",", ":")
     ).encode("utf-8")
-    request = urllib.request.Request(
-        endpoint,
-        data=body,
-        method="POST",
-        headers={
-            "Accept": "application/json",
-            "Content-Type": "application/json; charset=utf-8",
-            "User-Agent": "CleanYourMail-cli-feedback/1",
-        },
-    )
+    try:
+        request = urllib.request.Request(
+            endpoint,
+            data=body,
+            method="POST",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json; charset=utf-8",
+                "User-Agent": "CleanYourMail-cli-feedback/1",
+            },
+        )
+    except (TypeError, ValueError) as error:
+        raise RuntimeError("invalid feedback endpoint") from error
     open_request = opener or urllib.request.urlopen
     try:
         with open_request(request, timeout=timeout) as response:
@@ -171,18 +176,14 @@ def main(argv: list[str] | None = None) -> int:
         default=f"CleanYourMail CLI {__version__}",
     )
     parser.add_argument(
-        "--endpoint",
-        default=os.environ.get("CYM_FEEDBACK_URL", DEFAULT_ENDPOINT),
-    )
-    parser.add_argument(
         "--yes",
         action="store_true",
         help="actually send after showing the preview",
     )
     args = parser.parse_args(argv)
 
-    checklist = args.checklist or _read_checklist(args.checklist_file)
     try:
+        checklist = args.checklist or _read_checklist(args.checklist_file)
         payload = build_payload(
             kind=args.kind,
             message=args.message,
@@ -207,10 +208,10 @@ def main(argv: list[str] | None = None) -> int:
 
     if not args.yes:
         print("Nothing sent. Re-run with --yes after the person approves.")
-        return 2
+        return 3
 
     try:
-        send(payload, endpoint=args.endpoint)
+        send(payload)
     except RuntimeError as error:
         print(f"error: {error}", file=sys.stderr)
         return 1

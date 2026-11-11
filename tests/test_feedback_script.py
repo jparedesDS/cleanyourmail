@@ -29,8 +29,12 @@ class RedactionTests(unittest.TestCase):
             "From: person@example.com\n"
             "Message-ID: <abc@example.com>\n"
             "token: super-secret\n"
+            "password: hunter two\n"
+            "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9\n"
+            "access_token=eyJhbGciOiJIUzI1NiJ9\n"
+            "client_secret=abcdef\n"
             "Build: Windows 10.0.19045\n"
-            "inline serial: INLINE123 and token: INLINE-SECRET\n"
+            "inline serial: INLINE 123 and token: INLINE-SECRET value\n"
         )
 
         redacted = feedback.redact(text)
@@ -44,8 +48,11 @@ class RedactionTests(unittest.TestCase):
             "person@example.com",
             "abc@example.com",
             "super-secret",
-            "INLINE123",
-            "INLINE-SECRET",
+            "hunter two",
+            "eyJhbGciOiJIUzI1NiJ9",
+            "abcdef",
+            "INLINE 123",
+            "INLINE-SECRET value",
         ):
             with self.subTest(value=value):
                 self.assertNotIn(value, redacted)
@@ -134,9 +141,21 @@ class SendTests(unittest.TestCase):
             {"kind": "feedback", "message": "hello", "website": ""},
         )
         self.assertEqual(
+            request.get_header("Content-type"),
+            "application/json; charset=utf-8",
+        )
+        self.assertEqual(
             opener.call_args.kwargs["timeout"],
             20,
         )
+
+    def test_send_rejects_an_invalid_endpoint(self):
+        with self.assertRaisesRegex(RuntimeError, "invalid feedback endpoint"):
+            feedback.send(
+                {"kind": "feedback", "message": "hello"},
+                endpoint="not-a-url",
+                opener=mock.Mock(),
+            )
 
     def test_send_maps_http_errors(self):
         for code, expected in (
@@ -189,14 +208,21 @@ class MainTests(unittest.TestCase):
         with mock.patch.object(feedback, "send") as send_mock, \
                 contextlib.redirect_stdout(out):
             result = feedback.main(
-                ["--message", "hello", "--checklist", "App: test"]
+                [
+                    "--message",
+                    "hello person@example.com token: hunter two",
+                    "--checklist",
+                    "App: test",
+                ]
             )
 
-        self.assertEqual(result, 2)
+        self.assertEqual(result, 3)
         send_mock.assert_not_called()
         self.assertIn("Nothing sent", out.getvalue())
         self.assertIn("App: test", out.getvalue())
         self.assertIn("CleanYourMail CLI", out.getvalue())
+        self.assertNotIn("person@example.com", out.getvalue())
+        self.assertNotIn("hunter two", out.getvalue())
 
     def test_with_yes_sends_after_the_preview(self):
         out = io.StringIO()
@@ -242,8 +268,26 @@ class MainTests(unittest.TestCase):
                     ["--checklist-file", str(path)]
                 )
 
-        self.assertEqual(result, 2)
+        self.assertEqual(result, 3)
         self.assertIn("Mode: folders", out.getvalue())
+
+    def test_missing_checklist_file_returns_two(self):
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            result = feedback.main(
+                ["--checklist-file", "does-not-exist.txt"]
+            )
+
+        self.assertEqual(result, 2)
+        self.assertIn("error:", err.getvalue())
+
+    def test_empty_payload_returns_two(self):
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            result = feedback.main(["--message", ""])
+
+        self.assertEqual(result, 2)
+        self.assertIn("error:", err.getvalue())
 
 
 if __name__ == "__main__":

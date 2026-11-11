@@ -51,7 +51,8 @@ runs locally, reads headers only and journals every move, so you can undo it.
 ## Why CleanYourMail
 
 - **Private by construction.** The CLI runs locally. It reads headers only, stores metadata, and has
-  no telemetry or third-party API.
+  no telemetry or third-party API. The separate opt-in feedback helper is the only exception: it
+  posts a reviewed payload only when run with `--yes`.
 - **Reversible by default.** Every move is journaled with COPYUID and Message-ID. One command
   restores it.
 - **Agent-native, not agent-only.** The CLI is the product. `SKILL.md` and `PROMPT.md` teach any

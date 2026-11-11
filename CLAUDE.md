@@ -1,7 +1,8 @@
 # CLAUDE.md
 
 CleanYourMail is an open-source **skill** that lets a coding agent clean an IMAP mailbox reversibly.
-It is not a hosted service: there is no server, database service, telemetry or third-party API.
+It is not a hosted service: there is no server, database service, telemetry or third-party API. The
+separate opt-in feedback helper posts only when run with `--yes`.
 
 This file is the short context for Claude Code. [`AGENTS.md`](AGENTS.md) is the full maintainer
 guide; [`SKILL.md`](SKILL.md) is the procedure the cleaning agent follows.
