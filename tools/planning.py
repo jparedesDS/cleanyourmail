@@ -39,8 +39,10 @@ class Group:
     recommended: str = "keep"
     skipped: dict[str, int] = field(default_factory=dict)
     uids: dict[str, list[int]] = field(default_factory=dict)
+    messages: list[dict] = field(default_factory=list)
 
-    def to_dict(self, include_uids: bool = False) -> dict:
+    def to_dict(self, include_uids: bool = False,
+                include_messages: bool = False) -> dict:
         data = {
             "key": self.key,
             "category": self.category,
@@ -65,6 +67,8 @@ class Group:
         }
         if include_uids:
             data["uids"] = self.uids
+        if include_messages:
+            data["messages"] = self.messages
         return data
 
 
@@ -80,7 +84,8 @@ class Plan:
     generated: str = field(default_factory=lambda: to_iso(utcnow()))
     version: int = PLAN_VERSION
 
-    def to_dict(self, include_uids: bool = True) -> dict:
+    def to_dict(self, include_uids: bool = True,
+                include_messages: bool = True) -> dict:
         return {
             "version": self.version,
             "generated": self.generated,
@@ -90,7 +95,13 @@ class Plan:
             "uidvalidity": self.uidvalidity,
             "stats": self.stats,
             "actions": self.actions,
-            "groups": [group.to_dict(include_uids=include_uids) for group in self.groups],
+            "groups": [
+                group.to_dict(
+                    include_uids=include_uids,
+                    include_messages=include_messages,
+                )
+                for group in self.groups
+            ],
         }
 
 
@@ -213,10 +224,25 @@ def _build_group(category: str, domain: str, items: list[StoredMessage],
 
     dated.sort()  # oldest first
     per_group = max(0, int(policy.max_messages_per_group))
-    for _date, mailbox, uid in dated[:per_group]:
+    selected = dated[:per_group]
+    for _date, mailbox, uid in selected:
         uids[mailbox].append(uid)
     if len(dated) > per_group:
         skip["group_limit"] += len(dated) - per_group
+
+    by_key = {(item.mailbox, item.uid): item for item in items}
+    group.messages = [
+        {
+            "uid": uid,
+            "mailbox": mailbox,
+            "sender": by_key[(mailbox, uid)].from_addr,
+            "name": by_key[(mailbox, uid)].from_name,
+            "subject": truncate(by_key[(mailbox, uid)].subject, 120),
+            "date": by_key[(mailbox, uid)].date,
+        }
+        for _date, mailbox, uid in selected
+        if (mailbox, uid) in by_key
+    ]
 
     group.uids = {mailbox: sorted(values) for mailbox, values in uids.items() if values}
     group.actionable = sum(len(values) for values in group.uids.values())

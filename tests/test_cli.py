@@ -160,8 +160,11 @@ class CliTest(unittest.TestCase):
                 self.assertEqual(action["target"], "***")
         for group in plan_payload["groups"]:
             self.assertEqual(group["domain"], "***")
+            self.assertEqual(group["messages"], [])
         plan_file = next((self.temp / "state").glob("*/plan.json"))
-        self.assertIn("example.com", plan_file.read_text(encoding="utf-8"))
+        plan_text = plan_file.read_text(encoding="utf-8")
+        self.assertIn("example.com", plan_text)
+        self.assertIn('"messages"', plan_text)
 
         code, out, err = self.cli("apply", str(plan_file), "--dry-run", "--json", "--redact")
         self.assertEqual(code, 0, err)

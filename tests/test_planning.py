@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import json
 import unittest
 from pathlib import Path
 
@@ -67,6 +68,34 @@ class PlanningTest(unittest.TestCase):
         move_uids = {uid for a in actions if a["type"] == "move"
                      for uid in a["uids"]}
         self.assertEqual(move_uids, {1, 2, 3})
+
+    def test_plan_includes_message_previews(self):
+        messages = [
+            message(1, "newsletter", "news@example.com",
+                    subject="Weekly digest"),
+            message(2, "newsletter", "news@example.com",
+                    subject="New arrivals"),
+        ]
+        plan = build_plan(messages, config())
+        group = next(g for g in plan.groups if g.category == "newsletter")
+
+        self.assertEqual(len(group.messages), 2)
+        preview = group.messages[0]
+        self.assertEqual(
+            set(preview),
+            {"uid", "mailbox", "sender", "name", "subject", "date"},
+        )
+        self.assertEqual(preview["sender"], "news@example.com")
+        self.assertIn(preview["subject"], {"Weekly digest", "New arrivals"})
+        self.assertNotIn("id-1@test", json.dumps(group.messages))
+
+        payload = plan.to_dict()
+        serialized = next(
+            item for item in payload["groups"]
+            if item["category"] == "newsletter"
+        )
+        self.assertEqual(len(serialized["messages"]), 2)
+        self.assertNotIn("messages", group.to_dict())
 
     def test_protected_group_is_excluded(self):
         messages = [

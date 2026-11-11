@@ -4,10 +4,13 @@ All notable changes to CleanYourMail are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.3.0] - 2026-11-11
 
 ### Added
 
+- Plan JSON now includes a `messages` preview for each actionable group: UID, mailbox, sender,
+  display name, subject and date. The app can show exactly which messages will move without reading
+  bodies. `plan --redact` clears these previews.
 - `scripts/feedback.py`, an opt-in feedback and bug-report helper with a preview, explicit `--yes`
   and identifier redaction. It posts to the same Cloudflare Worker as the app and website and never
   runs automatically.

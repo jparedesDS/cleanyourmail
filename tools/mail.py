@@ -670,6 +670,8 @@ def _redact_group_data(data: dict) -> dict:
     out["domain"] = "***"
     out["senders"] = ["***"] if out.get("senders") else []
     out["samples"] = []
+    if "messages" in out:
+        out["messages"] = []
     out["reasons"] = ["redacted"]
     out["uids"] = {}
     if out.get("protected_reason"):
